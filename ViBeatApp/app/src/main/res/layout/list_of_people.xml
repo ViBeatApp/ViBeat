@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+
+        <ImageView
+            android:id="@+id/imageUser"
+            android:layout_marginLeft="20dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:src="@android:drawable/ic_menu_slideshow" />
+
+        <LinearLayout
+            android:layout_width="187dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:fontFamily="@font/caveat_brush" />
+
+            <TextView
+                android:id="@+id/admin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="admin"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:fontFamily="@font/caveat_brush" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/adminImage"
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="11dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/chess_not" />
+
+    </LinearLayout>
+
+</RelativeLayout>
