@@ -55,7 +55,7 @@ public class CostumAdapter extends BaseAdapter {
         row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (context instanceof createPartyActivity)
+                if (context instanceof createPartyActivity || context instanceof AddMusicActivity)
                     create_handler(v, context, ind);
                 else {
                     playlist_handler(v, ind);
@@ -89,7 +89,7 @@ public class CostumAdapter extends BaseAdapter {
     }
 
     private void playlist_handler(View v, int position) {
-        for (Track elem : songs){
+        for (Track elem : songs) {
             elem.is_playing = false;
             //View tmp = v.findViewById(R.layout.list_of_songs);
         }

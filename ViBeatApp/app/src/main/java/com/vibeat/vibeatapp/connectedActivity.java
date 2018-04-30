@@ -3,7 +3,10 @@ package com.vibeat.vibeatapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 
 public class connectedActivity extends AppCompatActivity {
 
@@ -32,7 +35,23 @@ public class connectedActivity extends AppCompatActivity {
         listOfPeople.setAdapter(new PeopleCostumAdapter(connectedActivity.this, users, 0));
 
         pendingList = (ListView) findViewById(R.id.waiting_list);
-        pendingList.setAdapter(new PeopleCostumAdapter(connectedActivity.this, waiting, 1));
+        pendingList.setAdapter(new WaitingCostumAdapter(connectedActivity.this, waiting, 1));
+
+        EditText partyName = (EditText) findViewById(R.id.editText);
+        partyName.setText(info.user_name+"'s Party");
+
+        Switch isPrivate = (Switch) findViewById(R.id.isPrivate);
+        isPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+                Switch isPrivate = (Switch) buttonView;
+                if (isChecked)
+                    isPrivate.setText("Private");
+                else
+                    isPrivate.setText("Public");
+            }
+        });
 
     }
 }

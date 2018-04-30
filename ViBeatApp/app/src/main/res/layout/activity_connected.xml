@@ -8,12 +8,52 @@
     tools:context=".connectedActivity"
     android:background="@color/background">
 
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_marginBottom="10dp"
+        android:focusableInTouchMode="true">
+
+        <Space
+            android:layout_width="42dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="180dp"
+            android:layout_height="77dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textColor="@color/colorAccent"
+            android:textSize="24sp"
+            app:fontFamily="@font/caveat_brush"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="28dp" />
+
+        <Space
+            android:layout_width="42dp"
+            android:layout_height="wrap_content" />
+
+        <Switch
+            android:id="@+id/isPrivate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Private"
+            android:textSize="18sp"
+            android:fontFamily="@font/caveat_brush"
+            tools:layout_editor_absoluteX="200dp"
+            tools:layout_editor_absoluteY="36dp" />
+    </TableRow>
+
     <TextView
         android:id="@+id/connected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="  Connected to your party"
         android:textColor="@color/text"
+        android:layout_marginBottom="10dp"
         android:textSize="36sp"
         app:fontFamily="@font/caveat_brush" />
 
@@ -35,6 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="  Pending requests"
+        android:layout_marginBottom="10dp"
         android:textColor="@color/text"
         android:textSize="36sp"
         app:fontFamily="@font/caveat_brush" />

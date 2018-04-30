@@ -1,24 +1,23 @@
 package com.vibeat.vibeatapp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class PeopleCostumAdapter extends BaseAdapter {
+public class WaitingCostumAdapter extends BaseAdapter {
     static LayoutInflater inflater = null;
 
     Context context;
     User[] users;
     int type;
 
-    public PeopleCostumAdapter(Context context, User[] users, int type){
+    public WaitingCostumAdapter(Context context, User[] users, int type){
         this.context = context;
         this.users = users;
         this.type = type;
@@ -46,47 +45,56 @@ public class PeopleCostumAdapter extends BaseAdapter {
 
         if (row == null) {
             inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.list_of_people, null);
+            row = inflater.inflate(R.layout.list_of_waiting, null);
         }
 
         final int ind = position;
 
         ImageView img = (ImageView) row.findViewById(R.id.imageUser);
         TextView name = (TextView) row.findViewById(R.id.name);
-        TextView admin = (TextView) row.findViewById(R.id.admin);
-        ImageView crown = (ImageView) row.findViewById(R.id.adminImage);
+        ImageView no = (ImageView) row.findViewById(R.id.no);
+        ImageView ok = (ImageView) row.findViewById(R.id.ok);
 
         final View row_send = row;
-        crown.setOnClickListener(new View.OnClickListener() {
+        ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (context instanceof connectedActivity)
-                    make_admin(row_send, context, ind);
+                    add_user(row_send, context, ind);
+            }
+        });
+
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (context instanceof connectedActivity)
+                    remove_user(row_send, context, ind);
             }
         });
 
         img.setImageResource(R.drawable.add); //img.setImageResource(users[position].icon_id);
         name.setText(users[position].getName());
-        admin.setTextColor(Color.TRANSPARENT);
-        crown.setImageResource(R.drawable.ok);
+        ok.setImageResource(R.drawable.ok);
+        no.setImageResource(R.drawable.no);
 
         //Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
         //bm = pictureChange.getCroppedBitmap(bm);
         //img.setImageBitmap(bm);
 
-        if (this.type == 0) {
-            crown.setImageResource(R.drawable.chess_not);
-            if (users[position].is_admin) {
-                crown.setImageResource(R.drawable.chess);
-                admin.setTextColor(Color.parseColor("#FF0099CC"));
-            }
-        }
-
-
         return row;
     }
 
-    private void make_admin(View v, Context c, int position) {
+    private void add_user(View v, Context c, int position) {
+
+        this.users[position].is_admin = true;
+        ImageView img = v.findViewById(R.id.adminImage);
+        TextView admin = v.findViewById(R.id.admin);
+        img.setImageResource(R.drawable.chess);
+        admin.setTextColor(Color.parseColor("#FF0099CC"));
+        v.invalidate();
+    }
+
+    private void remove_user(View v, Context c, int position) {
 
         this.users[position].is_admin = true;
         ImageView img = v.findViewById(R.id.adminImage);

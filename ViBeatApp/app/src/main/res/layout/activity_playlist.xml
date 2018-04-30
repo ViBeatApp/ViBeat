@@ -54,9 +54,21 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Now Vibing"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:fontFamily="@font/caveat_brush"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/text"/>
+
     <ListView
         android:id="@+id/playlist"
         android:layout_width="match_parent"
-        android:layout_height="467dp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
