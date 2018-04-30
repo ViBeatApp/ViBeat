@@ -27,7 +27,8 @@
                 android:text="Title"
                 android:textSize="30sp"
                 android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush" />
+                app:fontFamily="@font/caveat_brush"
+                android:textColor="@color/text"/>
 
             <TextView
                 android:id="@+id/artist"
@@ -35,7 +36,8 @@
                 android:layout_height="match_parent"
                 android:text="artist name"
                 android:textSize="18sp"
-                app:fontFamily="@font/caveat_brush" />
+                app:fontFamily="@font/caveat_brush"
+                android:textColor="@color/stroke"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

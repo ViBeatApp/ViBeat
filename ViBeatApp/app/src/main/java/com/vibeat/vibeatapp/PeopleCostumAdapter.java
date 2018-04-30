@@ -11,14 +11,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PeopleCostumeAdapter extends BaseAdapter {
+public class PeopleCostumAdapter extends BaseAdapter {
     static LayoutInflater inflater = null;
 
     Context context;
     User[] users;
     int type;
 
-    public PeopleCostumeAdapter(Context context, User[] users, int type){
+    public PeopleCostumAdapter(Context context, User[] users, int type){
         this.context = context;
         this.users = users;
         this.type = type;
@@ -56,11 +56,6 @@ public class PeopleCostumeAdapter extends BaseAdapter {
         TextView admin = (TextView) row.findViewById(R.id.admin);
         ImageView crown = (ImageView) row.findViewById(R.id.adminImage);
 
-        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
-        bm = pictureChange.getCroppedBitmap(bm);
-        img.setImageBitmap(bm);
-
-
         final View row_send = row;
         crown.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +69,10 @@ public class PeopleCostumeAdapter extends BaseAdapter {
         name.setText(users[position].getName());
         admin.setTextColor(Color.TRANSPARENT);
         crown.setImageResource(R.drawable.ok);
+
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
+        bm = pictureChange.getCroppedBitmap(bm);
+        img.setImageBitmap(bm);
 
         if (this.type == 0) {
             crown.setImageResource(R.drawable.chess_not);

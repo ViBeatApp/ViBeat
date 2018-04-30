@@ -7,31 +7,30 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".enterPartyActivity"
-    android:background="@drawable/background2">
+    android:background="@color/background">
 
     <LinearLayout
-        android:layout_width="184dp"
-        android:layout_height="64dp"
+        android:layout_marginTop="5dp"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
         android:layout_gravity="right"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/hi"
-            android:layout_width="155dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Hi, Izzy"
-            android:textSize="18sp"
+            android:textColor="@color/text"
+            android:textSize="14sp"
             app:fontFamily="@font/caveat_brush" />
 
         <ImageView
             android:id="@+id/izzy"
-            android:layout_width="77dp"
-            android:layout_height="76dp"
+            android:layout_width="54dp"
+            android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"
             app:srcCompat="@drawable/izzy" />
 
     </LinearLayout>
@@ -43,7 +42,7 @@
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="20dp"
-        android:background="#3fff4444"
+        android:background="@color/colorAccent"
         android:text="Create Your Party!"
         android:textSize="24sp"
         android:visibility="visible"
@@ -60,122 +59,12 @@
         android:text="   Join a Party"
         android:textAllCaps="false"
         android:textSize="24sp"
-        app:fontFamily="@font/caveat_brush"/>
+        app:fontFamily="@font/caveat_brush"
+        android:textColor="@color/text"/>
 
-    <LinearLayout
-        android:layout_width="384dp"
-        android:layout_height="141dp"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/group1"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/im1"
-                android:layout_width="match_parent"
-                android:layout_height="86dp"
-                app:srcCompat="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/n1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:fontFamily="@font/caveat_brush" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/group2"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/im2"
-                android:layout_width="match_parent"
-                android:layout_height="86dp"
-                app:srcCompat="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/n2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:fontFamily="@font/caveat_brush" />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="384dp"
-        android:layout_height="141dp"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/group3"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/im3"
-                android:layout_width="match_parent"
-                android:layout_height="86dp"
-                app:srcCompat="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/n3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:fontFamily="@font/caveat_brush" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/group4"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/im4"
-                android:layout_width="match_parent"
-                android:layout_height="86dp"
-                app:srcCompat="@mipmap/ic_launcher" />
-
-            <TextView
-                android:id="@+id/n4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:fontFamily="@font/caveat_brush" />
-
-        </LinearLayout>
-    </LinearLayout>
+    <ListView
+        android:id="@+id/parties_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

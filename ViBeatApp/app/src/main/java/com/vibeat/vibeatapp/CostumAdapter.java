@@ -72,7 +72,7 @@ public class CostumAdapter extends BaseAdapter {
         artist.setText(songs[position].artist);
 
         if (songs[position].is_playing){
-            row.setBackgroundColor(Color.GRAY);
+            row.setBackgroundColor(Color.parseColor("#ff9c40"));
             this.selected_row = row;
         }
 
@@ -95,7 +95,7 @@ public class CostumAdapter extends BaseAdapter {
         }
         songs[position].is_playing = true;
         info.chosen = position;
-        v.setBackgroundColor(Color.GRAY);
+        v.setBackgroundColor(Color.parseColor("#ff9c40"));
         this.selected_row.setBackgroundColor(Color.TRANSPARENT);
         this.selected_row = v;
         v.invalidate();

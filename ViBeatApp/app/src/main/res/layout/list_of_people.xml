@@ -30,7 +30,8 @@
                 android:text="Title"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush" />
+                app:fontFamily="@font/caveat_brush"
+                android:textColor="@color/text"/>
 
             <TextView
                 android:id="@+id/admin"
@@ -38,10 +39,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="admin"
-                android:textColor="@android:color/holo_blue_dark"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush" />
+                app:fontFamily="@font/caveat_brush"
+                android:textColor="@color/text"/>
 
         </LinearLayout>
 

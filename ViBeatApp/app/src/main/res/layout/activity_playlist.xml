@@ -6,57 +6,57 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".playlistActivity"
-    android:background="@drawable/background2">
-
-    <ListView
-        android:id="@+id/playlist"
-        android:layout_width="match_parent"
-        android:layout_height="523dp" />
+    android:background="@color/background">
 
     <LinearLayout
-        android:layout_width="275dp"
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/song2" />
+            android:background="#00000000"
+            app:srcCompat="@drawable/add" />
 
         <ImageButton
             android:id="@+id/connected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/add2" />
+            app:srcCompat="@drawable/list" />
 
         <ImageButton
-            android:id="@+id/play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/pause"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/play2" />
+            app:srcCompat="@drawable/pause" />
 
 
         <ImageButton
             android:id="@+id/mute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/mute2" />
+            app:srcCompat="@drawable/mute" />
 
 
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/playlist"
+        android:layout_width="match_parent"
+        android:layout_height="467dp" />
 
 </LinearLayout>
