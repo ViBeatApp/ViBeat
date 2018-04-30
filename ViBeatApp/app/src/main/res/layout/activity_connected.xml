@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".connectedActivity"
-    android:background="@drawable/background2">
+    android:background="@color/background">
 
     <TextView
         android:id="@+id/connected"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="  Connected to your party"
-        android:textColor="@android:color/background_dark"
+        android:textColor="@color/text"
         android:textSize="36sp"
         app:fontFamily="@font/caveat_brush" />
 
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="  Pending requests"
-        android:textColor="@android:color/background_dark"
+        android:textColor="@color/text"
         android:textSize="36sp"
         app:fontFamily="@font/caveat_brush" />
 

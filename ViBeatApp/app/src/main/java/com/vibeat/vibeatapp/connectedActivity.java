@@ -29,10 +29,10 @@ public class connectedActivity extends AppCompatActivity {
         info = (passingInfo)i.getSerializableExtra("info");
 
         listOfPeople = (ListView) findViewById(R.id.connected_list);
-        listOfPeople.setAdapter(new PeopleCostumeAdapter(connectedActivity.this, users, 0));
+        listOfPeople.setAdapter(new PeopleCostumAdapter(connectedActivity.this, users, 0));
 
         pendingList = (ListView) findViewById(R.id.waiting_list);
-        pendingList.setAdapter(new PeopleCostumeAdapter(connectedActivity.this, waiting, 1));
+        pendingList.setAdapter(new PeopleCostumAdapter(connectedActivity.this, waiting, 1));
 
     }
 }
