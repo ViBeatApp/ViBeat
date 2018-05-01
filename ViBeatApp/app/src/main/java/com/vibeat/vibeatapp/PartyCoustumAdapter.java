@@ -89,7 +89,7 @@ public class PartyCoustumAdapter extends BaseAdapter {
         return row;
     }
     public void join(View v, Context c, int position, int i) {
-        Intent intent = new Intent(c, playlistActivity.class);
+        Intent intent = new Intent(c, LoadingActivity.class);
         info.group_id = position;
         info.chosen = 1;
         intent.putExtra("info",info);

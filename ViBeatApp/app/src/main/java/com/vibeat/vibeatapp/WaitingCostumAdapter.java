@@ -1,6 +1,8 @@
 package com.vibeat.vibeatapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,35 +74,33 @@ public class WaitingCostumAdapter extends BaseAdapter {
             }
         });
 
-        img.setImageResource(R.drawable.add); //img.setImageResource(users[position].icon_id);
+        img.setImageResource(users[position].icon_id);
         name.setText(users[position].getName());
         ok.setImageResource(R.drawable.ok);
         no.setImageResource(R.drawable.no);
 
-        //Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
-        //bm = pictureChange.getCroppedBitmap(bm);
-        //img.setImageBitmap(bm);
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
+        bm = pictureChange.getCroppedBitmap(bm);
+        img.setImageBitmap(bm);
 
         return row;
     }
 
     private void add_user(View v, Context c, int position) {
 
-        this.users[position].is_admin = true;
-        ImageView img = v.findViewById(R.id.adminImage);
-        TextView admin = v.findViewById(R.id.admin);
-        img.setImageResource(R.drawable.chess);
-        admin.setTextColor(Color.parseColor("#FF0099CC"));
-        v.invalidate();
+
     }
 
     private void remove_user(View v, Context c, int position) {
 
-        this.users[position].is_admin = true;
-        ImageView img = v.findViewById(R.id.adminImage);
-        TextView admin = v.findViewById(R.id.admin);
-        img.setImageResource(R.drawable.chess);
-        admin.setTextColor(Color.parseColor("#FF0099CC"));
+        ImageView img = v.findViewById(R.id.imageUser);
+        TextView admin = v.findViewById(R.id.name);
+        ImageView no = v.findViewById(R.id.no);
+        ImageView ok = v.findViewById(R.id.ok);
+        img.setImageResource(R.drawable.blank);
+        no.setImageResource(R.drawable.blank);
+        ok.setImageResource(R.drawable.blank);
+        admin.setTextColor(Color.TRANSPARENT);
         v.invalidate();
     }
 }

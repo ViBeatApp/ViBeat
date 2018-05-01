@@ -44,7 +44,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/text"/>
+                android:textColor="@color/colorAccent"/>
 
         </LinearLayout>
 

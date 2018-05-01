@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.provider.FontsContractCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.EditText;

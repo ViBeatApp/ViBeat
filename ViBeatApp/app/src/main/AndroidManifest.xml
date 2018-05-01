@@ -25,7 +25,8 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".connectedActivity" />
-        <activity android:name=".AddMusicActivity"></activity>
+        <activity android:name=".AddMusicActivity" />
+        <activity android:name=".LoadingActivity"></activity>
     </application>
 
 </manifest>

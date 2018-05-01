@@ -60,7 +60,7 @@
     <ListView
         android:id="@+id/connected_list"
         android:layout_width="wrap_content"
-        android:layout_height="267dp"
+        android:layout_height="286dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="80dp">
 

@@ -65,24 +65,23 @@ public class PeopleCostumAdapter extends BaseAdapter {
             }
         });
 
-        img.setImageResource(R.drawable.add); //img.setImageResource(users[position].icon_id);
+        img.setImageResource(users[position].icon_id);
+        //img.setImageResource(R.drawable.add);
         name.setText(users[position].getName());
         admin.setTextColor(Color.TRANSPARENT);
         crown.setImageResource(R.drawable.ok);
 
-        //Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
-        //bm = pictureChange.getCroppedBitmap(bm);
-        //img.setImageBitmap(bm);
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
+        bm = pictureChange.getCroppedBitmap(bm);
+        img.setImageBitmap(bm);
 
         if (this.type == 0) {
             crown.setImageResource(R.drawable.chess_not);
             if (users[position].is_admin) {
                 crown.setImageResource(R.drawable.chess);
-                admin.setTextColor(Color.parseColor("#FF0099CC"));
+                admin.setTextColor(Color.parseColor("#ff9c40"));
             }
         }
-
-
         return row;
     }
 
@@ -92,7 +91,7 @@ public class PeopleCostumAdapter extends BaseAdapter {
         ImageView img = v.findViewById(R.id.adminImage);
         TextView admin = v.findViewById(R.id.admin);
         img.setImageResource(R.drawable.chess);
-        admin.setTextColor(Color.parseColor("#FF0099CC"));
+        admin.setTextColor(Color.parseColor("#ff9c40"));
         v.invalidate();
     }
 }
