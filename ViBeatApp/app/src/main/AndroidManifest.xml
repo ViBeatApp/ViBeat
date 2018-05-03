@@ -3,30 +3,31 @@
     package="com.vibeat.vibeatapp">
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".enterPartyActivity" />
-        <activity android:name=".createPartyActivity" />
-        <activity android:name=".playlistActivity" />
+        <activity android:name=".Activities.EnterPartyActivity" />
+        <activity android:name=".Activities.CreatePartyActivity" />
+        <activity android:name=".Activities.PlaylistActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".connectedActivity" />
-        <activity android:name=".AddMusicActivity" />
-        <activity android:name=".LoadingActivity"></activity>
+        <activity android:name=".Activities.ConnectedActivity" />
+        <activity android:name=".Activities.AddMusicActivity" />
+        <activity android:name=".Activities.LoadingActivity"></activity>
     </application>
 
 </manifest>

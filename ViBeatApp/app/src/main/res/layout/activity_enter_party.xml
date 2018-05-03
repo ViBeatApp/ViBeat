@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".enterPartyActivity"
+    tools:context=".Activities.EnterPartyActivity"
     android:background="@color/background">
 
     <LinearLayout

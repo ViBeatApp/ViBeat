@@ -21,6 +21,7 @@ public class Client_Handler implements Runnable {
 			System.out.println("Accepted connection : " + this.client.sock);
 
 			identification(fromClient,toClient);					//join to some party.
+			
 			communicateWithServer(fromClient,toClient);
 		} 
 		catch (IOException e) {
@@ -50,7 +51,7 @@ public class Client_Handler implements Runnable {
 					toClient.writeUTF("there is no such party! loser");
 					done = true;
 				}
-				else sendSignalJoinPerson(party_thread);
+				else sendSignalJoinPerson(party_thread,sock);
 				break;
 			}
 		}
