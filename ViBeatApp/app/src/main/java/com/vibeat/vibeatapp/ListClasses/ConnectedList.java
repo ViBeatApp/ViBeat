@@ -1,26 +1,29 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.HelperClasses.*;
+import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
 
 public class ConnectedList implements ListAdapterable {
-    passingInfo.Party party;
-    int pressed = -1;
+    Party party;
 
-    public ConnectedList(passingInfo.Party party){
+    public ConnectedList(Party party){
         this.party = party;
     }
 
     @Override
-    public View initRow(View v, int position) {
+    public View initRow(final Adapter adapter, Activity activity, View v, int position) {
         final int ind = position;
 
         ImageView img = (ImageView) v.findViewById(R.id.imageUser);
@@ -29,31 +32,34 @@ public class ConnectedList implements ListAdapterable {
         ImageView crown = (ImageView) v.findViewById(R.id.adminImage);
 
         final View row_send = v;
-        crown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (context instanceof ConnectedActivity)
-                    make_admin(row_send, context, ind);
-            }
-        });
+        final Activity context = activity;
 
-        img.setImageResource(users[position].icon_id);
-        //img.setImageResource(R.drawable.add);
-        name.setText(users[position].getName());
-        admin.setTextColor(Color.TRANSPARENT);
-        crown.setImageResource(R.drawable.ok);
-
-        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), users[position].icon_id);
+        Bitmap bm;
+        if (position < party.admin.size()) {
+            bm = BitmapFactory.decodeFile(party.admin.get(position).img_path);
+            name.setText(party.admin.get(position).name);
+            admin.setTextColor(Color.parseColor("#ff9c40"));
+            crown.setImageResource(R.drawable.chess);
+        }
+        else {
+            bm = BitmapFactory.decodeFile(party.connected.get(position - party.admin.size()).img_path);
+            name.setText(party.connected.get(position - party.admin.size()).name);
+            admin.setTextColor(Color.TRANSPARENT);
+            crown.setImageResource(R.drawable.chess_not);
+        }
         bm = pictureChange.getCroppedBitmap(bm);
         img.setImageBitmap(bm);
 
-        if (this.type == 0) {
-            crown.setImageResource(R.drawable.chess_not);
-            if (users[position].is_admin) {
-                crown.setImageResource(R.drawable.chess);
-                admin.setTextColor(Color.parseColor("#ff9c40"));
+        crown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(ind >= party.admin.size()) {
+                    party.makeAdmin(party.connected.get(ind - party.admin.size()));
+                    ((BaseAdapter) adapter).notifyDataSetChanged();
+                }
             }
-        }
+        });
+
         return v;
     }
 
@@ -64,15 +70,15 @@ public class ConnectedList implements ListAdapterable {
 
     @Override
     public int getCount() {
-        return party.connected.length + party.admin.length;
+        return party.connected.size() + party.admin.size();
     }
 
     @Override
     public Object getItem(int position) {
-        if (position < party.admin.length)
-            return party.admin[position];
+        if (position < party.admin.size())
+            return party.admin.get(position);
         else
-            return party.connected[position - party.admin.length];
+            return party.connected.get(position - party.admin.size());
     }
 
     @Override

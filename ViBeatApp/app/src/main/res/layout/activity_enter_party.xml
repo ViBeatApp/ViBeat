@@ -17,7 +17,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/hi"
+            android:id="@+id/hello_user"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -29,7 +29,7 @@
             app:fontFamily="@font/caveat_brush" />
 
         <ImageView
-            android:id="@+id/izzy"
+            android:id="@+id/this_user"
             android:layout_width="54dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"

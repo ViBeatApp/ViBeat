@@ -17,6 +17,12 @@ public class Playlist{
         tracks = new ArrayList<Track>();
     }
 
+    public Playlist(List<Track> tracks, boolean is_playing, int cur_track){
+        this.is_playing = is_playing;
+        this.cur_track = cur_track;
+        this.tracks = tracks;
+    }
+
     public void addTrack(Track t){
         tracks.add(t);
     }

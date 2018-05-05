@@ -33,13 +33,13 @@
             app:srcCompat="@drawable/list" />
 
         <ImageButton
-            android:id="@+id/pause"
+            android:id="@+id/play_pause"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/pause" />
+            app:srcCompat="@drawable/play" />
 
 
         <ImageButton

@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,16 +12,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.Adapters.CostumeListAdapter;
+import com.vibeat.vibeatapp.ListClasses.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.User;
-import com.vibeat.vibeatapp.HelperClasses.passingInfo;
-import com.vibeat.vibeatapp.Adapters.PartyCoustumAdapter;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 
+import java.io.File;
 import java.util.List;
 
 public class EnterPartyActivity extends AppCompatActivity {
@@ -28,13 +28,7 @@ public class EnterPartyActivity extends AppCompatActivity {
     public MyApplication app;
     ListView listOfParties;
 
-    /*User user1 = new User("Dana Oshri", R.drawable.dana, 1, false);
-    User user2 = new User("Idan Cohen", R.drawable.idan, 2, true);
-    User user3 = new User("Ido Abulafya", R.drawable.ido, 3, false);
-    User user4 = new User("Tomer Solomon", R.drawable.tomer, 4, false);
-
-    User[][] users = { {user3, user1}, {user2, user4}};
-    */
+    //private String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,26 +42,23 @@ public class EnterPartyActivity extends AppCompatActivity {
         listOfParties.setAdapter(new CostumeListAdapter(EnterPartyActivity.this,
                                                         new PartiesList(nearby_parties)));
 
-        ImageView user = (ImageView) findViewById(R.id.izzy);
-        TextView name = (TextView) findViewById(R.id.hi);
+        User user = app.client_manager.user;
+        ImageView user_img = (ImageView) findViewById(R.id.this_user);
+        TextView user_name = (TextView) findViewById(R.id.hello_user);
 
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.izzy);
+        Bitmap bm = BitmapFactory.decodeFile(user.img_path);
         bm = pictureChange.getCroppedBitmap(bm);
-        user.setImageBitmap(bm);
+        user_img.setImageBitmap(bm);
+
+        user_name.setText("Hi, "+user.name);
 
         Button create = (Button) findViewById(R.id.create);
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createParty(v);
+                Intent intent = new Intent(EnterPartyActivity.this, CreatePartyActivity.class);
+                startActivity(intent);
             }
         });
-    }
-
-    public void createParty(View v) {
-        Intent intent = new Intent(this, CreatePartyActivity.class);
-        info.group_id = 100;
-        intent.putExtra("info",info);
-        startActivity(intent);
     }
 }

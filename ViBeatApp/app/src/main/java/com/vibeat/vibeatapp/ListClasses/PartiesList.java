@@ -1,20 +1,27 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
+import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
 
 public class PartiesList implements ListAdapterable {
+
     List<Party> nearby_parties;
 
     public PartiesList(List<Party> nearby_parties){
@@ -22,13 +29,13 @@ public class PartiesList implements ListAdapterable {
     }
 
     @Override
-    public View initRow(View v, int position) {
+    public View initRow(Adapter adapter, Activity context, View v, final int position) {
 
-        final int ind = position;
-
-        ImageView img1 = (ImageView) v.findViewById(R.id.party1);
+        LinearLayout party1 = (LinearLayout) v.findViewById(R.id.party1);
+        ImageView img1 = (ImageView) v.findViewById(R.id.imgParty1);
         TextView name1 = (TextView) v.findViewById(R.id.userParty1);
-        ImageView img2 = (ImageView) v.findViewById(R.id.party2);
+        LinearLayout party2 = (LinearLayout) v.findViewById(R.id.party2);
+        ImageView img2 = (ImageView) v.findViewById(R.id.imgParty2);
         TextView name2 = (TextView) v.findViewById(R.id.userParty2);
 
         String path1 = nearby_parties.get(2*position).getCreator().img_path;
@@ -44,40 +51,51 @@ public class PartiesList implements ListAdapterable {
         bm2 = pictureChange.getCroppedBitmap(bm2);
         img2.setImageBitmap(bm2);
 
-        img1.setOnClickListener(new View.OnClickListener() {
+        final Activity activity = context;
+
+        party1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                join(v, context, ind, 0);
+                Party party = nearby_parties.get(2*position);
+                join(activity, party);
             }
         });
 
-        img2.setOnClickListener(new View.OnClickListener() {
+        party2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                join(v, context, ind, 1);
+                Party party = nearby_parties.get(2*position+1);
+                join(activity, party);
             }
         });
 
-        return row;
+        return v;
     }
 
     @Override
     public int getLayoutId() {
-        return 0;
+        return R.layout.list_of_parties;
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return (int) Math.ceil((float) nearby_parties.size()/2);
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return nearby_parties.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
+    }
+
+    public void join(Activity c, Party party) {
+        MyApplication app = (MyApplication) c.getApplication();
+        app.client_manager.party = party;
+        Intent intent = new Intent(c, LoadingActivity.class);
+        c.startActivity(intent);
     }
 }

@@ -1,5 +1,6 @@
-package com.vibeat.vibeatapp.Adapters;
+package com.vibeat.vibeatapp.ListClasses;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +46,7 @@ public class CostumeListAdapter extends BaseAdapter {
             row = inflater.inflate(list_obj.getLayoutId(), null);
         }
 
-        row = list_obj.initRow(row, position);
+        row = list_obj.initRow(this, (Activity)context, row, position);
 
         return row;
     }

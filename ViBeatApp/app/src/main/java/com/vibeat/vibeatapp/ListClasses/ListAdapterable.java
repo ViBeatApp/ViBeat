@@ -1,10 +1,13 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.View;
+import android.widget.Adapter;
 
 public interface ListAdapterable{
 
-    public View initRow(View v, int position);
+    public View initRow(Adapter adapter, Activity activity, View v, int position);
     public int getLayoutId();
 
     public int getCount();

@@ -4,19 +4,21 @@ import android.content.Context;
 import android.location.Location;
 
 import com.vibeat.vibeatapp.Objects.Party;
+import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientManager {
 
-    User user;
-    Party party;
-    boolean is_admin;
+    public User user;
+    public Party party;
+    public boolean is_admin;
 
-    ServerConnection conn;
-    Location location;
+    public ServerConnection conn;
+    public Location location;
 
     public ClientManager(User user){
         this.user= user;
@@ -27,22 +29,20 @@ public class ClientManager {
         conn.connectToServer(this.user);
     }
 
-    public void createParty(String party_name, boolean is_private){
+    public void createParty(){
         is_admin = true;
-        this.party = new Party(user,party_name,is_private);
         conn.addNewParty(this.party);
     }
 
-    public boolean connectParty(Party party){
+    public boolean connectParty(){
         if (party.is_private) {
-            this.party.addRequest(user);
+            party.addRequest(user);
             conn.updateParty(this.party);
 
             boolean user_canceled = false; // FIND IF USER PRESSED CANCEL
             while (true){
                 switch (conn.getRequestAnswer(party,user)){
                     case POSITIVE:
-                        this.party = party;
                         conn.syncParty(this.party);
                         return true;
                     case NEGATIVE:
@@ -69,8 +69,16 @@ public class ClientManager {
         conn.updateParty(this.party);
     }
 
-    public List<Track> searchTracks(String search_string){
-        return conn.getTracksByString(search_string);
+    // get track item and change the current track index to track's index.
+    public void changeTrack(Track track){
+        int pos = this.party.playlist.tracks.indexOf(track);
+        this.party.playlist.cur_track = pos;
+        conn.sendTrackCommand(this.party, pos);
+    }
+
+    public Playlist searchTracks(String search_string){
+        return new Playlist(conn.getTracksByString(search_string),
+                false,0);
     }
 
 
@@ -100,6 +108,22 @@ public class ClientManager {
 
     public void commandPlayPause(){
         this.party.playlist.is_playing = !this.party.playlist.is_playing;
+        conn.sendPlayPauseCommand(this.party);
+    }
+
+    public void turnToPublic(){
+        this.party.is_private = false;
+        this.party.connected.addAll(this.party.request);
+        for (User u : this.party.request){
+            conn.sendRequestAnswer(this.party, u, true);
+        }
+        this.party.request.clear();
+        conn.updateParty(this.party);
+    }
+
+    public void turnToPrivate(){
+        this.party.is_private = true;
+        this.party.request = new ArrayList<User>();
         conn.updateParty(this.party);
     }
 }
