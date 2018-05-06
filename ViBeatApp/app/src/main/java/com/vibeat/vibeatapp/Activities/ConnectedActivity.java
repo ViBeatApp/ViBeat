@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -76,12 +77,15 @@ public class ConnectedActivity extends AppCompatActivity {
             }
         });
 
-        Switch isPrivate = (Switch) findViewById(R.id.isPrivate);
-        isPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Switch isPrivate = (Switch) buttonView;
-                if (isChecked) {
-                    isPrivate.setText("Private");
+        final ImageView isPrivate = (ImageView) findViewById(R.id.isPrivate);
+        if (!app.client_manager.party.is_private)
+            isPrivate.setImageResource(R.drawable.public_img);
+
+        isPrivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!app.client_manager.party.is_private) {
+                    isPrivate.setImageResource(R.drawable.private_img);
                     app.client_manager.turnToPrivate();
                     req_title.setVisibility(View.VISIBLE);
                     request_list.setVisibility(View.VISIBLE);
@@ -90,7 +94,7 @@ public class ConnectedActivity extends AppCompatActivity {
                     request_adapter.notifyDataSetChanged();
                 }
                 else {
-                    isPrivate.setText("Public");
+                    isPrivate.setImageResource(R.drawable.public_img2);
                     app.client_manager.turnToPublic();
                     req_title.setVisibility(View.GONE);
                     request_list.setVisibility(View.GONE);
@@ -100,6 +104,5 @@ public class ConnectedActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 }

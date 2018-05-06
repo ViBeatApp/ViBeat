@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -54,15 +56,21 @@ public class CreatePartyActivity extends AppCompatActivity {
             }
         });
 
-        Switch isPrivate = (Switch) findViewById(R.id.isPrivate);
-        isPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Switch isPrivate = (Switch) buttonView;
-                party.is_private = isChecked;
-                if (isChecked)
-                    isPrivate.setText("Private");
-                else
-                    isPrivate.setText("Public");
+        final ImageView isPrivate = (ImageView) findViewById(R.id.isPrivate);
+        if (!app.client_manager.party.is_private)
+            isPrivate.setImageResource(R.drawable.public_img2);
+
+        isPrivate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!app.client_manager.party.is_private) {
+                    isPrivate.setImageResource(R.drawable.private_img);
+                    app.client_manager.party.is_private = true;
+                }
+                else {
+                    isPrivate.setImageResource(R.drawable.public_img2);
+                    app.client_manager.party.is_private = false;
+                }
             }
         });
     }

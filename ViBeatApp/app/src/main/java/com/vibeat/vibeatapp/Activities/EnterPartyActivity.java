@@ -36,6 +36,8 @@ public class EnterPartyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_enter_party);
 
         app = (MyApplication) this.getApplication();
+        app.client_manager.initLocationTracking(this);
+
         List<Party> nearby_parties = app.client_manager.getPartiesNearby();
 
         listOfParties = (ListView) findViewById(R.id.parties_list);

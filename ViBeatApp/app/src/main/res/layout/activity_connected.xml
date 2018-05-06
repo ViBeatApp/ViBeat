@@ -8,44 +8,36 @@
     tools:context=".Activities.ConnectedActivity"
     android:background="@color/background">
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="88dp"
-        android:layout_marginBottom="10dp"
-        android:focusableInTouchMode="true">
-
-        <Space
-            android:layout_width="42dp"
-            android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/editText"
-            android:layout_width="180dp"
-            android:layout_height="77dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
             android:textColor="@color/colorAccent"
             android:textSize="24sp"
-            app:fontFamily="@font/caveat_brush"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="28dp" />
+            app:fontFamily="@font/caveat_brush" />
 
-        <Space
-            android:layout_width="42dp"
-            android:layout_height="wrap_content" />
-
-        <Switch
+        <ImageView
             android:id="@+id/isPrivate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="Private"
-            android:textSize="18sp"
-            android:fontFamily="@font/caveat_brush"
-            tools:layout_editor_absoluteX="200dp"
-            tools:layout_editor_absoluteY="36dp" />
-    </TableRow>
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/private_img" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/connected"
@@ -60,9 +52,7 @@
     <ListView
         android:id="@+id/connected_list"
         android:layout_width="wrap_content"
-        android:layout_height="286dp"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="80dp">
+        android:layout_height="wrap_content">
 
     </ListView>
 
