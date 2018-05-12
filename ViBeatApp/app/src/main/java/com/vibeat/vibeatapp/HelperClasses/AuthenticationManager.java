@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import com.vibeat.vibeatapp.Objects.User;
 
+
 public class AuthenticationManager {
 
     public static User getFacebookUser(){

@@ -9,10 +9,6 @@ import com.vibeat.vibeatapp.Objects.User;
 import java.util.ArrayList;
 import java.util.List;
 
-enum Answer{
-    POSITIVE, NEGATIVE, NO_ANSWER;
-}
-
 public class ServerConnection {
 
     //adds the created party to server DB
@@ -26,9 +22,6 @@ public class ServerConnection {
 
     //get updated party from server
     public void syncParty(Party party){    }
-
-    //get answer from server for if we got in or not
-    public Answer getRequestAnswer(Party party, User user){ return Answer.POSITIVE; }
 
     //send answer for request to join he party
     public void sendRequestAnswer(Party party, User requested, boolean ans){    }
@@ -62,15 +55,15 @@ public class ServerConnection {
     //return from server search results from tracks
     public List<Track> getTracksByString(String search_string){
         Track song0 = new Track(0, "Haverot Shelach", "Omer Adam",
-                "/storage/emulated/0/ViBeat/omeradam.jpg");
+                "/storage/emulated/0/ViBeat/omeradam.jpg", "");
         Track song1 = new Track(1, "Toy", "Neta Barzilai",
-                "/storage/emulated/0/ViBeat/netabrazilai.jpg");
+                "/storage/emulated/0/ViBeat/netabrazilai.jpg", "");
         Track song2 = new Track(2, "Ratzity", "Eden Ben Zaken",
-                "/storage/emulated/0/ViBeat/edenbenzaken.jpg");
+                "/storage/emulated/0/ViBeat/edenbenzaken.jpg", "");
         Track song3 = new Track(3, "Up&Up", "Coldplay",
-                "/storage/emulated/0/ViBeat/coldplay.jpg");
+                "/storage/emulated/0/ViBeat/coldplay.jpg", "");
         Track song4 = new Track(4, "Olay Nedaber", "Nadav Guedj",
-                "/storage/emulated/0/ViBeat/nadavguedj.jpg");
+                "/storage/emulated/0/ViBeat/nadavguedj.jpg","");
         List<Track> songs = new ArrayList<Track>();
         songs.add(song0);
         songs.add(song1);

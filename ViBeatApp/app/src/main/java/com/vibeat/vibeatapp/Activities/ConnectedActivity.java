@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -7,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -102,6 +104,15 @@ public class ConnectedActivity extends AppCompatActivity {
                     connected_adapter.notifyDataSetChanged();
                     request_adapter.notifyDataSetChanged();
                 }
+            }
+        });
+
+        ImageButton back = (ImageButton) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ConnectedActivity.this, PlaylistActivity.class);
+                startActivity(intent);
             }
         });
     }

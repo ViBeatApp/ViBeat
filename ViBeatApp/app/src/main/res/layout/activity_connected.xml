@@ -6,11 +6,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.ConnectedActivity"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:weightSum="100">
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="left"
+        android:layout_weight="10"
+        android:background="@color/background"
+        app:srcCompat="@drawable/back" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -42,7 +53,8 @@
     <TextView
         android:id="@+id/connected"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:text="  Connected to your party"
         android:textColor="@color/text"
         android:layout_marginBottom="10dp"
@@ -52,18 +64,21 @@
     <ListView
         android:id="@+id/connected_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="40">
 
     </ListView>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="0dp"
+        android:layout_weight="3"/>
 
     <TextView
         android:id="@+id/connected2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:text="  Pending requests"
         android:layout_marginBottom="10dp"
         android:textColor="@color/text"
@@ -73,6 +88,7 @@
     <ListView
         android:id="@+id/waiting_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="17"/>
 
 </LinearLayout>

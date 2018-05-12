@@ -63,11 +63,21 @@ public class PlaylistActivity extends AppCompatActivity {
                     app.client_manager.commandPlayPause();
                 }
             });
-    }
+        }
         else {
             connected.setVisibility(View.GONE);
             add.setVisibility(View.GONE);
             play_pause.setVisibility(View.GONE);
         }
+
+        ImageButton back = (ImageButton) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                app.client_manager.party = null;
+                Intent intent = new Intent(PlaylistActivity.this, EnterPartyActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

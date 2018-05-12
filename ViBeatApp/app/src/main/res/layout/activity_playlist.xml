@@ -6,11 +6,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.PlaylistActivity"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:weightSum="100">
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="left"
+        android:layout_weight="10"
+        android:background="@color/background"
+        app:srcCompat="@drawable/back" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
+        android:layout_weight="15"
         android:layout_gravity="center"
         android:orientation="horizontal">
 
@@ -57,7 +68,8 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:text="Now Vibing"
         android:textSize="40sp"
         android:textStyle="bold"
@@ -68,7 +80,8 @@
 
     <ListView
         android:id="@+id/playlist"
+        android:layout_weight="65"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp" />
 
 </LinearLayout>

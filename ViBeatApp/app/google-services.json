@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "650479347335",
+    "firebase_url": "https://vibeatappp.firebaseio.com",
+    "project_id": "vibeatappp",
+    "storage_bucket": "vibeatappp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650479347335:android:bee5dc80fa03db0a",
+        "android_client_info": {
+          "package_name": "com.vibeat.vibeatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650479347335-6e9c2qcovnc7apnhf6k553npht9cs1fh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vibeat.vibeatapp",
+            "certificate_hash": "9f1746b32ef9074e7ea440de9e0177a2f1dd04ba"
+          }
+        },
+        {
+          "client_id": "650479347335-fajsdkttqhdfl4ague9squjspuddhu47.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXh_Tk3RLUJbsgForxj_5kgqtB_tcahPY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "650479347335-fajsdkttqhdfl4ague9squjspuddhu47.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

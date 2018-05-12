@@ -8,11 +8,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
@@ -48,20 +46,6 @@ public class ClientManager {
         if (party.is_private) {
             party.addRequest(user);
             conn.updateParty(this.party);
-
-            boolean user_canceled = false; // FIND IF USER PRESSED CANCEL
-            while (true){
-                switch (conn.getRequestAnswer(party,user)){
-                    case POSITIVE:
-                        conn.syncParty(this.party);
-                        return true;
-                    case NEGATIVE:
-                        return false;
-                    case NO_ANSWER:
-                        if (user_canceled)
-                            return false;
-                }
-            }
         }
         else{
             this.party = party;

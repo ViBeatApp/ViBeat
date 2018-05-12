@@ -6,13 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".Activities.CreatePartyActivity"
     android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:weightSum="100">
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="left"
+        android:layout_weight="10"
+        android:background="@color/background"
+        app:srcCompat="@drawable/back" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_weight="10">
 
         <EditText
             android:id="@+id/editText"
@@ -42,7 +53,8 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:text="Choose a party starter!"
         android:layout_marginBottom="10dp"
         android:textSize="40dp"
@@ -54,6 +66,7 @@
     <ListView
         android:id = "@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="80"/>
 
 </LinearLayout>
