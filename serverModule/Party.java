@@ -11,7 +11,6 @@ public class Party {
 	List<User> admins;
 	List<User> connected;
 	List<User> request;
-	String wakeUpReason;
 	Selector selector; //for wakeUp
 	boolean is_private;
 
