@@ -113,7 +113,5 @@ public class Party_thread implements Runnable {
 	@Override
 	public void run() {
 		
-		
 	}
-
 }
