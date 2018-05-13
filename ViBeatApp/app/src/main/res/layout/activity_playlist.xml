@@ -23,30 +23,35 @@
         android:layout_height="0dp"
         android:layout_weight="15"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="100">
 
         <ImageButton
             android:id="@+id/add"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="#00000000"
             app:srcCompat="@drawable/add" />
 
         <ImageButton
-            android:id="@+id/connected"
-            android:layout_width="match_parent"
+            android:id="@+id/mute"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/list" />
+            app:srcCompat="@drawable/mute" />
+
 
         <ImageButton
             android:id="@+id/play_pause"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
@@ -54,14 +59,25 @@
 
 
         <ImageButton
-            android:id="@+id/mute"
-            android:layout_width="match_parent"
+            android:id="@+id/next"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/mute" />
+            app:srcCompat="@drawable/next" />
 
+
+        <ImageButton
+            android:id="@+id/connected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="20"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/list" />
 
     </LinearLayout>
 

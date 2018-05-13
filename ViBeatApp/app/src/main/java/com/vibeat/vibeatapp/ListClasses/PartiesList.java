@@ -95,6 +95,7 @@ public class PartiesList implements ListAdapterable {
     public void join(Activity c, Party party) {
         MyApplication app = (MyApplication) c.getApplication();
         app.client_manager.party = party;
+        app.media_manager.updatePlaylist(app.client_manager.party.playlist);
         Intent intent = new Intent(c, LoadingActivity.class);
         c.startActivity(intent);
     }

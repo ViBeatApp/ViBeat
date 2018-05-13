@@ -25,13 +25,15 @@ public class LoadingActivity extends AppCompatActivity {
         app = (MyApplication) this.getApplication();
         app.listener_thread.current_activity = LoadingActivity.this;
 
-        timer.schedule(new TimerTask() {
+        app.client_manager.connectParty();
+
+        /*timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Intent intent;
                 app.client_manager.connectParty();
             }
-        }, 4*1000);
+        }, 4*1000);*/
 
         Button nevermind = (Button) findViewById(R.id.nevermind);
         nevermind.setOnClickListener(new View.OnClickListener() {

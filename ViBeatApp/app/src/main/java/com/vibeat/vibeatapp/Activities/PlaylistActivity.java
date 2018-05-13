@@ -36,9 +36,14 @@ public class PlaylistActivity extends AppCompatActivity {
         listOfSongs.setAdapter(new CostumeListAdapter(PlaylistActivity.this,
                 new PlaylistList(app.client_manager.party.playlist)));
 
+
+        final ImageButton mute = (ImageButton) findViewById(R.id.mute);
+
+        // admin only
+        final ImageButton play_pause = (ImageButton) findViewById(R.id.play_pause);
+        ImageButton next = (ImageButton) findViewById(R.id.next);
         ImageButton connected = (ImageButton) findViewById(R.id.connected);
         ImageButton add = (ImageButton) findViewById(R.id.add);
-        final ImageButton play_pause = (ImageButton) findViewById(R.id.play_pause);
 
         if (app.client_manager.is_admin){
             connected.setOnClickListener(new View.OnClickListener() {
@@ -61,23 +66,55 @@ public class PlaylistActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     app.client_manager.commandPlayPause();
+                    if(app.client_manager.party.playlist.is_playing)
+                        play_pause.setImageResource(R.drawable.pause);
+                    else
+                        play_pause.setImageResource(R.drawable.play);
                 }
             });
+
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    app.client_manager.nextSong();
+                }
+            });
+
+
         }
         else {
             connected.setVisibility(View.GONE);
             add.setVisibility(View.GONE);
             play_pause.setVisibility(View.GONE);
+            next.setVisibility(View.GONE);
         }
+
+        mute.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                if(app.media_manager.isMute) {
+                    app.media_manager.unmute();
+                    mute.setImageResource(R.drawable.mute);
+                }
+                else {
+                    app.media_manager.mute();
+                    mute.setImageResource(R.drawable.unmute);
+                }
+            }
+        });
 
         ImageButton back = (ImageButton) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.client_manager.party = null;
+                app.client_manager.leaveParty();
+                app.media_manager.resetPlaylist();
                 Intent intent = new Intent(PlaylistActivity.this, EnterPartyActivity.class);
                 startActivity(intent);
             }
         });
+
+
     }
 }

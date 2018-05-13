@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import com.vibeat.vibeatapp.HelperClasses.AuthenticationManager;
 import com.vibeat.vibeatapp.HelperClasses.ClientManager;
 import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
+import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.client_manager = new ClientManager(AuthenticationManager.getFacebookUser());
+                app.client_manager = new ClientManager(AuthenticationManager.getFacebookUser(), app);
                 login();
             }
         });
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.client_manager = new ClientManager(AuthenticationManager.getGoogleUser());
+                app.client_manager = new ClientManager(AuthenticationManager.getGoogleUser(), app);
                 login();
             }
         });
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void login() {
+        app.media_manager = new MediaPlayerManager();
         app.listener_thread = new ListenerThread(MainActivity.this);
         app.listener_thread.start();
         Intent intent = new Intent(this, EnterPartyActivity.class);

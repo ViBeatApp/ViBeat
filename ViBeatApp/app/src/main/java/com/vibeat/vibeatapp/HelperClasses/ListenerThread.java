@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
 import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
+import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.ServerMsg;
 
@@ -16,16 +17,24 @@ import static com.vibeat.vibeatapp.Objects.MSGType.*;
 public class ListenerThread extends Thread {
 
     public Activity current_activity;
+    public MediaPlayerManager media_manager;
     public Intent intent;
 
     public ListenerThread(Activity current_activity) {
         this.current_activity = current_activity;
+        media_manager = ((MyApplication) current_activity.getApplication()).media_manager;
     }
 
     @Override
     public void run() {
-        while (true) {
-            ServerMsg m = getServerMSG();
+        while (!this.isInterrupted()) {
+            ServerMsg m = null;
+            try {
+                m = getServerMSG();
+            }
+            catch (InterruptedException e){
+                break;
+            }
             if (m.msg_type == RequestAnswer) {
                 if (m.bool_info) {
 
@@ -43,12 +52,9 @@ public class ListenerThread extends Thread {
         }
     }
 
-    public ServerMsg getServerMSG() {
-        try {
-            this.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public ServerMsg getServerMSG() throws InterruptedException{
+
+        this.sleep(2000);
         return new ServerMsg(AddAdmin, true);
     }
 }

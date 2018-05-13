@@ -55,15 +55,27 @@ public class ServerConnection {
     //return from server search results from tracks
     public List<Track> getTracksByString(String search_string){
         Track song0 = new Track(0, "Haverot Shelach", "Omer Adam",
-                "/storage/emulated/0/ViBeat/omeradam.jpg", "");
+                "/storage/emulated/0/ViBeat/omeradam.jpg",
+                //"https://dl.dropboxusercontent.com/s/dy01wssr2nde32w/Omer%20Adam%20-%20Haverot%20Shelach.mp3?dl=0");
+                "http://docs.google.com/uc?/export=download&id=12zPd5TK2k7gDRA2UN0qdPJe1YpPApO1R");
         Track song1 = new Track(1, "Toy", "Neta Barzilai",
-                "/storage/emulated/0/ViBeat/netabrazilai.jpg", "");
+                "/storage/emulated/0/ViBeat/netabrazilai.jpg",
+                 //"https://dl.dropboxusercontent.com/s/u8vi8erzyaism40/Netta%20-%20TOY.mp3?dl=0");
+                "http://docs.google.com/uc?/export=download&id=1Ri_gXnYHt1pdBw1b22uVzEnqzNs0pmxr");
+                //"http://docs.google.com/uc?/export=download&id=1E5H8Omn7FR1SeCsVRlQjJpGHKBl_2E-r");
+                //"/storage/emulated/0/Music/run/The Weeknd - I Feel It Coming ft. Daft Punk.mp3");
         Track song2 = new Track(2, "Ratzity", "Eden Ben Zaken",
-                "/storage/emulated/0/ViBeat/edenbenzaken.jpg", "");
+                "/storage/emulated/0/ViBeat/edenbenzaken.jpg",
+                //"https://dl.dropboxusercontent.com/s/usk3pksu8q6ergo/Eden%20Ben%20Zaken%20-%20Raziti.mp3?dl=0");
+                "http://docs.google.com/uc?/export=download&id=1ExMWlL3JzOQXIJu3LIuqs5xdb4M8aUfA");
         Track song3 = new Track(3, "Up&Up", "Coldplay",
-                "/storage/emulated/0/ViBeat/coldplay.jpg", "");
+                "/storage/emulated/0/ViBeat/coldplay.jpg",
+                //"https://dl.dropboxusercontent.com/s/xwgtk1z63ekywyw/Coldplay%20-%20Up%26Up.mp3?dl=0");
+                "http://docs.google.com/uc?/export=download&id=1lrsUe4_E5Qo9k1FHaEwSdR9n1KguftAY");
         Track song4 = new Track(4, "Olay Nedaber", "Nadav Guedj",
-                "/storage/emulated/0/ViBeat/nadavguedj.jpg","");
+                "/storage/emulated/0/ViBeat/nadavguedj.jpg",
+                //"https://dl.dropboxusercontent.com/s/46jr104iseveztk/Nadav%20Guedj%20-%20Ulay%20Nedaber.mp3?dl=0");
+                "http://docs.google.com/uc?/export=download&id=1o58CR7s4h36qBwWhkoXi9OSQRuyZaYR7");
         List<Track> songs = new ArrayList<Track>();
         songs.add(song0);
         songs.add(song1);
@@ -75,5 +87,12 @@ public class ServerConnection {
 
     public void sendTrackCommand(Party party, int position) { }
 
-    public void sendPlayPauseCommand(Party party) { }
+    public void sendPlayPauseCommand(Party party) {
+
+    }
+
+    // Send to server that the user wants to leave the party.
+    public void sendLeaveParty(){ }
+
+    public void closeConnection(){ }
 }

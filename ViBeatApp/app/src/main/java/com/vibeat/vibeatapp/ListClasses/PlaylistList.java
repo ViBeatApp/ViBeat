@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
+import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
@@ -46,6 +47,7 @@ public class PlaylistList implements ListAdapterable {
                     app.client_manager.party.request.add(new User("Idan Cohen",
                             "/storage/emulated/0/ViBeat/idan.jpg", 2));
                     app.client_manager.addTrack(track);
+                    app.media_manager.updatePlaylist(app.client_manager.party.playlist);
                     Intent intent = new Intent(activity, PlaylistActivity.class);
                     activity.startActivity(intent);
                 }

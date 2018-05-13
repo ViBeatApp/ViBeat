@@ -25,5 +25,7 @@ public class Playlist{
 
     public void addTrack(Track t){
         tracks.add(t);
+        if (tracks.size() == 1)
+            cur_track = 0;
     }
 }

@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,17 +26,20 @@ public class ClientManager {
     public User user;
     public Party party;
     public boolean is_admin;
+    public MyApplication app;
 
     public ServerConnection conn;
     public Location location;
 
-    public ClientManager(User user){
+    public ClientManager(User user, MyApplication app){
         this.user= user;
         this.party = null;
         this.is_admin = false;
 
         conn = new ServerConnection();
         conn.connectToServer(this.user);
+
+        this.app = app;
     }
 
     public void createParty(){
@@ -61,6 +66,14 @@ public class ClientManager {
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
         conn.updateParty(this.party);
+    }
+
+    public void nextSong(){
+        try {
+            app.media_manager.playNext();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // get track item and change the current track index to track's index.
@@ -132,8 +145,18 @@ public class ClientManager {
 
 
     public void commandPlayPause(){
+        //conn.sendPlayPauseCommand(this.party);
+        if (!this.party.playlist.is_playing) {
+            try {
+                app.media_manager.play();
+            }
+            catch(IOException e){
+
+            }
+        }
+        else
+            app.media_manager.pause();
         this.party.playlist.is_playing = !this.party.playlist.is_playing;
-        conn.sendPlayPauseCommand(this.party);
     }
 
     public void turnToPublic(){
@@ -150,5 +173,14 @@ public class ClientManager {
         this.party.is_private = true;
         this.party.request = new ArrayList<User>();
         conn.updateParty(this.party);
+    }
+
+    public void leaveParty(){
+        conn.sendLeaveParty();
+        this.party = null;
+    }
+
+    public void logout(){
+        conn.closeConnection();
     }
 }

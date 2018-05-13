@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -60,6 +61,23 @@ public class EnterPartyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EnterPartyActivity.this, CreatePartyActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        ImageButton logout = (ImageButton) findViewById(R.id.back);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                app.client_manager.logout();
+                app.listener_thread.interrupt();
+                try {
+                    app.listener_thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                app.client_manager = null;
+                Intent intent = new Intent(EnterPartyActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
