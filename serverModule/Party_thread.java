@@ -107,12 +107,8 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void SendCommandToChannel(SocketChannel channel, JSONObject obj) throws IOException {
-		byte[] Data = encode_json(obj);
+		byte[] Data = obj.toString().getBytes();
 		readWriteAux.writeSocket(channel, Data);
-	}
-	
-	public byte[] encode_json(JSONObject obj) {
-		return null;
 	}
 	@Override
 	public void run() {
