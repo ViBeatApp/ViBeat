@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONObject;
+
+import User.Song_preparation;
+
 public class Party_thread implements Runnable {
 	
 	long time_out;
@@ -14,6 +18,15 @@ public class Party_thread implements Runnable {
 	int ready_for_next_song; /* number of people ready for next sone */
 	public boolean woke_up;
 	int WakeUpReason;
+	Command get_ready_command;
+	
+	public Party_thread(Party party) {
+		
+	}
+	@Override
+	public void run() {
+		
+	}
 	
 	public void listen() throws IOException {
 		while (keep_on) {
@@ -57,7 +70,7 @@ public class Party_thread implements Runnable {
 			case DeleteSong:
 				break;
 			case GetReady:
-				break;
+				
 			case PlaySong:
 				break;
 			case Resume:
@@ -67,6 +80,19 @@ public class Party_thread implements Runnable {
 		}
 	}
 	
+	public void PlaySong(Command cmd) throws IOException {
+		update_get_ready_command();
+		ready_for_next_song = 0;
+		SendCommandToAll(get_ready_command);
+		ready_for_next_song++;
+		if 
+	}
+	
+	public void GetReady(Command cmd, User user) {
+		user.is_prepared = User.Song_preparation.prepared;
+		
+	}
+
 	public void DeleteSong(Command cmd) {
 		// ToDo
 	}
@@ -76,14 +102,6 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void AddSong(Command cmd) {
-		// ToDo
-	}
-	
-	public void GetReady(Command cmd) {
-		// ToDo
-	}
-	
-	public void PlaySong(Command cmd) {
 		// ToDo
 	}
 	
@@ -102,7 +120,7 @@ public class Party_thread implements Runnable {
 	public void SendCommandToList(Command cmd, List<User> receivers) throws IOException {
 		for (User receiver: receivers) {
 			SocketChannel channel = receiver.get_channel();
-			SendCommandToChannel(channel, cmd.CommandToJson(null));
+			SendCommandToChannel(channel, null); /* for now */
 		}
 	}
 	
@@ -110,8 +128,9 @@ public class Party_thread implements Runnable {
 		byte[] Data = obj.toString().getBytes();
 		readWriteAux.writeSocket(channel, Data);
 	}
-	@Override
-	public void run() {
+	
+	public void update_get_ready_command() {
+		// TODO Auto-generated method stub
 		
 	}
 }
