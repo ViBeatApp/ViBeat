@@ -1,13 +1,15 @@
+
+
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.json.JSONObject;
-
-import User.Song_preparation;
 
 public class Party_thread implements Runnable {
 	
@@ -17,10 +19,16 @@ public class Party_thread implements Runnable {
 	int number_of_participents;
 	int ready_for_next_song; /* number of people ready for next sone */
 	public boolean woke_up;
-	int WakeUpReason;
 	Command get_ready_command;
+	Command play_command;
+	public boolean start_song;
+	List<User> ready_for_song;
+	Selector server_selector;
 	
-	public Party_thread(Party party) {
+	
+	public Party_thread(Party party, Selector server_selector) {
+		this.party = party;
+		this.server_selector = server_selector;
 		
 	}
 	@Override
@@ -28,6 +36,7 @@ public class Party_thread implements Runnable {
 		
 	}
 	
+	/* the main function   */
 	public void listen() throws IOException {
 		while (keep_on) {
 			party.selector.select(time_out);
@@ -45,6 +54,9 @@ public class Party_thread implements Runnable {
 					do_command(cmd, (User) key.attachment());
 				}
 				keyIterator.remove();
+			}
+			if (start_song) {
+				SendCommandToList(play_command, ready_for_song, true);
 			}
 		}
 	}
@@ -83,13 +95,17 @@ public class Party_thread implements Runnable {
 	public void PlaySong(Command cmd) throws IOException {
 		update_get_ready_command();
 		ready_for_next_song = 0;
+		ready_for_song = new ArrayList<User>();
 		SendCommandToAll(get_ready_command);
-		ready_for_next_song++;
-		if 
 	}
 	
 	public void GetReady(Command cmd, User user) {
 		user.is_prepared = User.Song_preparation.prepared;
+		ready_for_next_song++;
+		ready_for_song.add(user);
+		if (ready_for_next_song > 0.5*number_of_participents) {
+			start_song = true;
+		}
 		
 	}
 
@@ -110,17 +126,21 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void SendCommandToAdmins(Command cmd) throws IOException {
-		SendCommandToList(cmd, party.admins);
+		SendCommandToList(cmd, party.admins, false);
 	}
 	
 	public void SendCommandToAll(Command cmd) throws IOException {
-		SendCommandToList(cmd, party.connected);
+		SendCommandToList(cmd, party.connected, false);
 	}
 	
-	public void SendCommandToList(Command cmd, List<User> receivers) throws IOException {
+	public void SendCommandToList(Command cmd, List<User> receivers,
+			boolean remove_from_list) throws IOException {
 		for (User receiver: receivers) {
 			SocketChannel channel = receiver.get_channel();
 			SendCommandToChannel(channel, null); /* for now */
+			if (remove_from_list) {
+				receivers.remove(receiver);
+			}
 		}
 	}
 	
@@ -130,7 +150,7 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void update_get_ready_command() {
-		// TODO Auto-generated method stub
+		// ToDo
 		
 	}
 }
