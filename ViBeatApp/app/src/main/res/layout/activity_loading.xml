@@ -4,27 +4,48 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="100"
     android:orientation="vertical"
     tools:context=".Activities.LoadingActivity"
     android:background="@color/background">
 
     <TextView
         android:id="@+id/textView"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="137dp"
-        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="30"
         android:fontFamily="@font/caveat_brush"
-        android:text="Connecting to party"
         android:gravity="center"
+        android:text="Connecting to party"
         android:textColor="@color/text"
         android:textSize="32sp" />
 
-    <pl.droidsonroids.gif.GifImageView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:orientation="horizontal">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/loading" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/nevermind"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="10"
         android:layout_gravity="center"
-        android:src="@drawable/loading" />
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="1dp"
+        android:text="  Nevermind...  "
+        android:fontFamily="@font/caveat_brush"
+        android:textColor="@color/colorPrimaryDark"
+        android:background="@color/stroke"/>
 
 </LinearLayout>

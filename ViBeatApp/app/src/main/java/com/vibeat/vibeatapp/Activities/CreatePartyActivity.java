@@ -1,12 +1,16 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -28,6 +32,8 @@ public class CreatePartyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_party);
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         app = (MyApplication) this.getApplication();
         final Party party = new Party(app.client_manager.user,
                                 app.client_manager.user.name+"'s Party",
@@ -41,6 +47,7 @@ public class CreatePartyActivity extends AppCompatActivity {
 
         EditText partyName = (EditText) findViewById(R.id.editText);
         partyName.setText(party.party_name);
+        partyName.clearFocus();
 
         partyName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -71,6 +78,15 @@ public class CreatePartyActivity extends AppCompatActivity {
                     isPrivate.setImageResource(R.drawable.public_img2);
                     app.client_manager.party.is_private = false;
                 }
+            }
+        });
+
+        ImageButton back = (ImageButton) findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CreatePartyActivity.this, EnterPartyActivity.class);
+                startActivity(intent);
             }
         });
     }
