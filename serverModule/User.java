@@ -19,5 +19,9 @@ public class User {
 		return image;
 	}
 	
+	public SocketChannel get_channel() {
+		return client;
+	}
+	
 
 }
