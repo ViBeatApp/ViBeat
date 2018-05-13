@@ -1,4 +1,9 @@
+import java.io.IOException;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class Party_thread implements Runnable {
 	
@@ -10,21 +15,21 @@ public class Party_thread implements Runnable {
 	public boolean woke_up;
 	int WakeUpReason;
 	
-	public void listen() {
+	public void listen() throws IOException {
 		while (keep_on) {
 			party.selector.select(time_out);
 			if (woke_up) {
 				WakeUp_handler();
 			}
-			Set<SelectionKey> selectedKeys = selector.selectedKeys();
+			Set<SelectionKey> selectedKeys = party.selector.selectedKeys();
 			Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 			while(keyIterator.hasNext()) {
 				SelectionKey key = keyIterator.next();
 				if (key.isReadable()) {
-					SocketChannel channel  = selectionKey.channel();
-					byte[] received_data = ReadWriteOx.read();
+					SocketChannel channel  = (SocketChannel) key.channel();
+					byte[] received_data = readWriteAux.readSocket(channel);
 					Command cmd = new Command(received_data);
-					do_command(cmd, key.attachment(););
+					do_command(cmd, (User) key.attachment());
 				}
 				keyIterator.remove();
 			}
@@ -36,16 +41,15 @@ public class Party_thread implements Runnable {
 		
 	}
 	
-	public void register_for_selection(User user) {
+	public void register_for_selection(User user) throws IOException {
 		SocketChannel channel = user.get_channel();
 		channel.configureBlocking(false); /* maybe redundant? */
-		SelectionKey key = channel.register(party.selector,
-				SelectionKey.OP_READ, user);
+		channel.register(party.selector, SelectionKey.OP_READ, user);
 	}
 	
 	/* we should decide about the command format */
 	public void do_command(Command cmd, User user) {
-		switch (cmd.get_type()) {
+		switch (cmd.cmd_type) {
 			case AddSong:
 				break;
 			case SwapSongs:
@@ -58,6 +62,8 @@ public class Party_thread implements Runnable {
 				break;
 			case Resume:
 				break;
+		default:
+			break;
 		}
 	}
 	
@@ -85,24 +91,28 @@ public class Party_thread implements Runnable {
 		// ToDo
 	}
 	
-	public void SendCommandToAdmins(Command cmd) {
+	public void SendCommandToAdmins(Command cmd) throws IOException {
 		SendCommandToList(cmd, party.admins);
 	}
 	
-	public void SendCommandToAll(Command cmd) {
+	public void SendCommandToAll(Command cmd) throws IOException {
 		SendCommandToList(cmd, party.connected);
 	}
 	
-	public void SendCommandToList(Command cmd, List<User> receivers) {
+	public void SendCommandToList(Command cmd, List<User> receivers) throws IOException {
 		for (User receiver: receivers) {
 			SocketChannel channel = receiver.get_channel();
-			SendCommandToChannel(channel, cmd.get_command());
+			SendCommandToChannel(channel, cmd.CommandToJson(null));
 		}
 	}
 	
-	public void SendCommandToChannel(SocketChannel channel, JSONObject obj) {
-		byte[] Data = obj.toString();
-		send_channel(channel, Data);
+	public void SendCommandToChannel(SocketChannel channel, JSONObject obj) throws IOException {
+		byte[] Data = encode_json(obj);
+		readWriteAux.writeSocket(channel, Data);
+	}
+	
+	public byte[] encode_json(JSONObject obj) {
+		return null;
 	}
 	@Override
 	public void run() {
