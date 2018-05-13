@@ -9,13 +9,21 @@ public class User {
 	}
 	String name;
 	int id;
-	Image image;
+	byte[] image;
 	boolean is_admin;
 	Party_Status party_status; /* waiting for approval or in party */
 	Song_preparation is_prepared;
 	SocketChannel client;
 	
-	public Image get_image() {
+	public User(String name, int id, byte[] image) {
+		super();
+		this.name = name;
+		this.image = image;
+		this.id = id;
+	}
+	
+	
+	public byte[] get_image() {
 		return image;
 	}
 	
