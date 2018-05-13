@@ -1,5 +1,3 @@
-package server;
-
 public class Track {
 	String name;
 	String image_url;

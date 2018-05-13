@@ -1,5 +1,3 @@
-package server;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.nio.channels.Selector;
@@ -33,7 +31,7 @@ public class Party {
 	}
 
 	public void getPartyImage(){
-		admins.get(0).getImage();
+		admins.get(0).get_image();
 	}
 
 	public void UpdateLocation(){  //pings
