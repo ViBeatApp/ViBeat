@@ -89,10 +89,6 @@ public class Party_thread implements Runnable {
 		SendCommandToList(play_command, ready_for_play, true);
 	}
 
-	private void doOfflineCommands() {
-		// ToDo
-
-	}
 	/* we should decide about the command format */
 
 	public void do_command(Command cmd, User user) throws Exception {
@@ -141,7 +137,7 @@ public class Party_thread implements Runnable {
 			User user = iter.next();
 			register_for_selection(user);
 			if (party.is_private) { 
-				party.addRequest(user);				//////////////////////////
+				party.addRequest(user);				
 				updateMsg = jsonKey.REQUESTS.getCommandString();
 			} 
 			
@@ -193,20 +189,20 @@ public class Party_thread implements Runnable {
 		SendCommandToAll(pause_command);
 	}
 
-	public void DeleteSong(Command cmd) {
+	public void DeleteSong(Command cmd) throws JSONException {
 		party.deleteSong(cmd.cmd_info.getInt("TrackID"));
-		addToJSONArray(jsonKey.DELETE_SONGS.getText(),cmd.cmd_info);
+		addToJSONArray(jsonKey.DELETE_SONGS.getCommandString(),cmd.cmd_info);
 	}
 
-	public void SwapSongs(Command cmd) {
+	public void SwapSongs(Command cmd) throws JSONException {
 		party.changeSongsOrder(cmd.cmd_info.getInt("TrackID_1"),cmd.cmd_info.getInt("TrackID_2"));
-		addToJSONArray(jsonKey.SWAP_SONGS.getText(),cmd.cmd_info);
+		addToJSONArray(jsonKey.SWAP_SONGS.getCommandString(),cmd.cmd_info);
 	}
 
-	public void AddSong(Command cmd) {
+	public void AddSong(Command cmd) throws JSONException {
 		Track newTrack = party.addSong(cmd.cmd_info.getString("url"));
 		JSONObject trackJSON = newTrack.get_JSON();
-		addToJSONArray("newSongs",trackJSON);
+		addToJSONArray(jsonKey.NEW_SONGS.getCommandString(),trackJSON);
 	}
 
 	private void addToJSONArray(String classifier, JSONObject JsonObject) throws JSONException {
@@ -222,16 +218,16 @@ public class Party_thread implements Runnable {
 		boolean removed_participent = party.connected.remove(user);
 		party.request.remove(user);
 		if (removed_participent || removed_admin) {
-			number_of_participents--;
-			Command cmd = new Command(null); /* upadting the party-participents */
-			SendCommandToAll(cmd);
-			if (ready_for_play.contains(user)) {
-				ready_for_play.remove(user);
-				ready_for_next_song--;
-			}
-			if (ready_for_next_song > 0.5*number_of_participents) {
-				play_song = true;
-			}
+			//number_of_participents--;
+			//Command cmd = new Command(null); /* upadting the party-participents */
+			//SendCommandToAll(cmd);
+			//if (ready_for_play.contains(user)) {
+				//ready_for_play.remove(user);
+				//ready_for_next_song--;
+			//}
+			//if (ready_for_next_song > 0.5*number_of_participents) {
+				//play_song = true;
+			//}
 		}
 		user.client.close();
 	}
