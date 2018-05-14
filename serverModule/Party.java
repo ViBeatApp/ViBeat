@@ -10,7 +10,8 @@ public class Party {
 	Playlist playlist;
 	List<User> admins;
 	List<User> connected;
-	List<User> request;
+	List<User> new_clients;
+	List<User> request; //only if private
 	Selector selector; //for wakeUp
 	boolean is_private;
 

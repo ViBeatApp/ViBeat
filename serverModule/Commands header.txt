@@ -1,0 +1,48 @@
+Messages from client to server:
+
+Authentication(name,ID,image)
+Give_Nearby_Parties(ClientLocation)
+searchParty(name)
+Join(partyID)
+Create(name,isPrivate)
+Disconnected
+
+AddSong (url)
+DeleteSong(TrackID)
+SwapSongs(TrackID_1,TrackID_2)
+PlaySong(TrackID,offset)
+ImReady(TraceID)
+Pause(TrackID,offset)
+
+RenameParty(newName)
+ConfirmRequest(userID)
+MakeAdmin(userID)
+UpdateLocation(Location)
+Close()  					//kill the party
+LeaveParty()
+
+
+Messages from server to client:
+Nearbyparties(PublicPartyInfo) 		//PublicPartyInfo = List<name,id,image>
+SearchResult(PublicPartyInfo)
+Response - (bool confirmed, partyInfo) if rejected - Null.
+
+GetReady(TrackID,offset)
+Play(TrackID,offset)
+Pause()
+
+updateParty(JSONObject):
+		"Users",[{name,id,image,IsAdmin},...]
+		"Requsts",[{name,id,image},...]
+		"DeleteSongs",[{TrackID},...]
+		"newSongs",[{url,newTrackID},...]
+		"SwapSongs",[{TrackID_1,TrackID_2},...]
+		"PartyRename",{name}
+		"IsPrivate",{bool IsPrivate}
+		
+IDs:
+partyID = Counter.
+trackID = Counter.
+userID 	= authenticationID.
+
+

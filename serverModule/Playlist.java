@@ -3,6 +3,7 @@ import java.util.List;
 
 public class Playlist {
 	List<Track> songs;
+	int nextTrackID = 0;
 	int songCounter; //played so far - for sync when song ends.
 	
 	public Playlist() {
