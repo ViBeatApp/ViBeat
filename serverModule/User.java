@@ -1,5 +1,8 @@
 import java.nio.channels.SocketChannel;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class User {
 	public enum Party_Status {
 		in_party, havnt_decided, waiting_for_approval
@@ -31,5 +34,12 @@ public class User {
 		return client;
 	}
 	
+	public JSONObject get_JSON() throws JSONException {
+		JSONObject userJson = new JSONObject();
+		userJson.put("name", this.name);
+		userJson.put("id", this.id);
+		userJson.put("image", this.image);
+		return userJson;
+	}
 
 }

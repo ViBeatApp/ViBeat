@@ -1,44 +1,44 @@
 Messages from client to server:
 
-Authentication(name,ID,image)
-Give_Nearby_Parties(ClientLocation)
-searchParty(name)
-Join(partyID)
-Create(name,isPrivate)
+Authentication(NAME,USER_ID,IMAGE)
+Give_Nearby_Parties(CLIENTLOCATION)
+searchParty(NAME)
+Join(PARTY_ID)
+Create(NAME,IS_PRIVATE)
 Disconnected
 
-AddSong (url)
+AddSong (URL)
 DeleteSong(TrackID)
-SwapSongs(TrackID_1,TrackID_2)
-PlaySong(TrackID,offset)
-ImReady(TraceID)
-Pause(TrackID,offset)
+SwapSongs(TRACK_ID_1,TrackID_2)
+PlaySong(TRACK_ID,OFFSET)
+ImReady(TRACK_ID)
+Pause(TRACK_ID)
 
-RenameParty(newName)
-ConfirmRequest(userID)
-MakeAdmin(userID)
-UpdateLocation(Location)
+RenameParty(NAME)
+ConfirmRequest(USER_ID)
+MakeAdmin(USER_ID)
+UpdateLocation(LOCATION)
 Close()  					//kill the party
 LeaveParty()
 
 
 Messages from server to client:
-Nearbyparties(PublicPartyInfo) 		//PublicPartyInfo = List<name,id,image>
-SearchResult(PublicPartyInfo)
-Response - (bool confirmed, partyInfo) if rejected - Null.
+Nearbyparties(PUBLIC_PARTY_INFO) 		//PublicPartyInfo = List<name,id,image>
+SearchResult(PUBLIC_PARTY_INFO)
+Response - (bool CONFIRMED, PARTY_INFO) if rejected - Null.
 
-GetReady(TrackID,offset)
-Play(TrackID,offset)
+GetReady(TRACK_ID,OFFSET)
+Play(TRACK_ID,OFFSET)
 Pause()
 
-updateParty(JSONObject):
-		"Users",[{name,id,image,IsAdmin},...]
-		"Requsts",[{name,id,image},...]
-		"DeleteSongs",[{TrackID},...]
-		"newSongs",[{url,newTrackID},...]
-		"SwapSongs",[{TrackID_1,TrackID_2},...]
-		"PartyRename",{name}
-		"IsPrivate",{bool IsPrivate}
+updateParty({
+		"USERS",[{NAME,USER_ID,IMAGE,IS_ADMIN},...]
+		"REQUESTS",[{NAME,USER_ID,IMAGE},...]
+		"DELETE_SONGS",[{TRACK_ID},...]
+		"NEW_SONGS",[{URL,TRACK_ID},...]
+		"SWAP_SONGS",[{TRACK_ID_1,TRACK_ID_2},...]
+		"PARTY_RENAME",[NAME]
+		"IS_PRIVATE",[bool IS_PRIVATE]})
 		
 IDs:
 partyID = Counter.

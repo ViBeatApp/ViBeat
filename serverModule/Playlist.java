@@ -11,30 +11,22 @@ public class Playlist {
 		songs = new ArrayList<>();
 		songCounter = 0;
 	}
-
-	public int addSong(String name){
+	//TODO
+	public Track addSong(String name){
 		if(!songIsExist(name))
-			return -1;
+			return null;
 		Track track = new Track(name);
 		songs.add(track);
+		return track;
+	}
+	
+	public int deleteSong(int trackID){
+
 		return 0;
 	}
 	
-	public int removeSong(int index){
-		if(songs.size() <= index){
-			return -1;
-		}
-		songs.remove(index);
-		return 0;
-	}
-	
-	public int changeSongsOrder(int i, int j){
-		if(songs.size() <= i || songs.size() <= j || i == j){
-			return -1;
-		}
-		Track track_i = songs.get(i);
-		songs.set(i, songs.get(j));
-		songs.set(j, track_i);
+	public int changeSongsOrder(int trackID_1, int trackID_2){
+
 		return 0;
 	}
 	

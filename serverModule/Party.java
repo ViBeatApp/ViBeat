@@ -46,7 +46,6 @@ public class Party {
 		connected.add(user);
 	}
 
-
 	public void addRequest(User user){
 		request.add(user);
 	}
@@ -70,15 +69,15 @@ public class Party {
 		return 0;
 	}
 
-	public int addSong(String name){
+	public Track addSong(String name){ 			///////////////////////////
 		return playlist.addSong(name);
 	}
 	
-	public int removeSong(int index){
-		return playlist.removeSong(index);
+	public int deleteSong(int trackID){
+		return playlist.deleteSong(trackID);
 	}
 	
-	public int changeSongsOrder(int i, int j){
-		return playlist.changeSongsOrder(i,j);
+	public int changeSongsOrder(int trackID_1, int trackID_2){			///////////////////////////
+		return playlist.changeSongsOrder(trackID_1,trackID_2);
 	}
 }

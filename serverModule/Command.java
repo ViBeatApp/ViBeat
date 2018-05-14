@@ -4,7 +4,12 @@ import org.json.JSONObject;
 public class Command {
 	CommandType cmd_type;
 	JSONObject cmd_info;
-
+	
+	public Command(CommandType cmd_type) throws JSONException {
+		
+		this.cmd_type = cmd_type;
+		this.cmd_info = new JSONObject();
+	}
 
 	public Command(byte[] message) throws JSONException {
 		if(message == null){
