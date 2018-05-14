@@ -46,3 +46,4 @@ trackID = Counter.
 userID 	= authenticationID.
 
 
+{"cmd_type": command_type, "cmd_info",json}

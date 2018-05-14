@@ -15,9 +15,10 @@ import org.json.JSONObject;
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
 	static List<User>  authenticated_users = new ArrayList<>();
+	static List<User>  Comeback_users = new ArrayList<>();
 	static int partyID = 0;
-	public static void main(String[] args) throws IOException, JSONException{
 
+	public static void main(String[] args) throws IOException, JSONException{
 
 		Selector selector = Selector.open();
 
@@ -25,13 +26,14 @@ public class ServerModule {
 		serverSocketChannel.socket().bind(new InetSocketAddress(9999));
 
 		serverSocketChannel.configureBlocking(false);
-		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT | SelectionKey.OP_READ);
 
 		while(true){
 
 			System.out.println("Waiting for select...");
 			int readyChannels = selector.select();
 			if(readyChannels == 0) continue;
+			handle_comeback_users();
 			System.out.println("Number of selected keys: " + readyChannels);
 
 			Set<SelectionKey> selectedKeys = selector.selectedKeys();
@@ -54,37 +56,62 @@ public class ServerModule {
 				else if (key.isReadable()) {
 					handleReadCommands(selector, key);
 				} 
-
 				keyIterator.remove();
 			}
 		}
+	}
+
+	private static void handle_comeback_users() {
+//		Iterator<User> iter = newClients.iterator();
+//		while (iter.hasNext()){
+//			User user = iter.next();
+//			register_for_selection(user);
+//			if (party.is_private) { 
+//				party.addRequest(user);				
+//				updateMsg = jsonKey.REQUESTS.getCommandString();
+//			} 
+//			
+//			/* the party is public, tell the user to get ready */
+//			else { 
+//				party.addClient(user);
+//				update_get_ready_command();
+//				SendCommandToUser(user, get_ready_command.cmd_info);
+//				updateMsg = jsonKey.USERS.getCommandString();
+//			}
+//			addToJSONArray(updateMsg,user.get_JSON());
+//			iter.remove();
+//		}
+		
 	}
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
 		byte[] messageArray = readWriteAux.readSocket(client);
 		Command cmd = new Command(messageArray);
+		
 		switch(cmd.cmd_type){
-
+		
 		case Authentication:
 			String name = cmd.cmd_info.getString("Name");
 			int id = cmd.cmd_info.getInt("Id");
 			byte[] image = (byte[]) cmd.cmd_info.get("Image");
 			User newUser = new User(name,id,image);
 			authenticated_users.add(newUser);
-			key.attach(newUser);
-			
+			key.attach(newUser);					///check this
+			break;
+
 		case Nearby_Parties:
 			sent_nearby_parties((User)key.attachment(),cmd.cmd_info);
+			break;
 			
 		case Join:
 			join_party((User)key.attachment(),cmd.cmd_info);
 			break;
-			
+
 		case Create:
 			create_party((User)key.attachment(),cmd.cmd_info,selector);
 			break;
-			
+
 		case Disconnected:	
 			removeIfAuthenticated(key);
 			client.close();
@@ -95,7 +122,6 @@ public class ServerModule {
 		}
 	}
 
-
 	private static void removeIfAuthenticated(SelectionKey key) {
 		User user = (User) key.attachment();
 		if(user == null)
@@ -103,13 +129,10 @@ public class ServerModule {
 		authenticated_users.remove(user);
 
 	}
-
-
+	//TODO
 	public static void sent_nearby_parties(User client,JSONObject info) {
 
 	}
-
-
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException {
@@ -122,7 +145,7 @@ public class ServerModule {
 
 	private static void join_party(User client, JSONObject cmd_info) throws JSONException {
 		Party party = FindPartyByID(cmd_info.getInt("Id"));
-		party.addRequest(client);
+		party.addNewClient(client);
 		party.selector.wakeup();	
 	}
 
@@ -134,4 +157,12 @@ public class ServerModule {
 		}
 		return null;
 	}
+	
+	//mini thread and locks.
+	//TODO
+	private static void addComebackUser(User user) {
+		
+	}
+
 }
+

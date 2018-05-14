@@ -17,13 +17,12 @@ public class Command {
 			return;
 		}
 		JSONObject json = CommandToJson(message);
-		this.cmd_type = CommandType.valueOf(json.getString("Command"));
-		this.cmd_info = json.getJSONObject("Info");
+		this.cmd_type = CommandType.valueOf(json.getString(jsonKey.COMMAND_TYPE.getCommandString()));
+		this.cmd_info = json.getJSONObject(jsonKey.COMMAND_INFO.getCommandString());
 	}
 
 	public JSONObject CommandToJson(byte[] message) throws JSONException {
 		return new JSONObject(new String(message));
-
 	}
 
 }

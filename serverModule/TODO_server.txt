@@ -1,0 +1,5 @@
+1.For modularity, implement update command in Command module.
+2.locks and thread.
+3.Location.
+4.disconnected.
+5.kill the party.

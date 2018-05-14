@@ -33,7 +33,7 @@ public class Party {
 	public void getPartyImage(){
 		admins.get(0).get_image();
 	}
-
+	//TODO
 	public void UpdateLocation(){  //pings
 
 	}
@@ -45,7 +45,9 @@ public class Party {
 	public void addClient(User user){
 		connected.add(user);
 	}
-
+	//handle locks.
+	public void addNewClient(User user) {}
+	
 	public void addRequest(User user){
 		request.add(user);
 	}
@@ -69,7 +71,7 @@ public class Party {
 		return 0;
 	}
 
-	public Track addSong(String name){ 			///////////////////////////
+	public Track addSong(String name){ 		
 		return playlist.addSong(name);
 	}
 	
@@ -77,7 +79,17 @@ public class Party {
 		return playlist.deleteSong(trackID);
 	}
 	
-	public int changeSongsOrder(int trackID_1, int trackID_2){			///////////////////////////
+	public int changeSongsOrder(int trackID_1, int trackID_2){	
 		return playlist.changeSongsOrder(trackID_1,trackID_2);
+	}
+	
+
+	public int get_current_track_id() {
+		return playlist.songs.get(0).trackId;
+	}
+
+	public void next_song() {
+		// TODO Auto-generated method stub
+		
 	}
 }

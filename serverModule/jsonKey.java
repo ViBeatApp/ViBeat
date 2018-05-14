@@ -27,9 +27,11 @@ enum jsonKey {
 	
 	TRACK_ID("TRACK_ID"),
 	PARTY_ID("PARTY_ID"),
-	USER_ID("USER_ID");
+	USER_ID("USER_ID"),
 
-
+	COMMAND_TYPE("COMMAND_TYPE"),
+	COMMAND_INFO("COMMAND_INFO");
+	
 	private String text;
 	jsonKey (String text) {
 		this.text = text;

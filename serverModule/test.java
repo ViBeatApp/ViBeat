@@ -1,39 +1,37 @@
-package server;
-
 import java.util.List;
 
 public class test {
 
 	public static void main(String[] args) {
 		
-		System.out.println("create new party");
-		User ido = new User("ido");
-		Party party = new Party("ido's party", 3, ido, true);
-		System.out.println(party.addSong("ido's song") == 0 ? "adding success\n" : "adding failed\n");
-		printInfo(party);
-		
-		System.out.println("adding tomer to clients");
-		User tomer = new User("tomer");
-		party.addClient(tomer);
-		party.addSong("tomer's song");
-		printInfo(party);
-		
-		System.out.println("adding tomer to admins");
-		party.addAdmin(tomer);
-		printInfo(party);
-		
-		System.out.println("adding idan to requests");
-		User idan = new User("idan");
-		party.addRequest(idan);
-		printInfo(party);
-		
-		System.out.println("replace the songs");
-		party.changeSongsOrder(0,1);
-		printInfo(party);
-		
-		System.out.println("remove tomer's song");
-		party.removeSong(0);
-		printInfo(party);
+//		System.out.println("create new party");
+//		User ido = new User("ido");
+//		Party party = new Party("ido's party", 3, ido, true);
+//		System.out.println(party.addSong("ido's song") == 0 ? "adding success\n" : "adding failed\n");
+//		printInfo(party);
+//		
+//		System.out.println("adding tomer to clients");
+//		User tomer = new User("tomer");
+//		party.addClient(tomer);
+//		party.addSong("tomer's song");
+//		printInfo(party);
+//		
+//		System.out.println("adding tomer to admins");
+//		party.addAdmin(tomer);
+//		printInfo(party);
+//		
+//		System.out.println("adding idan to requests");
+//		User idan = new User("idan");
+//		party.addRequest(idan);
+//		printInfo(party);
+//		
+//		System.out.println("replace the songs");
+//		party.changeSongsOrder(0,1);
+//		printInfo(party);
+//		
+//		System.out.println("remove tomer's song");
+//		party.removeSong(0);
+//		printInfo(party);
 		
 	}
 	
