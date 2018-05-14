@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -25,9 +23,7 @@ public class Party_thread implements Runnable {
 
 	public boolean keep_on;
 
-	public boolean play_song;
-	public boolean fresh_start;
-	public boolean first_wave;
+	public boolean in_play_protocol;
 
 	public List<User> ready_for_play;
 	public List<User> newClients;
@@ -39,10 +35,9 @@ public class Party_thread implements Runnable {
 	public Party_thread(Party party, Selector server_selector) {
 		this.party = party;
 		this.server_selector = server_selector;
-
 	}
+	
 	@Override
-
 	public void run() {
 		try {
 			register_for_selection(party.admins.get(0));
@@ -55,16 +50,9 @@ public class Party_thread implements Runnable {
 	/* the main function   */
 	public void listen() throws IOException, Exception {
 		while (keep_on) {
-
-			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
-			long sleeping_reminder = current_song_duration - total_offset;
-			if (sleeping_reminder <= 0) {
-				System.out.println("it's the end of the world");
-			}
-			party.selector.select(sleeping_reminder - 100);
-
+			party.selector.select();
 			handler_new_clients();
-			handle_current_clients();		
+			handle_current_clients();
 		}
 	}
 
@@ -81,24 +69,25 @@ public class Party_thread implements Runnable {
 			}
 			keyIterator.remove();
 		}
-
-		if (0.5*party.connected.size() < ready_for_play.size() && !party.is_playing) {
+		if (!party.is_playing && play_condition()) { /* we start playing the song */
 			party.is_playing = true;
-			sendPlayToList();
 			last_play_time = Instant.now();
+			sendPlayToList();
 		}
-
 		doOfflineCommands();
-
-
 	}
+	
+	public boolean play_condition() {
+		return (0.5*party.connected.size() < ready_for_play.size()) && !party.is_playing;
+	}
+	
 	private void sendPlayToList() throws IOException {
-		update_play_command(total_offset);
+		update_play_command();
 		SendCommandToList(play_command, ready_for_play, true);
 	}
 
 	private void doOfflineCommands() {
-		// TODO Auto-generated method stub
+		// ToDo
 
 	}
 	/* we should decide about the command format */
@@ -106,7 +95,6 @@ public class Party_thread implements Runnable {
 	public void do_command(Command cmd, User user) throws Exception {
 		switch (cmd.cmd_type) {
 		case PlaySong:
-			fresh_start = true;
 			startPlayProtocol(cmd);
 			break;
 		case Pause:
@@ -143,17 +131,14 @@ public class Party_thread implements Runnable {
 	/* to handle */
 	public void handler_new_clients() throws Exception {
 		get_newClients();
-
 		Iterator<User> iter = newClients.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
-
 			if (party.is_private) { /* party is private, send request to join the party*/
 				party.addRequest(user);
 				Command cmd = new Command(null); /* need to figure out the command structcure */
 				SendCommandToAdmins(cmd);
-
 			} 
 			else { /* the party is public, tell the user to get ready */
 				party.addClient(user);
@@ -171,27 +156,33 @@ public class Party_thread implements Runnable {
 	}
 
 	/* we wait for half of the party participants to be ready before we actually start playin */
-	public void startPlayProtocol(Command cmd) throws IOException {
-		party.is_playing = false;
-		ready_for_play = new ArrayList<User>();
-		update_get_ready_command();
-		SendCommandToAll(get_ready_command);
-	}
-
-
-
-	public void GetReady(Command cmd, User user) {
-		user.is_prepared = User.Song_preparation.prepared;
-		ready_for_next_song++;
-		ready_for_play.add(user);
-		if (ready_for_next_song > 0.5*number_of_participents) {
-			play_song = true;
+	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
+		if ((!in_play_protocol) || (cmd.cmd_info.getInt("TrackID") != party.get_current_track_id())) {
+			party.is_playing = false;
+			in_play_protocol = true;
+			party.next_song();
+			total_offset = cmd.cmd_info.getLong("offset");
+			update_get_ready_command();
+			SendCommandToAll(get_ready_command);
 		}
 	}
 
-	public void pause_song() throws IOException {
+	public void GetReady(Command cmd, User user) throws IOException {
+		if (party.is_playing) {
+			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+			update_play_command();
+			SendCommandToUser(user, get_ready_command.cmd_info);
+		} else {
+			ready_for_play.add(user);
+			if (play_condition()) {
+				party.is_playing = true;
+				sendPlayToList();
+			}
+		}
+	}
+
+	public void pause_song() throws IOException, JSONException {
 		SendCommandToAll(pause_command);
-		total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
 	}
 
 	public void DeleteSong(Command cmd) {
@@ -248,14 +239,17 @@ public class Party_thread implements Runnable {
 		byte[] Data = obj.toString().getBytes();
 		readWriteAux.writeSocket(user.get_channel(), Data);
 	}
-
-	public void update_get_ready_command() {
-		// ToDo
+	
+	/* updates the GetReady command */
+	public void update_get_ready_command() throws JSONException {
+		get_ready_command.cmd_info.put("offset", total_offset);
+		get_ready_command.cmd_info.put("TrackID", party.get_current_track_id());
 	}
 
-	/* updates the play-command */
-	public void update_play_command(long song_offset) {
-		// ToDo
+	/* updates the play command */
+	public void update_play_command() {
+		get_ready_command.cmd_info.put("offset", total_offset);
+		get_ready_command.cmd_info.put("TrackID", party.get_current_track_id());
 
 	}
 }
