@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +21,8 @@ public class Party_thread implements Runnable {
 	public Command get_ready_command;
 	public Command play_command;
 	public Command pause_command;
-
+	public Command update_party;
+	
 	public boolean keep_on;
 
 	public boolean in_play_protocol;
@@ -51,6 +53,7 @@ public class Party_thread implements Runnable {
 	public void listen() throws IOException, Exception {
 		while (keep_on) {
 			party.selector.select();
+			update_party = new Command(CommandType.updateParty);
 			handler_new_clients();
 			handle_current_clients();
 		}
@@ -69,12 +72,12 @@ public class Party_thread implements Runnable {
 			}
 			keyIterator.remove();
 		}
-		if (!party.is_playing && play_condition()) { /* we start playing the song */
+		if (play_condition()) { /* we start playing the song */
 			party.is_playing = true;
 			last_play_time = Instant.now();
 			sendPlayToList();
 		}
-		doOfflineCommands();
+		SendCommandToAll(update_party);
 	}
 	
 	public boolean play_condition() {
@@ -106,7 +109,7 @@ public class Party_thread implements Runnable {
 
 			//add to lists.
 		case SwapSongs:
-			DeleteSong(cmd);
+			SwapSongs(cmd);
 			break;
 		case DeleteSong:
 			DeleteSong(cmd);
@@ -131,20 +134,25 @@ public class Party_thread implements Runnable {
 	/* to handle */
 	public void handler_new_clients() throws Exception {
 		get_newClients();
+		String updateMsg;
+		
 		Iterator<User> iter = newClients.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
-			if (party.is_private) { /* party is private, send request to join the party*/
-				party.addRequest(user);
-				Command cmd = new Command(null); /* need to figure out the command structcure */
-				SendCommandToAdmins(cmd);
+			if (party.is_private) { 
+				party.addRequest(user);				//////////////////////////
+				updateMsg = jsonKey.REQUESTS.getCommandString();
 			} 
-			else { /* the party is public, tell the user to get ready */
+			
+			/* the party is public, tell the user to get ready */
+			else { 
 				party.addClient(user);
 				update_get_ready_command();
 				SendCommandToUser(user, get_ready_command.cmd_info);
+				updateMsg = jsonKey.USERS.getCommandString();
 			}
+			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
 		}
 	}
@@ -186,17 +194,29 @@ public class Party_thread implements Runnable {
 	}
 
 	public void DeleteSong(Command cmd) {
-		// ToDo
+		party.deleteSong(cmd.cmd_info.getInt("TrackID"));
+		addToJSONArray(jsonKey.DELETE_SONGS.getText(),cmd.cmd_info);
 	}
 
 	public void SwapSongs(Command cmd) {
-		// ToDo
+		party.changeSongsOrder(cmd.cmd_info.getInt("TrackID_1"),cmd.cmd_info.getInt("TrackID_2"));
+		addToJSONArray(jsonKey.SWAP_SONGS.getText(),cmd.cmd_info);
 	}
 
 	public void AddSong(Command cmd) {
-		// ToDo
+		Track newTrack = party.addSong(cmd.cmd_info.getString("url"));
+		JSONObject trackJSON = newTrack.get_JSON();
+		addToJSONArray("newSongs",trackJSON);
 	}
 
+	private void addToJSONArray(String classifier, JSONObject JsonObject) throws JSONException {
+		if(!update_party.cmd_info.has(classifier)) {
+			update_party.cmd_info.put(classifier, new JSONArray());
+		}
+		update_party.cmd_info.getJSONArray(classifier).put(JsonObject);
+		
+	}
+	
 	public void disconnect_user(User user) throws JSONException, Exception {
 		boolean removed_admin = party.admins.remove(user);
 		boolean removed_participent = party.connected.remove(user);
