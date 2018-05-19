@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -22,6 +23,9 @@ import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.List;
 
 public class EnterPartyActivity extends AppCompatActivity {
@@ -50,9 +54,18 @@ public class EnterPartyActivity extends AppCompatActivity {
         ImageView user_img = (ImageView) findViewById(R.id.this_user);
         TextView user_name = (TextView) findViewById(R.id.hello_user);
 
-        Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-        bm = pictureChange.getCroppedBitmap(bm);
-        user_img.setImageBitmap(bm);
+        try{
+            //URL newurl = new URL(user.img_path);
+            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
+            //bm = pictureChange.getCroppedBitmap(bm);
+            //user_img.setImageBitmap(bm);.
+            user_img.setImageURI(Uri.parse(user.img_path));
+        }
+        //catch (IOException e){
+
+        //}
+        catch (Exception e){}
 
         user_name.setText("Hi, "+user.name);
 
