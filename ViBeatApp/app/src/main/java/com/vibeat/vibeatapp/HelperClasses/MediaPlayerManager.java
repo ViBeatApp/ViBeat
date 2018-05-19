@@ -21,10 +21,6 @@ public class MediaPlayerManager {
     public MediaPlayerManager(Playlist playlist){
         this();
         this.playlist = playlist;
-        this.prepared_current = false;
-        this.prepared_next = false;
-        this.isMute = false;
-        this.playing = 1;
     }
 
     public MediaPlayerManager(){
@@ -32,6 +28,11 @@ public class MediaPlayerManager {
         mediaPlayer1.setAudioStreamType(AudioManager.STREAM_MUSIC);
         this.mediaPlayer2 = new MediaPlayer();
         mediaPlayer2.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        this.prepared_current = false;
+        this.prepared_next = false;
+        this.isMute = false;
+        this.playing = 1;
     }
 
     public void updatePlaylist(Playlist playlist){
@@ -103,10 +104,14 @@ public class MediaPlayerManager {
     }
 
     public void playNext()throws IOException{
+        MediaPlayer mediaPlayer = (this.playing == 1) ? mediaPlayer1 : mediaPlayer2;
+        mediaPlayer.reset();
+
         playing = 3 - playing;
         this.prepared_current = this.prepared_next;
         this.prepared_next = false;
         play();
+        playlist.cur_track++;
         prepareNextSong();
     }
 

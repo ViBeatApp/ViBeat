@@ -42,6 +42,7 @@ public class PlaylistList implements ListAdapterable {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (activity instanceof CreatePartyActivity){
                     app.client_manager.createParty();
                     app.client_manager.party.request.add(new User("Idan Cohen",
@@ -55,10 +56,6 @@ public class PlaylistList implements ListAdapterable {
                     app.client_manager.addTrack(track);
                     Intent intent = new Intent(activity, PlaylistActivity.class);
                     activity.startActivity(intent);
-                }
-                else if (activity instanceof PlaylistActivity) {
-                    app.client_manager.changeTrack(track);
-                    ((BaseAdapter) adap).notifyDataSetChanged();
                 }
             }
         });
@@ -100,4 +97,5 @@ public class PlaylistList implements ListAdapterable {
     public long getItemId(int position) {
         return position;
     }
+
 }

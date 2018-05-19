@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.vibeat.vibeatapp.ListClasses.ListAdapterable;
+import com.vibeat.vibeatapp.R;
 
 public class CostumeListAdapter extends BaseAdapter {
 
@@ -46,9 +49,11 @@ public class CostumeListAdapter extends BaseAdapter {
             row = inflater.inflate(list_obj.getLayoutId(), null);
         }
 
+
         row = list_obj.initRow(this, (Activity)context, row, position);
 
         return row;
+
     }
 
 }

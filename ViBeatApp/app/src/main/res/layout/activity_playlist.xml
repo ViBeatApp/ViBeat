@@ -94,7 +94,8 @@
         android:layout_marginBottom="10dp"
         android:textColor="@color/text"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
+        android:scrollbars="vertical"
         android:id="@+id/playlist"
         android:layout_weight="65"
         android:layout_width="match_parent"
