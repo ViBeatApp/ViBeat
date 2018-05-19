@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -31,6 +32,7 @@ public class PlaylistList implements ListAdapterable {
         this.playlist = playlist;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View initRow(Adapter adapter, Activity context, View v, final int position) {
 
@@ -71,7 +73,7 @@ public class PlaylistList implements ListAdapterable {
         artist.setText(track.artist);
 
         if (position == playlist.cur_track)
-            v.setBackgroundColor(Color.parseColor("#ff9c40"));
+            v.setBackgroundColor(R.color.colorAccent);
         else
             v.setBackgroundColor(Color.TRANSPARENT);
 

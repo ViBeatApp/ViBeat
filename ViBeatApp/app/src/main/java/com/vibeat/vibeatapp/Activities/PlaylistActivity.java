@@ -52,6 +52,7 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
     private SwipeMenuListView swipeList;
     private RecyclerView recyclerView;
     private PlaylistRecyclerView adapter;
+    private ItemTouchHelper itemTouchHelper;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -62,58 +63,14 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
 
         recyclerView = (RecyclerView)findViewById(R.id.playlist);
         adapter = new PlaylistRecyclerView(PlaylistActivity.this, app.client_manager.party.playlist);
-        final GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
-        recyclerView.setLayoutManager(layoutManager);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager (this);
+        recyclerView.setLayoutManager (mLayoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        ItemTouchHelper.SimpleCallback item = new RecyclerTouchHelper(0, ItemTouchHelper.LEFT,this );
-        new ItemTouchHelper(item).attachToRecyclerView(recyclerView);
-        /*
-        final ArrayAdapter adapter = new PlayListSwipeList(PlaylistActivity.this,
-                                                            app.client_manager.party.playlist);
-
-        swipeList = (SwipeMenuListView) findViewById(R.id.playlist);
-        swipeList.setAdapter(adapter);
-
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                SwipeMenuItem play_next_item = new SwipeMenuItem(getApplicationContext());
-                play_next_item.setBackground(new ColorDrawable(Color.TRANSPARENT));
-                play_next_item.setWidth(200);
-                play_next_item.setIcon(R.drawable.play_next);
-                menu.addMenuItem(play_next_item);
-
-                SwipeMenuItem delete_item = new SwipeMenuItem(getApplicationContext());
-                delete_item.setBackground(new ColorDrawable(Color.RED));
-                delete_item.setWidth(170);
-                delete_item.setIcon(R.drawable.ic_delete);
-                menu.addMenuItem(delete_item);
-            }
-        };
-
-        swipeList.setMenuCreator(creator);
-
-        swipeList.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                switch (index) {
-                    case 0:
-
-                        ((BaseAdapter) adapter).notifyDataSetChanged();
-                        break;
-                    case 1:
-                        ((BaseAdapter) adapter).notifyDataSetChanged();
-                        break;
-                }
-                // false : close the menu; true : not close the menu
-                return false;
-            }
-        });
-
-        */
+        ItemTouchHelper.Callback callback = new RecyclerTouchHelper(adapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         final ImageButton mute = (ImageButton) findViewById(R.id.mute);
 
@@ -199,7 +156,11 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder)
-            adapter.removeTrack(position);
+        itemTouchHelper.startSwipe(viewHolder);
+    }
+
+    @Override
+    public void onDrag(RecyclerView.ViewHolder viewHolder) {
+        itemTouchHelper.startDrag(viewHolder);
     }
 }
