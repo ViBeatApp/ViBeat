@@ -1,9 +1,6 @@
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.List;
-
-import org.json.JSONException;
 
 public class test {
 	public static void main(String[] args) throws Exception {
@@ -16,11 +13,12 @@ public class test {
 		auth.cmd_info.put("USER_ID", 0);
 		auth.cmd_info.put("IMAGE", "abcd");
 		readWriteAux.writeSocket(socket, auth);
-		
+		Thread.sleep(1000);
 		Command create = new Command(CommandType.CREATE);
 		create.cmd_info.put("NAME", "Ido's party");
 		create.cmd_info.put("IS_PRIVATE", false);
 		readWriteAux.writeSocket(socket, create);
+		Thread.sleep(1000);
 		//System.out.println(readWriteAux.readSocket(socket));
 		check_manage_songs(socket);
 	}
@@ -31,6 +29,7 @@ public class test {
 		System.out.println("sending new_command");
 		add_song.cmd_info.put("URL", "www.youtube1");
 		readWriteAux.writeSocket(socket, add_song);
+		Thread.sleep(1000);
 		System.out.println("send URL1");
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("got reply");
