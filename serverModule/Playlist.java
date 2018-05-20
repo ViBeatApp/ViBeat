@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Playlist {
@@ -19,12 +20,32 @@ public class Playlist {
 	}
 	
 	public int deleteSong(int trackID){
-
-		return 0;
+		Iterator<Track> iter = songs.iterator();
+		while (iter.hasNext()){
+			Track track = iter.next();
+			if(track.trackId == trackID) {
+				iter.remove();
+				return 1;
+			}
+		}
+		return -1;
 	}
 	
 	public int changeSongsOrder(int trackID_1, int trackID_2){
-
+		int firstIndex = -1;
+		int secondIndex = -1;
+		for(int i = 0; i < songs.size(); ++i) {
+			if(songs.get(i).trackId == trackID_1) {
+				firstIndex = i;
+			}
+			if(songs.get(i).trackId == trackID_2) {
+				secondIndex = i;
+			}
+		}
+		if(firstIndex == -1 || secondIndex == -1) return -1;
+		Track tmpTrack = songs.get(firstIndex);
+		songs.set(firstIndex, songs.get(secondIndex));
+		songs.set(secondIndex, tmpTrack);
 		return 0;
 	}
 	
