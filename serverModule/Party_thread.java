@@ -103,9 +103,7 @@ public class Party_thread implements Runnable {
 			} 
 			/* the party is public, tell the user to get ready */
 			else { 
-				party.addClient(user);
-				update_get_ready_command();
-				SendCommandToUser(user, get_ready_command);
+				add_client(user);
 				updateMsg = jsonKey.USERS.name();
 			}
 			addToJSONArray(updateMsg,user.get_JSON());
@@ -114,8 +112,14 @@ public class Party_thread implements Runnable {
 	}
 	
 	/* send to the user the entire party info */
-	public void sync_party(User user) {
+	public void add_client(User user) {
+		party.addClient(user);
+		JSONObject party_info = party.getFullJson();
+		Command sync_command = Command(SYNC_PARTY, party_info);
+		SendCommandToUser(user, sync_command);
 		
+		update_get_ready_command();
+		SendCommandToUser(user, get_ready_command);
 	}
 	
 	public boolean play_condition() {
@@ -136,7 +140,8 @@ public class Party_thread implements Runnable {
 			GetReady(cmd, user);
 			break;
 		case CONFIRM_REQUEST:
-			User user = find_user()
+			User confirmed_user = find_user(cmd.getIntAttribute("USER_ID"));
+			add_client(confirmed_user);
 			//add to lists.
 		case SWAP_SONGS:
 			SwapSongs(cmd);
@@ -144,7 +149,6 @@ public class Party_thread implements Runnable {
 		case DELETE_SONG:
 			DeleteSong(cmd);
 			break;
-
 		case ADD_SONG:
 			AddSong(cmd);
 			break;
@@ -157,6 +161,15 @@ public class Party_thread implements Runnable {
 		default:
 			break;
 		}
+	}
+
+	private User find_user(int USER_ID) {
+		for (User user: party.request) {
+			if (user.id == USER_ID) {
+				return user;
+			}
+		}
+		return null; /* no such user */
 	}
 
 	/* handling the locks */
