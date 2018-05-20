@@ -4,10 +4,15 @@ import java.io.IOException;
 import java.nio.channels.Selector;
 
 public class Party {
+	
+	public enum Party_Status {
+		notPlaying, preparing, isPlaying
+	}
+	
 	String party_name;
 	int party_id;
 	//Location location;
-	boolean is_playing;
+	Party_Status status;
 	Playlist playlist;
 	List<User> admins;
 	List<User> connected;
@@ -20,7 +25,7 @@ public class Party {
 		super();
 		this.party_name = party_name;
 		this.party_id = party_id;
-		this.is_playing = false;
+		this.status = Party_Status.notPlaying;
 		this.playlist = new Playlist();
 		admins = new ArrayList<>();
 		connected = new ArrayList<>();
