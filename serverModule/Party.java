@@ -1,5 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.nio.channels.Selector;
 
@@ -36,8 +41,8 @@ public class Party {
 		this.connected.add(admin);
 	}
 
-	public void getPartyImage(){
-		admins.get(0).get_image();
+	public byte[] getPartyImage(){
+		return admins.get(0).get_image();
 	}
 	//TODO
 	public void UpdateLocation(){  //pings
@@ -101,4 +106,29 @@ public class Party {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public JSONObject getPublicJson() throws JSONException{
+		JSONObject publicJson = new JSONObject();
+		publicJson.put(jsonKey.NAME.name(), this.party_name);
+		publicJson.put(jsonKey.USER_ID.name(), this.party_id);
+		publicJson.put(jsonKey.IMAGE.name(), new String(this.getPartyImage()));
+		return publicJson;
+	}
+	
+	public JSONObject getFullJson() throws JSONException{
+		JSONObject fullJson = new JSONObject();
+		fullJson.put(jsonKey.NAME.name(), this.party_name);
+		fullJson.put(jsonKey.USER_ID.name(), this.party_id);
+		fullJson.put(jsonKey.IMAGE.name(), new String(this.getPartyImage()));
+		fullJson.put(jsonKey.LOCATION.name(), 0);
+		fullJson.put(jsonKey.SONGS.name(), playlist.getTrackArray());
+		fullJson.put(jsonKey.IS_PRIVATE.name(), is_private);
+		fullJson.put(jsonKey.USERS.name(), User.getUserArray(connected));
+		fullJson.put(jsonKey.ADMINS.name(), User.getUserArray(admins));
+		fullJson.put(jsonKey.REQUESTS.name(), User.getUserArray(request));
+		return fullJson;
+	}
+	
+	
+
 }

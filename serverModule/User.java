@@ -1,5 +1,8 @@
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,10 +32,17 @@ public class User {
 	
 	public JSONObject get_JSON() throws JSONException {
 		JSONObject userJson = new JSONObject();
-		userJson.put("name", this.name);
-		userJson.put("id", this.id);
-		userJson.put("image", this.image);
+		userJson.put(jsonKey.NAME.name(), this.name);
+		userJson.put(jsonKey.USER_ID.name(), this.id);
+		userJson.put(jsonKey.IMAGE.name(), this.image);
 		return userJson;
 	}
-
+	
+	public static JSONArray getUserArray(List<User> connected) throws JSONException {
+		JSONArray jsonArray = new JSONArray();
+		for(User user : connected) {
+			jsonArray.put(user.get_JSON());
+		}
+		return jsonArray;
+	}
 }

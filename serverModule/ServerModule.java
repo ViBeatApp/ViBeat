@@ -110,10 +110,18 @@ public class ServerModule {
 			removeIfAuthenticated(key);
 			client.close();
 			break;
+			
+		case SEARCH_PARTY:
+			sendPartyByName(cmd.cmd_info);
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
+	}
+
+	private static void sendPartyByName(JSONObject cmd_info) {
+		
+		
 	}
 
 	private static void removeIfAuthenticated(SelectionKey key) {

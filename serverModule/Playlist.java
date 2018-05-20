@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 public class Playlist {
 	List<Track> songs;
 	int nextTrackID = 0;
@@ -47,6 +50,14 @@ public class Playlist {
 		songs.set(firstIndex, songs.get(secondIndex));
 		songs.set(secondIndex, tmpTrack);
 		return 0;
+	}
+	
+	public JSONArray getTrackArray() throws JSONException {
+		JSONArray jsonArray = new JSONArray();
+		for(Track track : songs) {
+			jsonArray.put(track.get_JSON());
+		}
+		return jsonArray;
 	}
 	
 }

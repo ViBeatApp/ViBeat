@@ -38,8 +38,16 @@ updateParty({
 		"DELETE_SONGS",[{TRACK_ID},...]
 		"NEW_SONGS",[{URL,TRACK_ID},...]
 		"SWAP_SONGS",[{TRACK_ID_1,TRACK_ID_2},...]
-		"PARTY_RENAME",[NAME]
-		"IS_PRIVATE",[bool IS_PRIVATE]})
+		"PARTY_RENAME","NAME"
+		"IS_PRIVATE",bool IS_PRIVATE})
+		
+syncParty({
+		"USERS",[{NAME,USER_ID,IMAGE},...]
+		"ADMINS",[{NAME,USER_ID,IMAGE},...]
+		"REQUESTS",[{NAME,USER_ID,IMAGE},...]			//if private - value = 0 
+		"SONGS",[{URL,TRACK_ID},...]
+		"PARTY_NAME","NAME"
+		"IS_PRIVATE",bool IS_PRIVATE})
 		
 IDs:
 partyID = Counter.
