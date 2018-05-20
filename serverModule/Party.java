@@ -6,7 +6,7 @@ import java.nio.channels.Selector;
 public class Party {
 	
 	public enum Party_Status {
-		notPlaying, preparing, isPlaying
+		notPlaying, preparing, playing
 	}
 	
 	String party_name;

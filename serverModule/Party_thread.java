@@ -81,7 +81,7 @@ public class Party_thread implements Runnable {
 			keyIterator.remove();
 		}
 		if (play_condition()) { /* we start playing the song */
-			party.is_playing = true;
+			party.status = Party.Party_Status.playing;
 			last_play_time = Instant.now();
 			sendPlayToList();
 		}
@@ -114,7 +114,7 @@ public class Party_thread implements Runnable {
 	}
 	
 	public boolean play_condition() {
-		return (0.5*party.connected.size() < ready_for_play.size()) && !party.is_playing;
+		return (0.5*party.connected.size() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
 	}
 
 	/* we should decide about the command format */
@@ -168,7 +168,7 @@ public class Party_thread implements Runnable {
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
 		if (!(in_play_protocol && cmd.cmd_info.getInt("TrackID") == party.get_current_track_id())) {
 			ready_for_play = new ArrayList<>();
-			party.is_playing = false;
+			party.status = Party.Party_Status.preparing;
 			in_play_protocol = true;
 			party.next_song();
 			total_offset = cmd.cmd_info.getLong("offset");
@@ -178,17 +178,22 @@ public class Party_thread implements Runnable {
 	}
 
 	public void GetReady(Command cmd, User user) throws IOException, JSONException {
-		if (party.is_playing) {
+		switch(party.status) {
+		case playing:
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
 			update_play_command();
 			SendCommandToUser(user, play_command);
-		} else {
+			break;
+		case preparing:
 			ready_for_play.add(user);
+			break;
+		default:
+			break;
 		}
 	}
 
 	public void pause_song() throws IOException, JSONException {
-		party.is_playing = false;
+		party.status = Party.Party_Status.notPlaying;
 		SendCommandToAll(pause_command);
 	}
 	
