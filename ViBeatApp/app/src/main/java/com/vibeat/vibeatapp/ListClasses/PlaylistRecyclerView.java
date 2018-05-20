@@ -22,6 +22,7 @@ import com.vibeat.vibeatapp.R;
 import java.util.Collections;
 
 import static com.vibeat.vibeatapp.R.color.colorAccent;
+import static com.vibeat.vibeatapp.R.color.colorAccentlight;
 
 public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> {
 
@@ -39,13 +40,20 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         return new playlistViewHolder(v);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
-    public void onBindViewHolder(playlistViewHolder holder, int position) {
+    public void onBindViewHolder(final playlistViewHolder holder, int position) {
         Track track = this.playlist.tracks.get(position);
         holder.title.setText(track.title);
         holder.artist.setText(track.artist);
         Bitmap bm = BitmapFactory.decodeFile(track.img_path);
         holder.img.setImageBitmap(bm);
+
+        if(this.playlist.cur_track == position)
+            holder.background.setBackgroundColor(R.color.colorLightStroke);
+        else
+            holder.background.setBackgroundColor(Color.TRANSPARENT);
+
     }
 
     @Override
@@ -54,9 +62,13 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {
-        Collections.swap(playlist.tracks, fromPosition, toPosition);
-        notifyItemMoved(fromPosition, toPosition);
-        return true;
+        if (toPosition != playlist.cur_track){
+            Collections.swap(playlist.tracks, fromPosition, toPosition);
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+        else
+            return false;
     }
 
     public void onItemDismiss(int position) {
@@ -64,24 +76,32 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         notifyItemRemoved(position);
     }
 
-    public class playlistViewHolder extends RecyclerView.ViewHolder {
+    public class playlistViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
 
         public TextView title, artist;
         public ImageView img;
+        public LinearLayout background;
 
         public playlistViewHolder(View v){
             super(v);
             this.img = (ImageView) v.findViewById(R.id.imageSong);
             this.title = (TextView) v.findViewById(R.id.title);
             this.artist = (TextView) v.findViewById(R.id.artist);
+            this.background = (LinearLayout) v.findViewById(R.id.background);
         }
 
         @SuppressLint("ResourceAsColor")
         public void onItemClear() {
-            itemView.setBackgroundColor(R.color.background);
+            itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
+
         @SuppressLint("ResourceAsColor")
-        public void onItemSelected() { itemView.setBackgroundColor(colorAccent); }
+        @Override
+        public boolean onLongClick(View v) {
+            this.background.setBackgroundColor(R.color.colorPrimary);
+            notifyDataSetChanged();
+            return true;
+        }
     }
 }

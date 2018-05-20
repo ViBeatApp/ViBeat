@@ -2,7 +2,6 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import com.vibeat.vibeatapp.Objects.Playlist;
 

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.MainActivity"
-    android:background="@color/background"
+    android:background="@drawable/rose_colored_lenses"
     android:weightSum="100">
 
 

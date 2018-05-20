@@ -15,7 +15,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_slideshow" />
+            android:src="@android:drawable/ic_input_add" />
 
         <LinearLayout
             android:layout_width="187dp"
@@ -30,10 +30,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Title"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/text"/>
+                android:textColor="@color/colorPrimaryDark"/>
 
         </LinearLayout>
 
@@ -44,7 +44,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="11dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/no" />
+        app:srcCompat="@drawable/ic_no" />
 
         <ImageView
             android:id="@+id/ok"
@@ -53,7 +53,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="11dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ok" />
+            app:srcCompat="@drawable/ic_ok" />
 
     </LinearLayout>
 

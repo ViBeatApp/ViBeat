@@ -72,11 +72,6 @@ public class PlaylistList implements ListAdapterable {
         title.setText(track.title);
         artist.setText(track.artist);
 
-        if (position == playlist.cur_track)
-            v.setBackgroundColor(R.color.colorAccent);
-        else
-            v.setBackgroundColor(Color.TRANSPARENT);
-
         return v;
     }
 

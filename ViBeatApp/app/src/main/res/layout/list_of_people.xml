@@ -14,8 +14,7 @@
             android:layout_marginLeft="10dp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_menu_slideshow" />
+            android:layout_gravity="center_vertical" />
 
         <LinearLayout
             android:layout_width="187dp"
@@ -30,10 +29,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Title"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/text"/>
+                android:textColor="@color/colorPrimaryDark"/>
 
             <TextView
                 android:id="@+id/admin"
@@ -41,10 +40,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="admin"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/colorPrimaryDark"/>
 
         </LinearLayout>
 

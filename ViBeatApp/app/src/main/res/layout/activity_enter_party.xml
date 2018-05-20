@@ -7,68 +7,35 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".Activities.EnterPartyActivity"
-    android:background="@color/background">
+    android:background="@drawable/rose_colored_lenses"
+    android:weightSum="100">
 
-    <LinearLayout
-        android:layout_marginTop="5dp"
+    <include layout="@layout/toolbar"></include>
+
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="right"
-        android:orientation="horizontal"
-        android:weightSum="100">
-
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="10"
-            android:background="@color/background"
-            app:srcCompat="@drawable/back" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="30"/>
-
-        <TextView
-            android:id="@+id/hello_user"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="50"
-            android:layout_gravity="right"
-            android:text="Hi, Izzy"
-            android:textColor="@color/text"
-            android:textSize="25sp"
-            android:layout_marginLeft="10dp"
-            app:fontFamily="@font/caveat_brush" />
-
-        <ImageView
-            android:id="@+id/this_user"
-            android:layout_width="0dp"
-            android:layout_weight="10"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:layout_marginRight="10dp"
-            app:srcCompat="@drawable/izzy" />
-
-    </LinearLayout>
+        android:layout_height="20dp" />
 
     <Button
         android:id="@+id/create"
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="20dp"
-        android:background="@color/colorAccent"
-        android:text="Create Your Party!"
+        android:background="@drawable/round_button"
+        android:text="   Create Your Party!   "
+        android:textColorHighlight="@color/colorPrimaryDark"
         android:textSize="24sp"
+        android:textColor="@color/colorAccent"
         android:visibility="visible"
         app:fontFamily="@font/caveat_brush"
         tools:layout_editor_absoluteX="150dp"
         tools:layout_editor_absoluteY="65dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
 
     <TextView
         android:id="@+id/textView3"
@@ -76,15 +43,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="   Join a Party"
+        android:text="   Parties around you   "
         android:textAllCaps="false"
-        android:textSize="24sp"
+        android:textSize="30sp"
         app:fontFamily="@font/caveat_brush"
-        android:textColor="@color/text"/>
+        android:textColor="@color/colorPrimaryDark"/>
 
     <ListView
         android:id="@+id/parties_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:divider="#00ff0000"
+        android:dividerHeight="1dp"/>
 
 </LinearLayout>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/stroke"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="30">
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundGravity="left"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_back" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="40">
+
+            <TextView
+                android:id="@+id/activity_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/dancing_script"
+                android:gravity="center"
+                android:text="ViBeat"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                tools:fontFamily="@font/dancing_script" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="30"
+            android:weightSum="100">
+
+            <ImageView
+                android:id="@+id/this_user"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="50"
+                android:gravity="right"
+                android:foregroundGravity="right"
+                app:srcCompat="@drawable/izzy" />
+
+            <TextView
+                android:id="@+id/hello_user"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="50"
+                android:gravity="center_vertical"
+                android:text="Hi, Izzy"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                app:fontFamily="@font/caveat_brush" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.Toolbar>

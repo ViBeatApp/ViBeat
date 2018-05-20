@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +23,7 @@ public class ConnectedList implements ListAdapterable {
         this.party = party;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View initRow(final Adapter adapter, Activity activity, View v, int position) {
         final int ind = position;
@@ -34,26 +36,27 @@ public class ConnectedList implements ListAdapterable {
         final View row_send = v;
         final Activity context = activity;
 
-        Bitmap bm;
+        //Bitmap bm;
+
+
         if (position < party.admin.size()) {
-            bm = BitmapFactory.decodeFile(party.admin.get(position).img_path);
+            //bm = BitmapFactory.decodeFile(party.admin.get(position).img_path);
             name.setText(party.admin.get(position).name);
-            admin.setTextColor(Color.parseColor("#ff9c40"));
+            admin.setTextColor(R.color.colorPrimary);
             crown.setImageResource(R.drawable.chess);
-        }
-        else {
-            bm = BitmapFactory.decodeFile(party.connected.get(position - party.admin.size()).img_path);
+        } else {
+            //bm = BitmapFactory.decodeFile(party.connected.get(position - party.admin.size()).img_path);
             name.setText(party.connected.get(position - party.admin.size()).name);
             admin.setTextColor(Color.TRANSPARENT);
             crown.setImageResource(R.drawable.chess_not);
         }
-        bm = pictureChange.getCroppedBitmap(bm);
-        img.setImageBitmap(bm);
+        //bm = pictureChange.getCroppedBitmap(bm);
+        //img.setImageBitmap(bm);
 
         crown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ind >= party.admin.size()) {
+                if (ind >= party.admin.size()) {
                     party.makeAdmin(party.connected.get(ind - party.admin.size()));
                     ((BaseAdapter) adapter).notifyDataSetChanged();
                 }

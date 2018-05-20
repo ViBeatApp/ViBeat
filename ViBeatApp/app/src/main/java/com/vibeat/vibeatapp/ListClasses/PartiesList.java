@@ -1,10 +1,13 @@
 package com.vibeat.vibeatapp.ListClasses;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Adapter;
@@ -19,6 +22,9 @@ import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
+
+import static com.vibeat.vibeatapp.R.color.colorAccentlight;
+import static com.vibeat.vibeatapp.R.color.colorPrimary;
 
 public class PartiesList implements ListAdapterable {
 
@@ -45,9 +51,13 @@ public class PartiesList implements ListAdapterable {
 
         Bitmap bm1 = BitmapFactory.decodeFile(path1);
         bm1 = pictureChange.getCroppedBitmap(bm1);
+        bm1 = addWhiteBorder(bm1, 10);
+        bm1 = pictureChange.getCroppedBitmap(bm1);
         img1.setImageBitmap(bm1);
 
         Bitmap bm2 = BitmapFactory.decodeFile(path2);
+        bm2 = pictureChange.getCroppedBitmap(bm2);
+        bm2 = addWhiteBorder(bm2, 10);
         bm2 = pictureChange.getCroppedBitmap(bm2);
         img2.setImageBitmap(bm2);
 
@@ -98,5 +108,14 @@ public class PartiesList implements ListAdapterable {
         app.media_manager.updatePlaylist(app.client_manager.party.playlist);
         Intent intent = new Intent(c, LoadingActivity.class);
         c.startActivity(intent);
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private Bitmap addWhiteBorder(Bitmap bmp, int borderSize) {
+        Bitmap bmpWithBorder = Bitmap.createBitmap(bmp.getWidth() + borderSize * 2, bmp.getHeight() + borderSize * 2, bmp.getConfig());
+        Canvas canvas = new Canvas(bmpWithBorder);
+        canvas.drawColor(R.color.colorLightStroke);
+        canvas.drawBitmap(bmp, borderSize, borderSize, null);
+        return bmpWithBorder;
     }
 }

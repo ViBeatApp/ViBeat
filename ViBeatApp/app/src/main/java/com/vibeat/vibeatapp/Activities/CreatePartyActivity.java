@@ -1,6 +1,7 @@
 package com.vibeat.vibeatapp.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -14,12 +15,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.vibeat.vibeatapp.ListClasses.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
+import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 public class CreatePartyActivity extends AppCompatActivity {
@@ -45,6 +48,25 @@ public class CreatePartyActivity extends AppCompatActivity {
         listOfSongs.setAdapter(new CostumeListAdapter(CreatePartyActivity.this,
                 new PlaylistList(search_res)));
 
+        User user = app.client_manager.user;
+        ImageView user_img = (ImageView) findViewById(R.id.this_user);
+        TextView user_name = (TextView) findViewById(R.id.hello_user);
+
+        try{
+            //URL newurl = new URL(user.img_path);
+            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
+            //bm = pictureChange.getCroppedBitmap(bm);
+            //user_img.setImageBitmap(bm);.
+            user_img.setImageURI(Uri.parse(user.img_path));
+        }
+        //catch (IOException e){
+
+        //}
+        catch (Exception e){}
+
+        user_name.setText("Hi, "+user.name);
+
         EditText partyName = (EditText) findViewById(R.id.editText);
         partyName.setText(party.party_name);
         partyName.clearFocus();
@@ -65,17 +87,17 @@ public class CreatePartyActivity extends AppCompatActivity {
 
         final ImageView isPrivate = (ImageView) findViewById(R.id.isPrivate);
         if (!app.client_manager.party.is_private)
-            isPrivate.setImageResource(R.drawable.public_img2);
+            isPrivate.setImageResource(R.drawable.ic_unlock);
 
         isPrivate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!app.client_manager.party.is_private) {
-                    isPrivate.setImageResource(R.drawable.private_img);
+                    isPrivate.setImageResource(R.drawable.ic_lock);
                     app.client_manager.party.is_private = true;
                 }
                 else {
-                    isPrivate.setImageResource(R.drawable.public_img2);
+                    isPrivate.setImageResource(R.drawable.ic_unlock);
                     app.client_manager.party.is_private = false;
                 }
             }

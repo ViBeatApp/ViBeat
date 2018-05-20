@@ -6,80 +6,82 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.PlaylistActivity"
-    android:background="@color/background"
+    android:background="@drawable/rose_colored_lenses"
     android:weightSum="100">
 
-    <ImageButton
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="left"
-        android:layout_weight="10"
-        android:background="@color/background"
-        app:srcCompat="@drawable/back" />
+    <include layout="@layout/toolbar"></include>
+
+
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="15"
         android:layout_gravity="center"
+        android:layout_weight="15"
+        android:background="#75a19ab1"
         android:orientation="horizontal"
-        android:weightSum="100">
+        android:weightSum="100"
+        tools:background="@color/colorAccentlight">
 
         <ImageButton
             android:id="@+id/add"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
+            android:layout_weight="20"
             android:background="#00000000"
-            app:srcCompat="@drawable/add" />
+            app:srcCompat="@drawable/ic_add" />
 
         <ImageButton
             android:id="@+id/mute"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
+            android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/mute" />
+            app:srcCompat="@drawable/ic_mute" />
 
 
         <ImageButton
             android:id="@+id/play_pause"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
+            android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/play" />
+            app:srcCompat="@drawable/ic_play" />
 
 
         <ImageButton
             android:id="@+id/next"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
+            android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/next" />
+            app:srcCompat="@drawable/ic_next" />
 
 
         <ImageButton
             android:id="@+id/connected"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="20"
             android:layout_gravity="center"
             android:layout_marginLeft="2dp"
+            android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/list" />
+            app:srcCompat="@drawable/ic_connected" />
 
     </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"/>
 
     <TextView
         android:id="@+id/title"
@@ -87,12 +89,12 @@
         android:layout_height="0dp"
         android:layout_weight="10"
         android:text="Now Vibing"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:fontFamily="@font/caveat_brush"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/text"/>
+        android:textColor="@color/colorPrimaryDark"/>
 
     <android.support.v7.widget.RecyclerView
         android:scrollbars="vertical"

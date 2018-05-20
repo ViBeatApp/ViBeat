@@ -1,6 +1,7 @@
 package com.vibeat.vibeatapp.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -19,6 +20,7 @@ import com.vibeat.vibeatapp.ListClasses.ConnectedList;
 import com.vibeat.vibeatapp.ListClasses.RequestList;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
+import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 public class ConnectedActivity extends AppCompatActivity {
@@ -42,6 +44,26 @@ public class ConnectedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_connected);
 
         app = (MyApplication) this.getApplication();
+
+        User user = app.client_manager.user;
+        ImageView user_img = (ImageView) findViewById(R.id.this_user);
+        TextView user_name = (TextView) findViewById(R.id.hello_user);
+
+        try{
+            //URL newurl = new URL(user.img_path);
+            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
+            //bm = pictureChange.getCroppedBitmap(bm);
+            //user_img.setImageBitmap(bm);.
+            user_img.setImageURI(Uri.parse(user.img_path));
+        }
+        //catch (IOException e){
+
+        //}
+        catch (Exception e){}
+
+        user_name.setText("Hi, "+user.name);
+
         final CostumeListAdapter connected_adapter = new CostumeListAdapter(ConnectedActivity.this,
                 new ConnectedList(app.client_manager.party));
         final CostumeListAdapter request_adapter = new CostumeListAdapter(ConnectedActivity.this,
@@ -64,6 +86,7 @@ public class ConnectedActivity extends AppCompatActivity {
 
         EditText partyName = (EditText) findViewById(R.id.editText);
         partyName.setText(party.party_name);
+        partyName.clearFocus();
 
         partyName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -81,13 +104,13 @@ public class ConnectedActivity extends AppCompatActivity {
 
         final ImageView isPrivate = (ImageView) findViewById(R.id.isPrivate);
         if (!app.client_manager.party.is_private)
-            isPrivate.setImageResource(R.drawable.public_img);
+            isPrivate.setImageResource(R.drawable.ic_unlock);
 
         isPrivate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!app.client_manager.party.is_private) {
-                    isPrivate.setImageResource(R.drawable.private_img);
+                    isPrivate.setImageResource(R.drawable.ic_lock);
                     app.client_manager.turnToPrivate();
                     req_title.setVisibility(View.VISIBLE);
                     request_list.setVisibility(View.VISIBLE);
@@ -96,7 +119,7 @@ public class ConnectedActivity extends AppCompatActivity {
                     request_adapter.notifyDataSetChanged();
                 }
                 else {
-                    isPrivate.setImageResource(R.drawable.public_img2);
+                    isPrivate.setImageResource(R.drawable.ic_unlock);
                     app.client_manager.turnToPublic();
                     req_title.setVisibility(View.GONE);
                     request_list.setVisibility(View.GONE);

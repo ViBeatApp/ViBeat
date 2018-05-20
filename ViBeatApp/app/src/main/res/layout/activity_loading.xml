@@ -7,7 +7,9 @@
     android:weightSum="100"
     android:orientation="vertical"
     tools:context=".Activities.LoadingActivity"
-    android:background="@color/background">
+    android:background="@drawable/rose_colored_lenses">
+
+    <include layout="@layout/toolbar"></include>
 
     <TextView
         android:id="@+id/textView"
@@ -18,7 +20,7 @@
         android:fontFamily="@font/caveat_brush"
         android:gravity="center"
         android:text="Connecting to party"
-        android:textColor="@color/text"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="32sp" />
 
     <LinearLayout
@@ -34,18 +36,5 @@
             android:src="@drawable/loading" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/nevermind"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="10"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="1dp"
-        android:text="  Nevermind...  "
-        android:fontFamily="@font/caveat_brush"
-        android:textColor="@color/colorPrimaryDark"
-        android:background="@color/stroke"/>
 
 </LinearLayout>

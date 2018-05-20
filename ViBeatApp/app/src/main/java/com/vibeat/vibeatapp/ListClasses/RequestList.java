@@ -55,8 +55,8 @@ public class RequestList implements ListAdapterable {
         });
 
 
-        ok.setImageResource(R.drawable.ok);
-        no.setImageResource(R.drawable.no);
+        ok.setImageResource(R.drawable.ic_ok);
+        no.setImageResource(R.drawable.ic_no);
 
         Bitmap bm = BitmapFactory.decodeFile(party.request.get(position).img_path);
         bm = pictureChange.getCroppedBitmap(bm);

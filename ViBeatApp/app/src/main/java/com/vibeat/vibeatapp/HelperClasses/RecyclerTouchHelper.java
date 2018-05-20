@@ -1,19 +1,30 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
+import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
+import com.vibeat.vibeatapp.R;
+
+import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
 
 public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
     private PlaylistRecyclerView adapter;
+    private Context context;
 
-    public RecyclerTouchHelper(PlaylistRecyclerView adapter) {
+    public RecyclerTouchHelper(PlaylistRecyclerView adapter, Context context) {
+
         this.adapter = adapter;
+        this.context = context;
     }
 
     @Override
@@ -36,7 +47,7 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         // Set movement flags based on the layout manager
         final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+        final int swipeFlags = ItemTouchHelper.START;
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 
@@ -49,12 +60,39 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
-/*
+
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View foregroundView = ((PlaylistRecyclerView.playlistViewHolder)viewHolder).foreground;
-        getDefaultUIUtil().onDraw(c,recyclerView,foregroundView,dX,dY,actionState,isCurrentlyActive);
-    }*/
+        View itemView = viewHolder.itemView;
+
+        if(actionState == ACTION_STATE_SWIPE){
+            int xMarkMargin = 30;
+            Drawable deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete);
+
+            int itemHeight = itemView.getBottom() - itemView.getTop();
+
+            //Setting Swipe Background
+            ColorDrawable background = new ColorDrawable();
+            ((ColorDrawable) background).setColor(Color.RED);
+            background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+            background.draw(c);
+
+            int intrinsicWidth = deleteIcon.getIntrinsicWidth();
+            int intrinsicHeight = deleteIcon.getIntrinsicWidth();
+
+            int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
+            int xMarkRight = itemView.getRight() - xMarkMargin;
+            int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+            int xMarkBottom = xMarkTop + intrinsicHeight;
+
+
+            //Setting Swipe Icon
+            deleteIcon.setBounds(xMarkLeft, xMarkTop + 16, xMarkRight, xMarkBottom);
+            deleteIcon.draw(c);
+
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        }
+    }
 
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {

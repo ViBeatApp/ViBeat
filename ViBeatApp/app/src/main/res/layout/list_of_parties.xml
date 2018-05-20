@@ -28,7 +28,7 @@
             android:text="TextView"
             android:gravity="center"
             android:fontFamily="@font/caveat_brush"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"/>
 
     </LinearLayout>
@@ -68,7 +68,7 @@
             android:text="TextView"
             android:gravity="center"
             android:fontFamily="@font/caveat_brush"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"/>
     </LinearLayout>
 
