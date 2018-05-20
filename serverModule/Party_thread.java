@@ -91,7 +91,7 @@ public class Party_thread implements Runnable {
 			register_for_selection(user);
 			if (party.is_private) { 
 				party.addRequest(user);				
-				updateMsg = jsonKey.REQUESTS.getCommandString();
+				updateMsg = jsonKey.REQUESTS.name();
 			} 
 			
 			/* the party is public, tell the user to get ready */
@@ -99,7 +99,7 @@ public class Party_thread implements Runnable {
 				party.addClient(user);
 				update_get_ready_command();
 				SendCommandToUser(user, get_ready_command);
-				updateMsg = jsonKey.USERS.getCommandString();
+				updateMsg = jsonKey.USERS.name();
 			}
 			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
@@ -187,19 +187,19 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void DeleteSong(Command cmd) throws JSONException {
-		party.deleteSong(cmd.cmd_info.getInt(jsonKey.TRACK_ID.getCommandString()));
-		addToJSONArray(jsonKey.DELETE_SONGS.getCommandString(),cmd.cmd_info);
+		party.deleteSong(cmd.cmd_info.getInt(jsonKey.TRACK_ID.name()));
+		addToJSONArray(jsonKey.DELETE_SONGS.name(),cmd.cmd_info);
 	}
 
 	public void SwapSongs(Command cmd) throws JSONException {
-		party.changeSongsOrder(cmd.cmd_info.getInt(jsonKey.TRACK_ID_1.getCommandString()),cmd.cmd_info.getInt(jsonKey.TRACK_ID_2.getCommandString()));
-		addToJSONArray(jsonKey.SWAP_SONGS.getCommandString(),cmd.cmd_info);
+		party.changeSongsOrder(cmd.cmd_info.getInt(jsonKey.TRACK_ID_1.name()),cmd.cmd_info.getInt(jsonKey.TRACK_ID_2.name()));
+		addToJSONArray(jsonKey.SWAP_SONGS.name(),cmd.cmd_info);
 	}
 
 	public void AddSong(Command cmd) throws JSONException {
-		Track newTrack = party.addSong(cmd.cmd_info.getString(jsonKey.URL.getCommandString()));
+		Track newTrack = party.addSong(cmd.cmd_info.getString(jsonKey.URL.name()));
 		JSONObject trackJSON = newTrack.get_JSON();
-		addToJSONArray(jsonKey.NEW_SONGS.getCommandString(),trackJSON);
+		addToJSONArray(jsonKey.NEW_SONGS.name(),trackJSON);
 	}
 
 	private void addToJSONArray(String classifier, JSONObject JsonObject) throws JSONException {
@@ -255,14 +255,14 @@ public class Party_thread implements Runnable {
 	
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {
-		get_ready_command.cmd_info.put(jsonKey.OFFSET.getCommandString(), total_offset);
-		get_ready_command.cmd_info.put(jsonKey.TRACK_ID.getCommandString(), party.get_current_track_id());
+		get_ready_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
+		get_ready_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
 	}
 
 	/* updates the play command */
 	public void update_play_command() throws JSONException {
-		play_command.cmd_info.put(jsonKey.OFFSET.getCommandString(), total_offset);
-		play_command.cmd_info.put(jsonKey.TRACK_ID.getCommandString(), party.get_current_track_id());
+		play_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
+		play_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
 
 	}
 }

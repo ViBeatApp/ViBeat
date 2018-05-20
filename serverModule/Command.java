@@ -17,14 +17,14 @@ public class Command {
 			return;
 		}
 		JSONObject json = byteToJson(message);
-		this.cmd_type = CommandType.valueOf(json.getString(jsonKey.COMMAND_TYPE.getCommandString()));
-		this.cmd_info = json.getJSONObject(jsonKey.COMMAND_INFO.getCommandString());
+		this.cmd_type = CommandType.valueOf(json.getString(jsonKey.COMMAND_TYPE.name()));
+		this.cmd_info = json.getJSONObject(jsonKey.COMMAND_INFO.name());
 	}
 	
 	public byte[] commandTobyte() throws JSONException {
 		JSONObject json = new JSONObject();
-		json.put(jsonKey.COMMAND_TYPE.getCommandString(), this.cmd_type);
-		json.put(jsonKey.COMMAND_INFO.getCommandString(), this.cmd_info);
+		json.put(jsonKey.COMMAND_TYPE.name(), this.cmd_type);
+		json.put(jsonKey.COMMAND_INFO.name(), this.cmd_info);
 		return json.toString().getBytes();
 	}
 	
