@@ -6,24 +6,49 @@ import java.util.List;
 import org.json.JSONException;
 
 public class test {
-
 	public static void main(String[] args) throws JSONException, IOException {
+		//check_enum();
 		SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 		System.out.println("create new party");
 		
-		Command auth = new Command(CommandType.Authentication);
+		Command auth = new Command(CommandType.AUTHENTICATION);
 		auth.cmd_info.put("NAME", "Ido");
-		auth.cmd_info.put("USER_ID", "0");
-		auth.cmd_info.put("IMAGE", (byte[]) null);
+		auth.cmd_info.put("USER_ID", 0);
+		auth.cmd_info.put("IMAGE", "abcd");
 		readWriteAux.writeSocket(socket, auth);
 		
-		Command create = new Command(CommandType.Create);
-		auth.cmd_info.put("NAME", "Ido's party");
-		auth.cmd_info.put("private", false);
+		Command create = new Command(CommandType.CREATE);
+		create.cmd_info.put("NAME", "Ido's party");
+		create.cmd_info.put("private", false);
 		readWriteAux.writeSocket(socket, create);
 		System.out.println(readWriteAux.readSocket(socket));
 	}
 	
+	public static void check_manage_songs(SocketChannel socket) throws Exception {
+		Command add_song = new Command(CommandType.ADD_SONG);
+		Command reply;
+		add_song.cmd_info.put("URL", "www.youtube1");
+		readWriteAux.writeSocket(socket, add_song);
+		reply = readWriteAux.readSocket(socket);
+		System.out.println(reply);
+		
+		add_song.cmd_info.put("URL", "www.youtube2");
+		readWriteAux.writeSocket(socket, add_song);
+		reply = readWriteAux.readSocket(socket);
+		System.out.println(reply);
+		
+		add_song.cmd_info.put("URL", "www.youtube3");
+		readWriteAux.writeSocket(socket, add_song);
+		reply = readWriteAux.readSocket(socket);
+		System.out.println(reply);
+	}
+	
+	private static void check_enum() {
+		CommandType cmd = CommandType.valueOf("PLAY_SONG");
+		System.out.println("cmd = " + cmd.name()); 
+		
+	}
+
 	public static void printInfo(Party party){
 		System.out.println("party name: " + party.party_name);
 		System.out.println("party id: " + party.party_id);
