@@ -9,5 +9,6 @@
     <color name="colorAccentlight">#bea19ab1</color>
     <color name="colorLightStroke">#bee6e1f3</color>
     <color name="red">#f9625b</color>
+    <color name="purple">#600140</color>
     <color name="white">#ffffff</color>
 </resources>

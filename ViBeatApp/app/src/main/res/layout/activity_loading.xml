@@ -20,7 +20,7 @@
         android:fontFamily="@font/caveat_brush"
         android:gravity="center"
         android:text="Connecting to party"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/purple"
         android:textSize="32sp" />
 
     <LinearLayout
@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/loading" />
+            android:src="@drawable/dance" />
 
     </LinearLayout>
 
