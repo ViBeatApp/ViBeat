@@ -54,7 +54,13 @@ public class Party_thread implements Runnable {
 	/* the main function   */
 	public void listen() throws IOException, Exception {
 		while (keep_on) {
-			party.selector.select();
+			System.out.println("wake up party thread");
+			int readyChannels = party.selector.select();
+			if(readyChannels == 0) {
+				System.out.println("lost wake up");
+				continue;
+			}
+			System.out.println("wake up party thread");
 			update_party = new Command(CommandType.updateParty);
 			handler_new_clients();
 			handle_current_clients();
@@ -154,7 +160,6 @@ public class Party_thread implements Runnable {
 
 	public void register_for_selection(User user) throws IOException {
 		SocketChannel channel = user.get_channel();
-		channel.configureBlocking(false); /* redundant? */
 		channel.register(party.selector, SelectionKey.OP_READ, user);
 	}
 
@@ -227,7 +232,7 @@ public class Party_thread implements Runnable {
 				//play_song = true;
 			//}
 		}
-		user.client.close();
+		user.channel.close();
 	}
 
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {

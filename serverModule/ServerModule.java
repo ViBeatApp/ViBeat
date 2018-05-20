@@ -96,7 +96,8 @@ public class ServerModule {
 			String name = cmd.cmd_info.getString(jsonKey.NAME.name());
 			int id = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
 			byte[] image = cmd.cmd_info.getString(jsonKey.IMAGE.name()).getBytes();
-			User newUser = new User(name,id,image);
+			
+			User newUser = new User(name,id,image, client);
 			authenticated_users.add(newUser);
 			key.attach(newUser);					///check this
 			break;
@@ -107,10 +108,12 @@ public class ServerModule {
 			
 		case Join:
 			join_party((User)key.attachment(),cmd.cmd_info);
+			key.cancel();
 			break;
 
 		case Create:
 			create_party((User)key.attachment(),cmd.cmd_info,selector);
+			key.cancel();
 			break;
 
 		case Disconnected:	
@@ -136,11 +139,12 @@ public class ServerModule {
 	}
 	/* creating a new party
 	 * making admin the client who created the party */
-	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException {
+	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException, IOException {
 		String name = info.getString(jsonKey.NAME.name());
 		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
+		
 		Party party = new Party(name,partyID++,party_creator,is_private);
-		new Thread(new Party_thread(party,selector)).start();
+		new Party_thread(party,selector).start();
 
 	}
 

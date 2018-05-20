@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 import java.nio.channels.Selector;
 
 public class Party {
@@ -15,7 +16,7 @@ public class Party {
 	Selector selector; //for wakeUp
 	boolean is_private;
 
-	public Party(String party_name, int party_id, User admin, boolean is_private) {
+	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException {
 		super();
 		this.party_name = party_name;
 		this.party_id = party_id;
@@ -25,7 +26,7 @@ public class Party {
 		connected = new ArrayList<>();
 		request = new ArrayList<>();
 		this.is_private = is_private;
-		
+		this.selector = Selector.open();
 		this.admins.add(admin);
 		this.connected.add(admin);
 	}

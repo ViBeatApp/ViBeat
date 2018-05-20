@@ -16,13 +16,14 @@ public class User {
 	boolean is_admin;
 	Party_Status party_status; /* waiting for approval or in party */
 	Song_preparation is_prepared;
-	SocketChannel client;
+	SocketChannel channel;
 	
-	public User(String name, int id, byte[] image) {
+	public User(String name, int id, byte[] image,SocketChannel channel) {
 		super();
 		this.name = name;
 		this.image = image;
 		this.id = id;
+		this.channel = channel;
 	}
 	
 	
@@ -31,7 +32,7 @@ public class User {
 	}
 	
 	public SocketChannel get_channel() {
-		return client;
+		return channel;
 	}
 	
 	public JSONObject get_JSON() throws JSONException {
