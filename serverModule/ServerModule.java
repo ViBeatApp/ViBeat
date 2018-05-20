@@ -92,7 +92,7 @@ public class ServerModule {
 		System.out.println("command " + cmd.cmd_type + ", info" + cmd.cmd_info);
 		switch(cmd.cmd_type){
 		
-		case Authentication:
+		case AUTHENTICATION:
 			String name = cmd.cmd_info.getString(jsonKey.NAME.name());
 			int id = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
 			byte[] image = cmd.cmd_info.getString(jsonKey.IMAGE.name()).getBytes();
@@ -102,21 +102,21 @@ public class ServerModule {
 			key.attach(newUser);					///check this
 			break;
 
-		case Nearby_Parties:
+		case NEARBY_PARTIES:
 			sent_nearby_parties((User)key.attachment(),cmd.cmd_info);
 			break;
 			
-		case Join:
+		case JOIN:
 			join_party((User)key.attachment(),cmd.cmd_info);
 			key.cancel();
 			break;
 
-		case Create:
+		case CREATE:
 			create_party((User)key.attachment(),cmd.cmd_info,selector);
 			key.cancel();
 			break;
 
-		case Disconnected:	
+		case DISCONNECTED:	
 			removeIfAuthenticated(key);
 			client.close();
 			break;

@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Party_thread implements Runnable {
+public class Party_thread extends Thread {
 
 	public Party party;
 	public Selector server_selector;
@@ -37,9 +37,9 @@ public class Party_thread implements Runnable {
 	public Party_thread(Party party, Selector server_selector) throws JSONException {
 		this.party = party;
 		this.server_selector = server_selector;
-		pause_command = new Command(CommandType.Pause);
-		play_command = new Command(CommandType.PlaySong);
-		get_ready_command = new Command(CommandType.GetReady);
+		pause_command = new Command(CommandType.PAUSE);
+		play_command = new Command(CommandType.PLAY_SONG);
+		get_ready_command = new Command(CommandType.GET_READY);
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class Party_thread implements Runnable {
 				continue;
 			}
 			System.out.println("wake up party thread");
-			update_party = new Command(CommandType.updateParty);
+			update_party = new Command(CommandType.UPDATE_PARTY);
 			handler_new_clients();
 			handle_current_clients();
 		}
@@ -120,31 +120,31 @@ public class Party_thread implements Runnable {
 
 	public void do_command(Command cmd, User user) throws Exception {
 		switch (cmd.cmd_type) {
-		case PlaySong:
+		case PLAY_SONG:
 			startPlayProtocol(cmd);
 			break;
-		case Pause:
+		case PAUSE:
 			pause_song();
 			break;
-		case GetReady:
+		case GET_READY:
 			GetReady(cmd, user);
 			break;
 
 			//add to lists.
-		case SwapSongs:
+		case SWAP_SONGS:
 			SwapSongs(cmd);
 			break;
-		case DeleteSong:
+		case DELETE_SONG:
 			DeleteSong(cmd);
 			break;
 
-		case AddSong:
+		case ADD_SONG:
 			AddSong(cmd);
 			break;
-		case Disconnected:	
+		case DISCONNECTED:	
 			disconnect_user(user);
 			break;
-		case Location:	
+		case LOCATION:	
 			disconnect_user(user);
 			break;
 		default:

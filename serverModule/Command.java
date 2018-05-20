@@ -13,7 +13,7 @@ public class Command {
 
 	public Command(byte[] message) throws JSONException {
 		if(message == null){
-			this.cmd_type = CommandType.Disconnected;
+			this.cmd_type = CommandType.DISCONNECTED;
 			return;
 		}
 		JSONObject json = byteToJson(message);
