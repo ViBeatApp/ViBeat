@@ -7,13 +7,18 @@ import org.json.JSONException;
 
 
 public class readWriteAux {
+	SocketChannel socket;
 	
-	public static SocketChannel getSocketChannel() throws IOException {
-		return SocketChannel.open(new InetSocketAddress("localhost", 9999));
+	public readWriteAux() throws IOException {
+		socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 	}
 	
-	public static Command listen(SocketChannel socket) throws IOException, JSONException {
+	public Command recieve() throws IOException, JSONException {
 		return readSocket(socket);
+	}
+	
+	public void send(Command cmd) throws IOException, JSONException {
+		writeSocket(socket,cmd);
 	}
 	
 	public static Command readSocket(SocketChannel channel) throws IOException, JSONException{
