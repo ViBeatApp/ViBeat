@@ -26,7 +26,7 @@ public class ServerModule {
 		serverSocketChannel.socket().bind(new InetSocketAddress(9999));
 
 		serverSocketChannel.configureBlocking(false);
-		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT | SelectionKey.OP_READ);
+		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
 		while(true){
 
@@ -86,15 +86,14 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
-		byte[] messageArray = readWriteAux.readSocket(client);
-		Command cmd = new Command(messageArray);
+		Command cmd = readWriteAux.readSocket(client);
 		
 		switch(cmd.cmd_type){
 		
 		case Authentication:
-			String name = cmd.cmd_info.getString("Name");
-			int id = cmd.cmd_info.getInt("Id");
-			byte[] image = (byte[]) cmd.cmd_info.get("Image");
+			String name = cmd.cmd_info.getString(jsonKey.NAME.getCommandString());
+			int id = cmd.cmd_info.getInt(jsonKey.USER_ID.getCommandString());
+			byte[] image = (byte[]) cmd.cmd_info.get(jsonKey.IMAGE.getCommandString());
 			User newUser = new User(name,id,image);
 			authenticated_users.add(newUser);
 			key.attach(newUser);					///check this
@@ -136,15 +135,15 @@ public class ServerModule {
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException {
-		String name = info.getString("Name");
-		boolean is_private = info.getBoolean("private");
+		String name = info.getString(jsonKey.NAME.getCommandString());
+		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.getCommandString());
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		new Thread(new Party_thread(party,selector)).start();
 
 	}
 
 	private static void join_party(User client, JSONObject cmd_info) throws JSONException {
-		Party party = FindPartyByID(cmd_info.getInt("Id"));
+		Party party = FindPartyByID(cmd_info.getInt(jsonKey.PARTY_ID.getCommandString()));
 		party.addNewClient(client);
 		party.selector.wakeup();	
 	}

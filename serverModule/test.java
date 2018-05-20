@@ -12,16 +12,16 @@ public class test {
 		System.out.println("create new party");
 		
 		Command auth = new Command(CommandType.Authentication);
-		auth.cmd_info.put("Name", "Ido");
-		auth.cmd_info.put("Id", "0");
-		auth.cmd_info.put("Image", (byte[]) null);
+		auth.cmd_info.put("NAME", "Ido");
+		auth.cmd_info.put("USER_ID", "0");
+		auth.cmd_info.put("IMAGE", (byte[]) null);
 		readWriteAux.writeSocket(socket, auth);
 		
 		Command create = new Command(CommandType.Create);
-		auth.cmd_info.put("Name", "Ido's party");
+		auth.cmd_info.put("NAME", "Ido's party");
 		auth.cmd_info.put("private", false);
 		readWriteAux.writeSocket(socket, create);
-		
+		System.out.println(readWriteAux.readSocket(socket));
 	}
 	
 	public static void printInfo(Party party){

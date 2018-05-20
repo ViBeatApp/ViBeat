@@ -68,8 +68,7 @@ public class Party_thread implements Runnable {
 			SelectionKey key = keyIterator.next();
 			if (key.isReadable()) {
 				SocketChannel channel  = (SocketChannel) key.channel();
-				byte[] received_data = readWriteAux.readSocket(channel);
-				Command cmd = new Command(received_data);
+				Command cmd = readWriteAux.readSocket(channel);
 				do_command(cmd, (User) key.attachment());
 			}
 			keyIterator.remove();
@@ -99,7 +98,7 @@ public class Party_thread implements Runnable {
 			else { 
 				party.addClient(user);
 				update_get_ready_command();
-				SendCommandToUser(user, get_ready_command.cmd_info);
+				SendCommandToUser(user, get_ready_command);
 				updateMsg = jsonKey.USERS.getCommandString();
 			}
 			addToJSONArray(updateMsg,user.get_JSON());
@@ -159,7 +158,7 @@ public class Party_thread implements Runnable {
 		channel.register(party.selector, SelectionKey.OP_READ, user);
 	}
 
-	/* we wait for half of the party participants to be ready before we actually start playin */
+	/* we wait for half of the party participants to be ready before we actually start playing */
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
 		if (!(in_play_protocol && cmd.cmd_info.getInt("TrackID") == party.get_current_track_id())) {
 			ready_for_play = new ArrayList<>();
@@ -176,7 +175,7 @@ public class Party_thread implements Runnable {
 		if (party.is_playing) {
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
 			update_play_command();
-			SendCommandToUser(user, play_command.cmd_info);
+			SendCommandToUser(user, play_command);
 		} else {
 			ready_for_play.add(user);
 		}
@@ -188,17 +187,17 @@ public class Party_thread implements Runnable {
 	}
 	
 	public void DeleteSong(Command cmd) throws JSONException {
-		party.deleteSong(cmd.cmd_info.getInt("TrackID"));
+		party.deleteSong(cmd.cmd_info.getInt(jsonKey.TRACK_ID.getCommandString()));
 		addToJSONArray(jsonKey.DELETE_SONGS.getCommandString(),cmd.cmd_info);
 	}
 
 	public void SwapSongs(Command cmd) throws JSONException {
-		party.changeSongsOrder(cmd.cmd_info.getInt("TrackID_1"),cmd.cmd_info.getInt("TrackID_2"));
+		party.changeSongsOrder(cmd.cmd_info.getInt(jsonKey.TRACK_ID_1.getCommandString()),cmd.cmd_info.getInt(jsonKey.TRACK_ID_2.getCommandString()));
 		addToJSONArray(jsonKey.SWAP_SONGS.getCommandString(),cmd.cmd_info);
 	}
 
 	public void AddSong(Command cmd) throws JSONException {
-		Track newTrack = party.addSong(cmd.cmd_info.getString("url"));
+		Track newTrack = party.addSong(cmd.cmd_info.getString(jsonKey.URL.getCommandString()));
 		JSONObject trackJSON = newTrack.get_JSON();
 		addToJSONArray(jsonKey.NEW_SONGS.getCommandString(),trackJSON);
 	}
@@ -231,24 +230,22 @@ public class Party_thread implements Runnable {
 		user.client.close();
 	}
 
-	public void SendCommandToAll(Command cmd) throws IOException {
+	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
 		SendCommandToList(cmd, party.connected, false);
 	}
-
-	public void SendCommandToList(Command cmd, List<User> receivers,
-			boolean remove_from_list) throws IOException {
+	//TODO
+	public void SendCommandToList(Command cmd, List<User> receivers, boolean remove_from_list) throws IOException, JSONException {
 		Iterator<User> iter = receivers.iterator();
 		while (iter.hasNext()){
-			SendCommandToUser(iter.next(), cmd.cmd_info); /* for now */
+			SendCommandToUser(iter.next(), cmd); /* for now */
 			if (remove_from_list) {
 				iter.remove();
 			}
 		}
 	}
 
-	public void SendCommandToUser(User user, JSONObject obj) throws IOException {
-		byte[] Data = obj.toString().getBytes();
-		readWriteAux.writeSocket(user.get_channel(), Data);
+	public void SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
+		readWriteAux.writeSocket(user.get_channel(), cmd);
 	}
 	
 	private void sendPlayToList() throws IOException, JSONException {
@@ -258,14 +255,14 @@ public class Party_thread implements Runnable {
 	
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {
-		get_ready_command.cmd_info.put("offset", total_offset);
-		get_ready_command.cmd_info.put("TrackID", party.get_current_track_id());
+		get_ready_command.cmd_info.put(jsonKey.OFFSET.getCommandString(), total_offset);
+		get_ready_command.cmd_info.put(jsonKey.TRACK_ID.getCommandString(), party.get_current_track_id());
 	}
 
 	/* updates the play command */
 	public void update_play_command() throws JSONException {
-		play_command.cmd_info.put("offset", total_offset);
-		play_command.cmd_info.put("TrackID", party.get_current_track_id());
+		play_command.cmd_info.put(jsonKey.OFFSET.getCommandString(), total_offset);
+		play_command.cmd_info.put(jsonKey.TRACK_ID.getCommandString(), party.get_current_track_id());
 
 	}
 }
