@@ -112,10 +112,10 @@ public class Party_thread implements Runnable {
 	}
 	
 	/* send to the user the entire party info */
-	public void add_client(User user) {
+	public void add_client(User user) throws JSONException, IOException {
 		party.addClient(user);
 		JSONObject party_info = party.getFullJson();
-		Command sync_command = Command(SYNC_PARTY, party_info);
+		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
 		SendCommandToUser(user, sync_command);
 		
 		update_get_ready_command();
@@ -140,8 +140,11 @@ public class Party_thread implements Runnable {
 			GetReady(cmd, user);
 			break;
 		case CONFIRM_REQUEST:
-			User confirmed_user = find_user(cmd.getIntAttribute("USER_ID"));
+			User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID.name()));
 			add_client(confirmed_user);
+			party.request.remove(confirmed_user);				//TODO
+			adding_and_removing_from_updateParty_json();
+			break;
 			//add to lists.
 		case SWAP_SONGS:
 			SwapSongs(cmd);
@@ -161,6 +164,11 @@ public class Party_thread implements Runnable {
 		default:
 			break;
 		}
+	}
+	
+	private void adding_and_removing_from_updateParty_json() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private User find_user(int USER_ID) {
