@@ -46,8 +46,11 @@ public class Party {
 	public void addClient(User user){
 		connected.add(user);
 	}
+	
 	//handle locks.
-	public void addNewClient(User user) {}
+	public void addNewClient(User user) {
+		new_clients.add(user);
+	}
 	
 	public void addRequest(User user){
 		request.add(user);

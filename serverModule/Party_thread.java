@@ -13,7 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Party_thread extends Thread {
+public class Party_thread implements Runnable {
 
 	public Party party;
 	public Selector server_selector;
@@ -45,6 +45,7 @@ public class Party_thread extends Thread {
 	@Override
 	public void run() {
 		try {
+			System.out.println("reached");
 			register_for_selection(party.admins.get(0));
 			listen();
 		} catch (Exception e) {

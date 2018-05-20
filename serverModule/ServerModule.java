@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -17,8 +18,9 @@ import org.json.JSONObject;
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
 	static List<User>  authenticated_users = new ArrayList<>();
-	static List<User>  Comeback_users = new ArrayList<>();
+	static List<User>  comeback_users = new ArrayList<>();
 	static int partyID = 0;
+	static Selector selector;
 
 	public static void main(String[] args) throws IOException, JSONException{
 
@@ -48,10 +50,10 @@ public class ServerModule {
 				// a connection was accepted by a ServerSocketChannel.
 				if(key.isAcceptable()) {
 
-					SocketChannel client = serverSocketChannel.accept();
-					client.configureBlocking(false);
-					client.register(selector, SelectionKey.OP_READ);
-					System.out.println("Accepted new connection from client: " + client);
+					SocketChannel socket = serverSocketChannel.accept();
+					socket.configureBlocking(false);
+					socket.register(selector, SelectionKey.OP_READ);
+					System.out.println("Accepted new connection from client: " + socket);
 
 				} 
 				// a channel is ready for reading
@@ -63,26 +65,14 @@ public class ServerModule {
 		}
 	}
 
-	private static void handle_comeback_users() {
-//		Iterator<User> iter = newClients.iterator();
-//		while (iter.hasNext()){
-//			User user = iter.next();
-//			register_for_selection(user);
-//			if (party.is_private) { 
-//				party.addRequest(user);				
-//				updateMsg = jsonKey.REQUESTS.getCommandString();
-//			} 
-//			
-//			/* the party is public, tell the user to get ready */
-//			else { 
-//				party.addClient(user);
-//				update_get_ready_command();
-//				SendCommandToUser(user, get_ready_command.cmd_info);
-//				updateMsg = jsonKey.USERS.getCommandString();
-//			}
-//			addToJSONArray(updateMsg,user.get_JSON());
-//			iter.remove();
-//		}
+	private static void handle_comeback_users() throws ClosedChannelException {
+		Iterator<User> iter = comeback_users.iterator();
+		while (iter.hasNext()){
+			User user = iter.next();
+			user.channel.register(selector, SelectionKey.OP_READ);
+			authenticated_users.add(user);
+			iter.remove();
+		}
 		
 	}
 
@@ -107,13 +97,13 @@ public class ServerModule {
 			break;
 			
 		case JOIN:
-			join_party((User)key.attachment(),cmd.cmd_info);
 			key.cancel();
+			join_party((User)key.attachment(),cmd.cmd_info);		
 			break;
 
 		case CREATE:
-			create_party((User)key.attachment(),cmd.cmd_info,selector);
 			key.cancel();
+			create_party((User)key.attachment(),cmd.cmd_info,selector);
 			break;
 
 		case DISCONNECTED:	
@@ -137,6 +127,7 @@ public class ServerModule {
 	public static void sent_nearby_parties(User client,JSONObject info) {
 
 	}
+	
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException, IOException {
@@ -144,7 +135,7 @@ public class ServerModule {
 		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
 		
 		Party party = new Party(name,partyID++,party_creator,is_private);
-		new Party_thread(party,selector).start();
+		(new Thread(new Party_thread(party,selector))).start();
 
 	}
 
@@ -166,7 +157,7 @@ public class ServerModule {
 	//mini thread and locks.
 	//TODO
 	private static void addComebackUser(User user) {
-		
+		comeback_users.add(user);
 	}
 
 }
