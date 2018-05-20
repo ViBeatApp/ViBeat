@@ -12,10 +12,8 @@ public class Playlist {
 		songCounter = 0;
 	}
 	//TODO
-	public Track addSong(String name){
-		if(!songIsExist(name))
-			return null;
-		Track track = new Track(name);
+	public Track addSong(String url){
+		Track track = new Track(url,nextTrackID++);
 		songs.add(track);
 		return track;
 	}
@@ -30,8 +28,4 @@ public class Playlist {
 		return 0;
 	}
 	
-	private boolean songIsExist(String name) {
-		// TODO Auto-generated method stub
-		return true;
-	}
 }

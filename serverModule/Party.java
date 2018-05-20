@@ -80,8 +80,8 @@ public class Party {
 		return 0;
 	}
 
-	public Track addSong(String name){ 		
-		return playlist.addSong(name);
+	public Track addSong(String url){ 		
+		return playlist.addSong(url);
 	}
 	
 	public int deleteSong(int trackID){

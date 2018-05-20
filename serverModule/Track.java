@@ -2,20 +2,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Track {
-	String name;
-	String image_url;
-	String Url;
-	double duration;
+	String url;
 	int trackId;					//unique to track, not to name !
 	
-	public Track(String name) {
+	public Track(String url,int trackID) {
 		super();
-		this.name = name;
+		this.trackId = trackID;
+		this.url = url;
 	}
 	
 	public JSONObject get_JSON() throws JSONException {
 		JSONObject trackJson = new JSONObject();
-		trackJson.put("url", this.Url);
+		trackJson.put("url", this.url);
 		trackJson.put("trackId", this.trackId);
 		return trackJson;
 	}
