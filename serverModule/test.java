@@ -1,37 +1,26 @@
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
 import java.util.List;
+
+import org.json.JSONException;
 
 public class test {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JSONException, IOException {
+		SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
+		System.out.println("create new party");
 		
-//		System.out.println("create new party");
-//		User ido = new User("ido");
-//		Party party = new Party("ido's party", 3, ido, true);
-//		System.out.println(party.addSong("ido's song") == 0 ? "adding success\n" : "adding failed\n");
-//		printInfo(party);
-//		
-//		System.out.println("adding tomer to clients");
-//		User tomer = new User("tomer");
-//		party.addClient(tomer);
-//		party.addSong("tomer's song");
-//		printInfo(party);
-//		
-//		System.out.println("adding tomer to admins");
-//		party.addAdmin(tomer);
-//		printInfo(party);
-//		
-//		System.out.println("adding idan to requests");
-//		User idan = new User("idan");
-//		party.addRequest(idan);
-//		printInfo(party);
-//		
-//		System.out.println("replace the songs");
-//		party.changeSongsOrder(0,1);
-//		printInfo(party);
-//		
-//		System.out.println("remove tomer's song");
-//		party.removeSong(0);
-//		printInfo(party);
+		Command auth = new Command(CommandType.Authentication);
+		auth.cmd_info.put("Name", "Ido");
+		auth.cmd_info.put("Id", "0");
+		auth.cmd_info.put("Image", (byte[]) null);
+		readWriteAux.writeSocket(socket, auth);
+		
+		Command create = new Command(CommandType.Create);
+		auth.cmd_info.put("Name", "Ido's party");
+		auth.cmd_info.put("private", false);
+		readWriteAux.writeSocket(socket, create);
 		
 	}
 	
