@@ -40,6 +40,8 @@ public class Party_thread implements Runnable {
 		pause_command = new Command(CommandType.PAUSE);
 		play_command = new Command(CommandType.PLAY_SONG);
 		get_ready_command = new Command(CommandType.GET_READY);
+		keep_on = true;
+		ready_for_play = new ArrayList<>();
 	}
 	
 	@Override
@@ -91,7 +93,6 @@ public class Party_thread implements Runnable {
 	public void handler_new_clients() throws Exception {
 		get_newClients();
 		String updateMsg;
-		
 		Iterator<User> iter = newClients.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
@@ -100,7 +101,6 @@ public class Party_thread implements Runnable {
 				party.addRequest(user);				
 				updateMsg = jsonKey.REQUESTS.name();
 			} 
-			
 			/* the party is public, tell the user to get ready */
 			else { 
 				party.addClient(user);
@@ -111,6 +111,11 @@ public class Party_thread implements Runnable {
 			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
 		}
+	}
+	
+	/* send to the user the entire party info */
+	public void sync_party(User user) {
+		
 	}
 	
 	public boolean play_condition() {
@@ -130,7 +135,8 @@ public class Party_thread implements Runnable {
 		case GET_READY:
 			GetReady(cmd, user);
 			break;
-
+		case CONFIRM_REQUEST:
+			User user = find_user()
 			//add to lists.
 		case SWAP_SONGS:
 			SwapSongs(cmd);
@@ -274,6 +280,5 @@ public class Party_thread implements Runnable {
 	public void update_play_command() throws JSONException {
 		play_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
 		play_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
-
 	}
 }

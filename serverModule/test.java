@@ -33,19 +33,20 @@ public class test {
 		System.out.println("send URL1");
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("got reply");
-		System.out.println(reply);
+		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		
 		add_song.cmd_info.put("URL", "www.youtube2");
 		readWriteAux.writeSocket(socket, add_song);
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("got reply");
-		System.out.println(reply);
+		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		
 		add_song.cmd_info.put("URL", "www.youtube3");
+		System.out.println(add_song.cmd_info);
 		readWriteAux.writeSocket(socket, add_song);
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("got reply");
-		System.out.println(reply);
+		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 	}
 
 	public static void printInfo(Party party){
@@ -70,7 +71,7 @@ public class test {
 	
 	private static void printPlayList(Playlist playlist) {
 		for(int i = 0; i < playlist.songs.size(); ++i){
-			System.out.println("	" + playlist.songs.get(i).name);	
+			System.out.println("	" + playlist.songs.get(i).url);	
 		}
 	}
 
