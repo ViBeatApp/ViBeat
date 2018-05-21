@@ -323,7 +323,7 @@ public class Party_thread implements Runnable {
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
 		SendCommandToList(cmd, party.connected, false);
 	}
-	//TODO
+
 	public void SendCommandToList(Command cmd, List<User> recievers, boolean remove_from_list) throws IOException, JSONException {
 		List<User> disconnectedUsers = new ArrayList<>();
 		Iterator<User> iter = recievers.iterator();
@@ -354,9 +354,9 @@ public class Party_thread implements Runnable {
 	}
 
 	private void syncPartyToAll() throws JSONException, IOException {
-		// TODO Auto-generated method stub
-		if(party.numOfClients() == 0)
+		if(party.numOfClients() == 0) {
 			return;
+		}
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
 		SendCommandToAll(sync_command);
