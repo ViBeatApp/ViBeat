@@ -57,7 +57,6 @@ public class Party_thread implements Runnable {
 			int readyChannels = party.selector.select();
 			if(readyChannels == 0) {
 				System.out.println("lost wake up");
-				continue;
 			}
 			update_party = new Command(CommandType.UPDATE_PARTY);
 			handler_new_clients();
@@ -124,8 +123,6 @@ public class Party_thread implements Runnable {
 		return (0.5*party.connected.size() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
 	}
 
-	/* we should decide about the command format */
-
 	public void do_command(Command cmd, User user) throws Exception {
 		switch (cmd.cmd_type) {
 		case PLAY_SONG:
@@ -161,9 +158,20 @@ public class Party_thread implements Runnable {
 		case DISCONNECTED:	
 			disconnect_user(user);
 			break;
+		case LEAVE_PARTY:	
+			LeaveParty(user);
+			break;
+		case CLOSE_PARTY:	
+			disconnect_user(user);
+			break;
 		default:
 			break;
 		}
+	}
+
+	private void LeaveParty(User user) {
+		
+		
 	}
 
 	private void makeAdmin(Command cmd) throws JSONException {

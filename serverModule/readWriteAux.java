@@ -23,7 +23,7 @@ public class readWriteAux {
 	
 	public static Command readSocket(SocketChannel channel) throws IOException, JSONException{
 		int size = readSize(channel);
-		if (size == -1) return null;
+		if (size == -1) return new Command(CommandType.DISCONNECTED);
 		return readCommand(channel,size);
 	}
 	
