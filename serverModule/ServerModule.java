@@ -88,7 +88,7 @@ public class ServerModule {
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
-				int partyID = cmd.cmd_info.getInt(jsonKey.PARTY_ID.name());
+				int partyID = disconnectedUser.currentPartyId;
 				Party party = FindPartyByID(partyID);
 				if (party != null) {
 					key.cancel();

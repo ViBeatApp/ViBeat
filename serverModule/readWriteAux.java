@@ -61,7 +61,7 @@ public class readWriteAux {
 		return new Command(buf.array());
 	}
 	
-	public static void writeSocket(SocketChannel channel,Command cmd) throws IOException, JSONException{
+	public static int writeSocket(SocketChannel channel,Command cmd) throws JSONException{
 		byte[] byteArray = cmd.commandTobyte();
 		int size = byteArray.length;
 		ByteBuffer commandBuf = ByteBuffer.wrap(byteArray);
@@ -69,8 +69,14 @@ public class readWriteAux {
 		message.flip();
 		int writeRead = 0;
 		while(message.hasRemaining()) {
-			writeRead += channel.write(message);
+			try {
+				writeRead += channel.write(message);
+			} 
+			catch (IOException e) {
+				return -1;
+			}
 		}
 		System.out.println("writing " + writeRead + " bytes to client.");
+		return writeRead;
 	}
 }

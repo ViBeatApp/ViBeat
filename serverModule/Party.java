@@ -58,10 +58,7 @@ public class Party {
 		if(user.is_admin) {
 			user.is_admin = false;
 			--numOfAdmins;
-		}
-		if(numOfAdmins == 0) {
-			makeAdmin(connected.get(0));
-		}
+		}	
 	}
 	
 	public void addClient(User user){
@@ -73,8 +70,13 @@ public class Party {
 	public boolean removeClient(User user,boolean disconnected){
 		if(!disconnected)
 			user.currentPartyId = -1;
+		
 		disableAdmin(user);
-		return connected.remove(user);
+		boolean response =  connected.remove(user);
+		
+		if(numOfAdmins == 0 && numOfClients() != 0) 
+			makeAdmin(connected.get(0));
+		return response;
 	}
 
 	public void addRequest(User user){

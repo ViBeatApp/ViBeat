@@ -27,7 +27,7 @@ Messages from server to client:
 SEARCH_RESULT(result : [{name,id,image}...])		// could be empty array.
 REJECTED - json info is empty {} !!
 
-GET_READY(TRACK_ID,OFFSET)
+GET_READY(TRACK_ID,OFFSET)				//if offset == -1, there is not songs in list.
 PLAY_SONG(TRACK_ID,OFFSET)
 PAUSE()
 	
