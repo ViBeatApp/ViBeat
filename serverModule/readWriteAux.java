@@ -27,16 +27,21 @@ public class readWriteAux {
 		return readCommand(channel,size);
 	}
 	
-	public static int readSize(SocketChannel channel) throws IOException {
+	public static int readSize(SocketChannel channel) {
 		int bytesRead = 0;
 		ByteBuffer buf = ByteBuffer.allocate(4);		
 		while (buf.hasRemaining()) { 
-			bytesRead += channel.read(buf);
-			System.out.println(bytesRead);
-			if(bytesRead == -1)
+			try {
+				bytesRead += channel.read(buf);
+			} 
+			catch (IOException e) {
+				// TODO Auto-generated catch block
 				return -1;
+			}
 		}
-		if(bytesRead < 4) return -1;
+		if(bytesRead < 4) {
+			System.out.println("error readSize");
+		}
 		buf.rewind();
 		return buf.getInt();
 	}

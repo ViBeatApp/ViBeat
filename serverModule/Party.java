@@ -37,7 +37,6 @@ public class Party {
 		this.selector = Selector.open();
 		addClient(admin);
 		makeAdmin(admin);
-		this.connected.add(admin);
 	}
 
 	public byte[] getPartyImage(){
