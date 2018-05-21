@@ -226,7 +226,7 @@ public class Party_thread implements Runnable {
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
 		party.next_song();
-		total_offset = cmd.cmd_info.getLong("offset");
+		total_offset = cmd.getIntAttribute(jsonKey.OFFSET.name());
 		update_get_ready_command();
 		SendCommandToAll(get_ready_command);
 	}
@@ -285,7 +285,7 @@ public class Party_thread implements Runnable {
 	//TODO
 	public void disconnect_user(User user) throws JSONException, Exception {
 		//user.channel.close();			//check
-		addDisconenctedUser(user);
+		//addDisconenctedUser(user);
 		
 	}
 	

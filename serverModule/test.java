@@ -3,9 +3,24 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
-import org.json.JSONException;
-
 public class test implements Runnable {
+	
+	public void play_protocol_user(SocketChannel socket) throws Exception {
+		get_command(socket, CommandType.GET_READY, "user");
+		
+		Command ready_command = new Command(CommandType.IM_READY);
+		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		readWriteAux.writeSocket(socket, ready_command);
+		
+		get_command(socket, CommandType.PLAY_SONG, "user");
+		
+		Thread.sleep(1000);
+		Command pause_cmd = new Command(CommandType.PAUSE);
+		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		readWriteAux.writeSocket(socket, pause_cmd);
+		
+		get_command(socket, CommandType.PAUSE, "user");
+	}
 
 	public void join_party(SocketChannel socket) throws Exception {
 		Command auth = new Command(CommandType.AUTHENTICATION);
@@ -22,14 +37,17 @@ public class test implements Runnable {
 		
 		System.out.println("client - asked to join");
 		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("got reply - joined party?");
-		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("client - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		
+		reply = readWriteAux.readSocket(socket);
+		System.out.println("client get-ready: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 	}
 	@Override
 	public void run() {
 		try {
 			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 			join_party(socket);
+			play_protocol_user(socket);
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
@@ -56,6 +74,9 @@ public class test implements Runnable {
 		
 		(new Thread(new test())).start();
 		accept_new_participent(socket);
+		Thread.sleep(1000);
+		play_protocol_admin(socket);
+		Thread.sleep(1000);
 	}
 	
 	private static void accept_new_participent(SocketChannel socket) throws Exception {
@@ -64,6 +85,8 @@ public class test implements Runnable {
 		System.out.println("admin - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
 		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
+		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
+		readWriteAux.writeSocket(socket, confirm_req);
 		//Thread.sleep(1000);
 		
 		reply = readWriteAux.readSocket(socket);
@@ -87,14 +110,45 @@ public class test implements Runnable {
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
 		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+	}
+	
+	
+	public static void get_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
+		while (true) {
+			Command reply = readWriteAux.readSocket(socket);
+			System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+			if (reply.cmd_type == type) {
+				break;
+			}
+		}
+	}
+	
+	public static void play_protocol_admin(SocketChannel socket) throws Exception {
+		Command play_cmd = new Command(CommandType.PLAY_SONG);
+		play_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		play_cmd.setAttribute(jsonKey.OFFSET.name(), 0);
+		readWriteAux.writeSocket(socket, play_cmd);
+		get_command(socket, CommandType.GET_READY, "admin");
+		
+		Command ready_command = new Command(CommandType.IM_READY);
+		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		readWriteAux.writeSocket(socket, ready_command);
+		
+		get_command(socket, CommandType.PLAY_SONG, "admin");
+		
 		Thread.sleep(1000);
+		Command pause_cmd = new Command(CommandType.PAUSE);
+		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		readWriteAux.writeSocket(socket, pause_cmd);
+		
+		get_command(socket, CommandType.PAUSE, "admin");
 	}
 
 	public static void printInfo(Party party){
 		System.out.println("party name: " + party.party_name);
 		System.out.println("party id: " + party.party_id);
 		System.out.println("party's admins: ");
-		printUserList(party.admins);
+		//printUserList(party.admins);
 		System.out.println("party's clients: ");
 		printUserList(party.connected);
 		System.out.println("party's requests: ");
