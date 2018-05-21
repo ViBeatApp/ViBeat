@@ -84,21 +84,21 @@ public class test2 implements Runnable {
 
 	}
 	
-	private static void accept_new_participent(SocketChannel socket) throws Exception {
-		System.out.println("admin1 - in accept_new_participent");
-		Thread.sleep(1000);
-		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
-		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
-		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
-		readWriteAux.writeSocket(socket, confirm_req);
-		//Thread.sleep(1000);
-		
-		reply = readWriteAux.readSocket(socket);
-		System.out.println("admin3 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-	}
-	
+//	private static void accept_new_participent(SocketChannel socket) throws Exception {
+//		System.out.println("admin1 - in accept_new_participent");
+//		Thread.sleep(1000);
+//		Command reply = readWriteAux.readSocket(socket);
+//		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+//		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
+//		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
+//		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
+//		readWriteAux.writeSocket(socket, confirm_req);
+//		//Thread.sleep(1000);
+//		
+//		reply = readWriteAux.readSocket(socket);
+//		System.out.println("admin3 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+//	}
+//	
 	public static void manage_songs(SocketChannel socket) throws Exception {
 		Command add_song = new Command(CommandType.ADD_SONG);
 		Command reply;

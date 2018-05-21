@@ -29,8 +29,8 @@ public class Party_thread implements Runnable {
 	public List<User> newClients = new ArrayList<>();
 
 	public Instant last_play_time;
-	public long total_offset;
-	public long current_song_duration;
+	public int total_offset;
+	public int current_song_duration;
 
 	public Party_thread(Party party, Selector server_selector) throws JSONException {
 		this.party = party;
@@ -114,7 +114,7 @@ public class Party_thread implements Runnable {
 	public void addClientToParty(User user) throws JSONException, IOException {
 		party.addClient(user);
 		JSONObject party_info = party.getFullJson();
-		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
+		Command sync_command = Command.get_syncParty_Command(party_info);
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
 			System.out.println("party-thread: total-offset = " + total_offset);
@@ -176,7 +176,7 @@ public class Party_thread implements Runnable {
 
 
 	private void makeAdmin(Command cmd) throws JSONException {
-		int userId = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
+		int userId = cmd.getIntAttribute(jsonKey.USER_ID.name());
 		User user = find_user(userId);
 		party.makeAdmin(user);	
 	}
@@ -189,7 +189,7 @@ public class Party_thread implements Runnable {
 			addClientToParty(confirmed_user);
 		}
 		else {
-			SendCommandToUser(confirmed_user, new Command(CommandType.REJECTED));
+			SendCommandToUser(confirmed_user, Command.get_rejected_Command());
 			returnToServerModule(key,confirmed_user,false);
 		}
 
@@ -358,20 +358,20 @@ public class Party_thread implements Runnable {
 			return;
 		}
 		JSONObject party_info = party.getFullJson();
-		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
+		
+		Command sync_command = Command.get_syncParty_Command(party_info);
 		SendCommandToAll(sync_command);
 	}
 
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {
-
-		get_ready_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
-		get_ready_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
+		get_ready_command.setAttribute(jsonKey.OFFSET.name(), total_offset);
+		get_ready_command.setAttribute(jsonKey.TRACK_ID.name(), party.get_current_track_id());
 	}
 
 	/* updates the play command */
 	public void update_play_command() throws JSONException {
-		play_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
-		play_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
+		play_command.setAttribute(jsonKey.OFFSET.name(), total_offset);
+		play_command.setAttribute(jsonKey.TRACK_ID.name(), party.get_current_track_id());
 	}
 }

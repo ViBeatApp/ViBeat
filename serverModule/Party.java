@@ -39,7 +39,7 @@ public class Party {
 		makeAdmin(admin);
 	}
 
-	public byte[] getPartyImage(){
+	public String getPartyImage(){
 		return connected.get(0).get_image();
 	}
 	//TODO

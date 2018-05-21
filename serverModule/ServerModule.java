@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
@@ -80,10 +79,7 @@ public class ServerModule {
 		switch(cmd.cmd_type){
 
 		case AUTHENTICATION:
-			String name = cmd.cmd_info.getString(jsonKey.NAME.name());
-			int userId = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
-			byte[] image = cmd.cmd_info.getString(jsonKey.IMAGE.name()).getBytes();
-			
+			int userId = cmd.getIntAttribute(jsonKey.USER_ID.name());		
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
@@ -96,16 +92,18 @@ public class ServerModule {
 				}
 			}
 			
+			String name = cmd.getStringAttribute(jsonKey.NAME.name());
+			String image = cmd.getStringAttribute(jsonKey.IMAGE.name());
 			User newUser = new User(name,userId,image, client);
 			key.attach(newUser);					///check this
 			break;
 
 		case NEARBY_PARTIES:
-			send_nearby_parties((User)key.attachment(),cmd.cmd_info);
+			send_nearby_parties((User)key.attachment(),cmd);
 			break;
 
 		case JOIN:
-			int partyID = cmd.cmd_info.getInt(jsonKey.PARTY_ID.name());
+			int partyID = cmd.getIntAttribute(jsonKey.PARTY_ID.name());
 			Party party = FindPartyByID(partyID);
 			if (party == null)
 				break;
@@ -115,7 +113,7 @@ public class ServerModule {
 
 		case CREATE:
 			key.cancel();
-			create_party((User)key.attachment(),cmd.cmd_info,selector);
+			create_party((User)key.attachment(),cmd,selector);
 			break;
 
 		case DISCONNECTED:	
@@ -123,7 +121,7 @@ public class ServerModule {
 			break;
 
 		case SEARCH_PARTY:
-			Command answer = getPartiesByName(cmd.cmd_info.getString(jsonKey.NAME.name()));
+			Command answer = getPartiesByName(cmd.getStringAttribute(jsonKey.NAME.name()));
 			readWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
@@ -145,26 +143,24 @@ public class ServerModule {
 
 	private static Command getPartiesByName(String name) throws JSONException {
 		JSONArray resultArray = new JSONArray();
-		JSONObject resultInfo = new JSONObject();
 		for(Party party : current_parties) {
 			if (party.party_name.contains(name)) {
 				resultArray.put(party.getPublicJson());
 			}
 		}
-		resultInfo.put(jsonKey.RESULT.name(), resultArray);
-		return new Command(CommandType.SEARCH_RESULT,resultInfo);
+		return Command.get_searchResult_command(resultArray);
 	}
 
 	//TODO
-	public static void send_nearby_parties(User client,JSONObject info) {
+	public static void send_nearby_parties(User client,Command cmd) {
 
 	}
 
 	/* creating a new party
 	 * making admin the client who created the party */
-	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException, IOException {
-		String name = info.getString(jsonKey.NAME.name());
-		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
+	public static void create_party(User party_creator, Command cmd, Selector selector) throws JSONException, IOException {
+		String name = cmd.getStringAttribute(jsonKey.NAME.name());
+		boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE.name());
 
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		System.out.println("serverModule - party.party_id = " + party.party_id);

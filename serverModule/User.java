@@ -8,12 +8,12 @@ import org.json.JSONObject;
 public class User {
 	String name;
 	int id;
-	byte[] image;
+	String image;
 	boolean is_admin;
 	SocketChannel channel;
 	int currentPartyId = -1;				//if isn't part of some party so value = -1
 	
-	public User(String name, int id, byte[] image,SocketChannel channel) {
+	public User(String name, int id, String image,SocketChannel channel) {
 		super();
 		this.name = name;
 		this.image = image;
@@ -23,7 +23,7 @@ public class User {
 	}
 	
 	
-	public byte[] get_image() {
+	public String get_image() {
 		return image;
 	}
 	

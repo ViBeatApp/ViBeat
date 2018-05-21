@@ -1,5 +1,5 @@
 4. adding boolean variable for sync (not always).
-
+1. change from public to private
 2.locks and thread.
 3.Location.
 4.disconnected.
