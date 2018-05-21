@@ -35,19 +35,19 @@ public class test implements Runnable {
 		readWriteAux.writeSocket(socket, join_party);
 		//Thread.sleep(1000);
 		
-		System.out.println("client - asked to join");
+		System.out.println("client1 - asked to join");
 		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("client - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("client2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		
 		reply = readWriteAux.readSocket(socket);
-		System.out.println("client get-ready: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("client3 get-ready: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 	}
 	@Override
 	public void run() {
 		try {
 			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 			join_party(socket);
-			play_protocol_user(socket);
+			//play_protocol_user(socket);
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
@@ -73,16 +73,17 @@ public class test implements Runnable {
 		manage_songs(socket);
 		
 		(new Thread(new test())).start();
+		Thread.sleep(1000);
 		accept_new_participent(socket);
-		Thread.sleep(1000);
-		play_protocol_admin(socket);
-		Thread.sleep(1000);
+		//play_protocol_admin(socket);
+		//Thread.sleep(1000);
 	}
 	
 	private static void accept_new_participent(SocketChannel socket) throws Exception {
-		System.out.println("admin - in accept_new_participent");
+		System.out.println("admin1 - in accept_new_participent");
+		Thread.sleep(1000);
 		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("admin - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
 		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
 		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
@@ -90,7 +91,7 @@ public class test implements Runnable {
 		//Thread.sleep(1000);
 		
 		reply = readWriteAux.readSocket(socket);
-		System.out.println("admin - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("admin3 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 	}
 	
 	public static void manage_songs(SocketChannel socket) throws Exception {
@@ -116,7 +117,7 @@ public class test implements Runnable {
 	public static void get_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
 		while (true) {
 			Command reply = readWriteAux.readSocket(socket);
-			System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+			System.out.println(user_name + " - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 			if (reply.cmd_type == type) {
 				break;
 			}
