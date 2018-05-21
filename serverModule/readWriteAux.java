@@ -5,8 +5,6 @@ import java.nio.channels.SocketChannel;
 
 import org.json.JSONException;
 
-import com.sun.xml.internal.ws.message.ByteArrayAttachment;
-
 
 public class readWriteAux {
 	SocketChannel socket;

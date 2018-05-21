@@ -9,7 +9,7 @@ enum jsonKey {
 	LOCATION,
 	RESULT,
 	PARTY_INFO,
-	CONFIRMED,
+	CONFIRMED,		//Send to the person that want to join - boolean
 	
 	OFFSET,
 	USERS,

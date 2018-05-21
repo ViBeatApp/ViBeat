@@ -134,7 +134,7 @@ public class Party_thread implements Runnable {
 		case PAUSE:
 			pause_song();
 			break;
-		case GET_READY:
+		case IM_READY:
 			GetReady(cmd, user);
 			break;
 		case CONFIRM_REQUEST:
@@ -153,7 +153,7 @@ public class Party_thread implements Runnable {
 		case MAKE_ADMIN:	
 			makeAdmin(cmd);
 			break;
-		case LOCATION:	
+		case UPDATE_LOCATION:	
 			updateLocation(cmd);
 			break;
 		case RENAME_PARTY:
@@ -175,10 +175,21 @@ public class Party_thread implements Runnable {
 	private void confirmRequest(Command cmd) throws JSONException, IOException {
 		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID.name()));
 		if(confirmed_user == null) return;				//no such user / other admin confirmed.
-		addClientToParty(confirmed_user);
 		party.removeRequest(confirmed_user);
+		if(cmd.getBoolAttribute(jsonKey.CONFIRMED.name())) {
+			addClientToParty(confirmed_user);
+		}
+		else {
+			SendCommandToUser(confirmed_user, new Command(CommandType.REJECTED));
+			returnToServerModule(confirmed_user);
+		}
+		
 	}
 
+	public void returnToServerModule(User user) {
+		
+	}
+	
 	private User find_user(int USER_ID) {
 		for (User user: party.request) {
 			if (user.id == USER_ID) {
@@ -187,11 +198,16 @@ public class Party_thread implements Runnable {
 		}
 		return null; /* no such user */
 	}
-
-	/* handling the locks */
-	//TODO
+	
+	/*TODO handling the locks */
 	public void get_newClients() {
 		newClients = new ArrayList<>();
+		Iterator<User> iter = party.new_clients.iterator();
+		while (iter.hasNext()){
+			User user = iter.next();
+			newClients.add(user);
+			iter.remove();
+		}
 	}
 
 	public void register_for_selection(User user) throws IOException {

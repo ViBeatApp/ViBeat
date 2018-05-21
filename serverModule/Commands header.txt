@@ -1,37 +1,37 @@
 Messages from client to server:
 
 Authentication(NAME,USER_ID,IMAGE)
-Give_Nearby_Parties(CLIENTLOCATION)
-searchParty(NAME)
-Join(PARTY_ID)
-Create(NAME,IS_PRIVATE)
+NEARBY_PARTIES(CLIENTLOCATION)
+SEARCH_PARTY(NAME)
+JOIN(PARTY_ID)
+CREATE(NAME,IS_PRIVATE)
 Disconnected
 
-AddSong (URL)
-DeleteSong(TrackID)
-SwapSongs(TRACK_ID_1,TrackID_2)
-PlaySong(TRACK_ID,OFFSET)
-ImReady(TRACK_ID)
-Pause(TRACK_ID)
+ADD_SONG (URL)
+DELETE_SONG(TrackID)
+SWAP_SONGS(TRACK_ID_1,TrackID_2)
+PLAY_SONG(TRACK_ID,OFFSET)
+IM_READY(TRACK_ID)
+PAUSE(TRACK_ID)
 
-RenameParty(NAME)
-ConfirmRequest(USER_ID)
-MakeAdmin(USER_ID)
-UpdateLocation(LOCATION)
-Close()  					//kill the party
-LeaveParty()
+RENAME_PARTY(NAME)
+CONFIRM_REQUEST(USER_ID,Bool CONFIRMED)
+MAKE_ADMIN(USER_ID)
+UPDATE_LOCATION(LOCATION)
+CLOSE()  					//kill the party
+LEAVE_PARTY()
 
 
-Messages from server to client:
-Nearbyparties(result : [{name,id,image}...]) 		
-SearchResult(result : [{name,id,image}...])		// could be empty array.
-Response - (bool CONFIRMED, PARTY_INFO) if rejected - Null.
+Messages from server to client:	
 
-GetReady(TRACK_ID,OFFSET)
-Play(TRACK_ID,OFFSET)
-Pause()
+SEARCH_RESULT(result : [{name,id,image}...])		// could be empty array.
+REJECTED - json info is empty {} !!
+
+GET_READY(TRACK_ID,OFFSET)
+PLAY_SONG(TRACK_ID,OFFSET)
+PAUSE()
 	
-syncParty({
+SYNC_PARTY({
 		"USERS",[{NAME,USER_ID,IMAGE},...]
 		"ADMINS",[{NAME,USER_ID,IMAGE},...]
 		"REQUESTS",[{NAME,USER_ID,IMAGE},...]			//if private - value = 0 
