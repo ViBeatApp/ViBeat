@@ -69,7 +69,6 @@ public class ServerModule {
 		while (iter.hasNext()){
 			User user = iter.next();
 			user.channel.register(selector, SelectionKey.OP_READ);
-			authenticated_users.add(user);
 			iter.remove();
 		}
 
@@ -89,7 +88,8 @@ public class ServerModule {
 			User disconnectedUser = isDisconnectedUser(id);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
-				join_party(disconnectedUser,disconnectedUser.currentPartyId);
+				key.cancel();
+				join_party(disconnectedUser,disconnectedUser.currentPartyId);			
 				break;
 			}
 			
@@ -155,12 +155,10 @@ public class ServerModule {
 
 	/* creating a new party
 	 * making admin the client who created the party */
-	public static void create_party(SelectionKey key, JSONObject info, Selector selector) throws JSONException, IOException {
-		User party_creator = (User)key.attachment();
-		key.cancel();
+	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException, IOException {
 		String name = info.getString(jsonKey.NAME.name());
 		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
-		
+
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		System.out.println("serverModule - party.party_id = " + party.party_id);
 		System.out.println("serverModule - partyID = " + partyID);
@@ -169,13 +167,11 @@ public class ServerModule {
 
 	}
 
-	private static void join_party(SelectionKey key, int partyId) throws JSONException {
-		User client = (User)key.attachment();		
+	private static void join_party(User client, int partyId) throws JSONException {
 		Party party = FindPartyByID(partyId);
-		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed it. serverModule.join_party());
+		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed this. serverModule.join_party()");
 		System.out.println("serverModule - party: " + party);
 		party.addNewClient(client);
-		key.cancel();
 		party.selector.wakeup();	
 	}
 
