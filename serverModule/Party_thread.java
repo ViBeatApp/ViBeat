@@ -162,7 +162,7 @@ public class Party_thread implements Runnable {
 			disconnect_user(user);
 			break;
 		case LEAVE_PARTY:	
-			returnToServerModule(key,user);
+			//returnToServerModule(key,user);
 			break;
 		case CLOSE_PARTY:	
 			destroyParty();
@@ -188,7 +188,7 @@ public class Party_thread implements Runnable {
 		}
 		else {
 			SendCommandToUser(confirmed_user, new Command(CommandType.REJECTED));
-			returnToServerModule(key,confirmed_user);
+			//returnToServerModule(key,confirmed_user);
 		}
 		
 	}
@@ -285,11 +285,11 @@ public class Party_thread implements Runnable {
 	//TODO
 	public void disconnect_user(User user) throws JSONException, Exception {
 		//user.channel.close();			//check
-		//addDisconenctedUser(user);
+		ServerModule.addDisconenctedUser(user);
 		
 	}
 	
-	public void returnToServerModule(SelectionKey key,User user) throws IOException {
+	public void returnToServerModule(SelectionKey key,User user,boolean disconnected) throws IOException {
 		boolean removed_participent = party.removeClient(user);
 		party.removeRequest(user);
 		if (removed_participent) {
@@ -301,7 +301,10 @@ public class Party_thread implements Runnable {
 		}
 		newClients.remove(user);
 		key.cancel();
-		ServerModule.addComebackUser(user);
+		if(disconnected)
+			ServerModule.addDisconenctedUser(user);
+		else
+			ServerModule.addComebackUser(user);
 	}
 	
 	private void destroyParty() {

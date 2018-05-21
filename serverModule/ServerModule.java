@@ -88,9 +88,10 @@ public class ServerModule {
 			User disconnectedUser = isDisconnectedUser(id);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
-				key.cancel();
-				join_party(disconnectedUser,disconnectedUser.currentPartyId);			
-				break;
+				if(join_party((User)key.attachment(),cmd.cmd_info.getInt(jsonKey.PARTY_ID.name()))) {		//sync problem
+					key.cancel();		
+					break;
+				}
 			}
 			
 			User newUser = new User(name,id,image, client);
@@ -102,8 +103,12 @@ public class ServerModule {
 			break;
 
 		case JOIN:
-			key.cancel();
-			join_party((User)key.attachment(),cmd.cmd_info.getInt(jsonKey.PARTY_ID.name()));		
+			int partyID = cmd.cmd_info.getInt(jsonKey.PARTY_ID.name());
+			Party party = FindPartyByID(partyID);
+			if (party == null)
+				break;
+			key.cancel();	
+			join_party((User)key.attachment(),partyID);
 			break;
 
 		case CREATE:
@@ -167,12 +172,15 @@ public class ServerModule {
 
 	}
 
-	private static void join_party(User client, int partyId) throws JSONException {
+	private static boolean join_party(User client, int partyId) throws JSONException {
 		Party party = FindPartyByID(partyId);
+		if (party == null)
+			return false;
 		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed this. serverModule.join_party()");
 		System.out.println("serverModule - party: " + party);
 		party.addNewClient(client);
-		party.selector.wakeup();	
+		party.selector.wakeup();
+		return true;
 	}
 
 	private static Party FindPartyByID(int id) {
