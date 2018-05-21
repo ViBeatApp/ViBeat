@@ -23,24 +23,14 @@ LeaveParty()
 
 
 Messages from server to client:
-Nearbyparties(PUBLIC_PARTY_INFO) 		//PublicPartyInfo = List<name,id,image>
-SearchResult(PUBLIC_PARTY_INFO)
+Nearbyparties(result : [{name,id,image}...]) 		
+SearchResult(result : [{name,id,image}...])		// could be empty array.
 Response - (bool CONFIRMED, PARTY_INFO) if rejected - Null.
 
 GetReady(TRACK_ID,OFFSET)
 Play(TRACK_ID,OFFSET)
 Pause()
-
-updateParty({
-		"USERS",[{NAME,USER_ID,IMAGE},...]
-		"REQUESTS",[{NAME,USER_ID,IMAGE},...]
-		"NEW_ADMIN",[{NAME,USER_ID,IMAGE},...]
-		"DELETE_SONGS",[{TRACK_ID},...]
-		"NEW_SONGS",[{URL,TRACK_ID},...]
-		"SWAP_SONGS",[{TRACK_ID_1,TRACK_ID_2},...]
-		"PARTY_RENAME","NAME"
-		"IS_PRIVATE",bool IS_PRIVATE})
-		
+	
 syncParty({
 		"USERS",[{NAME,USER_ID,IMAGE},...]
 		"ADMINS",[{NAME,USER_ID,IMAGE},...]
@@ -54,5 +44,17 @@ partyID = Counter.
 trackID = Counter.
 userID 	= authenticationID.
 
-
 {"cmd_type": command_type, "cmd_info",json}
+
+updateParty({
+		"NEW_USERS",[{NAME,USER_ID,IMAGE},...]
+		"DELETE_USERS",[{USER_ID},...]
+		"NEW_REQUESTS",[{NAME,USER_ID,IMAGE},...]
+		"DELETE_REQUESTS",[{USER_ID},...]
+		"NEW_ADMIN",[{USER_ID},...]
+		"DELETE_ADMIN",[{USER_ID},...]
+		"NEW_SONGS",[{URL,TRACK_ID},...]
+		"DELETE_SONGS",[{TRACK_ID},...]
+		"SWAP_SONGS",[{TRACK_ID_1,TRACK_ID_2},...]
+		"PARTY_RENAME","NAME"
+		"IS_PRIVATE",bool IS_PRIVATE})

@@ -1,12 +1,10 @@
+import java.io.IOException;
+import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.nio.channels.Selector;
 
 public class Party {
 	
@@ -52,11 +50,14 @@ public class Party {
 	public void addAdmin(User user){
 		admins.add(user);
 	}
-
+	
+	public void removeAdmin(User user){
+		admins.remove(user);
+	}
+	
 	public void addClient(User user){
 		connected.add(user);
 	}
-	
 	//handle locks.
 	public void addNewClient(User user) {
 		new_clients.add(user);
@@ -66,6 +67,10 @@ public class Party {
 		request.add(user);
 	}
 
+	public void removeRequest(User user){
+		request.remove(user);
+	}
+	
 	public int comfirmedRequest(User user){
 		int index = request.indexOf(user);
 		if(index == -1){
@@ -96,7 +101,6 @@ public class Party {
 	public int changeSongsOrder(int trackID_1, int trackID_2){	
 		return playlist.changeSongsOrder(trackID_1,trackID_2);
 	}
-	
 
 	public int get_current_track_id() {
 		return playlist.songs.get(0).trackId;

@@ -5,6 +5,8 @@ import java.nio.channels.SocketChannel;
 
 import org.json.JSONException;
 
+import com.sun.xml.internal.ws.message.ByteArrayAttachment;
+
 
 public class readWriteAux {
 	SocketChannel socket;
@@ -22,20 +24,46 @@ public class readWriteAux {
 	}
 	
 	public static Command readSocket(SocketChannel channel) throws IOException, JSONException{
-		ByteBuffer buf = ByteBuffer.allocate(1000);
-		int bytesRead = channel.read(buf);
-		if(bytesRead == -1) return null;
-		System.out.println("reading " + bytesRead + " bytes from client.");
-		buf.flip();
-		return new Command(buf.array());
+		int size = readSize(channel);
+		if (size == -1) return null;
+		return readCommand(channel,size);
+	}
+	
+	public static int readSize(SocketChannel channel) throws IOException {
+		int bytesRead = 0;
+		ByteBuffer buf = ByteBuffer.allocate(4);		
+		while (buf.hasRemaining()) { 
+			bytesRead += channel.read(buf);
+		}
+		if(bytesRead < 4) return -1;
+		buf.rewind();
+		return buf.getInt();
 	}
 
+	public static Command readCommand(SocketChannel channel,int length) throws JSONException, IOException {
+		int bytesRead = 0;
+		ByteBuffer buf = ByteBuffer.allocate(length);	
+		while (buf.hasRemaining()) { 
+			bytesRead += channel.read(buf);
+		}
+		if(bytesRead != length) {
+			System.out.println("error - bytesRead != length");
+			return null;
+		}
+		System.out.println("reading " + length + " bytes from client.");
+		buf.rewind();
+		return new Command(buf.array());
+	}
+	
 	public static void writeSocket(SocketChannel channel,Command cmd) throws IOException, JSONException{
 		byte[] byteArray = cmd.commandTobyte();
-		ByteBuffer buf = ByteBuffer.wrap(byteArray);
+		int size = byteArray.length;
+		ByteBuffer commandBuf = ByteBuffer.wrap(byteArray);
+		ByteBuffer message = ByteBuffer.allocate(4+size).putInt(size).put(commandBuf);
+		message.flip();
 		int writeRead = 0;
-		while(buf.hasRemaining()) {
-			writeRead += channel.write(buf);
+		while(message.hasRemaining()) {
+			writeRead += channel.write(message);
 		}
 		System.out.println("writing " + writeRead + " bytes to client.");
 	}

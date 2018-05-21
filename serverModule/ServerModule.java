@@ -10,8 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.DatatypeConverter;
-
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,7 +78,7 @@ public class ServerModule {
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
 		Command cmd = readWriteAux.readSocket(client);
-		System.out.println("command " + cmd.cmd_type + ", info" + cmd.cmd_info);
+		cmd.printCommand();
 		switch(cmd.cmd_type){
 		
 		case AUTHENTICATION:
@@ -93,7 +92,7 @@ public class ServerModule {
 			break;
 
 		case NEARBY_PARTIES:
-			sent_nearby_parties((User)key.attachment(),cmd.cmd_info);
+			send_nearby_parties((User)key.attachment(),cmd.cmd_info);
 			break;
 			
 		case JOIN:
@@ -112,16 +111,24 @@ public class ServerModule {
 			break;
 			
 		case SEARCH_PARTY:
-			sendPartyByName(cmd.cmd_info);
+			Command answer = getPartiesByName(cmd.cmd_info.getString(jsonKey.NAME.name()));
+			readWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
 	}
 
-	private static void sendPartyByName(JSONObject cmd_info) {
-		
-		
+	private static Command getPartiesByName(String name) throws JSONException {
+		JSONArray resultArray = new JSONArray();
+		JSONObject resultInfo = new JSONObject();
+		for(Party party : current_parties) {
+			if (party.party_name.contains(name)) {
+				resultArray.put(party.getPublicJson());
+			}
+		}
+		resultInfo.put(jsonKey.RESULT.name(), resultArray);
+		return new Command(CommandType.SEARCH_RESULT,resultInfo);
 	}
 
 	private static void removeIfAuthenticated(SelectionKey key) {
@@ -132,7 +139,7 @@ public class ServerModule {
 
 	}
 	//TODO
-	public static void sent_nearby_parties(User client,JSONObject info) {
+	public static void send_nearby_parties(User client,JSONObject info) {
 
 	}
 	

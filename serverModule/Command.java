@@ -33,6 +33,10 @@ public class Command {
 		return json.toString().getBytes();
 	}
 	
+	public void printCommand() {
+		System.out.println("command " + this.cmd_type + ", info" + this.cmd_info);
+	}
+	
 	private JSONObject byteToJson(byte[] message) throws JSONException {
 		return new JSONObject(new String(message));
 	}
