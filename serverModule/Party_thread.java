@@ -73,6 +73,7 @@ public class Party_thread implements Runnable {
 			if (key.isReadable()) {
 				SocketChannel channel  = (SocketChannel) key.channel();
 				Command cmd = readWriteAux.readSocket(channel);
+				System.out.print("from user " + ((User)key.attachment()).name + " to server: ");
 				cmd.printCommand();
 				do_command(cmd, key);
 			}
@@ -232,6 +233,7 @@ public class Party_thread implements Runnable {
 		party.status = Party.Party_Status.preparing;
 		party.next_song();
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET.name());
+		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		update_get_ready_command();
 		SendCommandToAll(get_ready_command);
 	}
@@ -240,7 +242,7 @@ public class Party_thread implements Runnable {
 		switch(party.status) {
 		case playing:
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
-			System.out.println("party-thread: pause: update total offset = " + total_offset);
+			System.out.println("party-thread: GetReady: update total offset = " + total_offset);
 			update_play_command();
 			SendCommandToUser(user, play_command);
 			break;
@@ -258,8 +260,9 @@ public class Party_thread implements Runnable {
 	}
 
 	public void pause_song() throws IOException, JSONException {
-		if (party.status == Party.Party_Status.not_started) {
+		if (party.status == Party.Party_Status.playing) {
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+			System.out.println("party-thread: pause_song: update total offset = " + total_offset);
 		} else if ((party.status == Party.Party_Status.pause) ||  (party.status == Party.Party_Status.not_started)) {
 			return;
 		}

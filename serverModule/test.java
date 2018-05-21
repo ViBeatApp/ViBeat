@@ -20,8 +20,6 @@ public class test implements Runnable {
 		
 		get_command(socket, CommandType.PLAY_SONG, "user" + user_id);
 
-		
-		
 		// next cycle
 		if (user_id == 1) {
 			Thread.sleep(1000);	
@@ -170,7 +168,7 @@ public class test implements Runnable {
 		Thread.sleep(1000);
 		launch_user(2, "Dana");
 		accept_new_participent(socket, 2);
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		
 		// next cycle
 		System.out.println("------------------------ admin -------------------");
