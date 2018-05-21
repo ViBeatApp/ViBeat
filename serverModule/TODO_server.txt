@@ -1,6 +1,7 @@
 1.unimplement commands.
 2.read multiple messages (jsons).
 3.ask Dana and Idan about the updateParty/SyncParty.
+4. adding boolean variable for sync (not always).
 
 1.For modularity, implement update command in Command module.
 2.locks and thread.

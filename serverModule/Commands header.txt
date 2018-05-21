@@ -32,11 +32,13 @@ PLAY_SONG(TRACK_ID,OFFSET)
 PAUSE()
 	
 SYNC_PARTY({
-		"USERS",[{NAME,USER_ID,IMAGE},...]
+		"USERS",[{NAME,USER_ID,IMAGE,IS_ADMIN},...]
+		"IMAGE", byte[]
+		"LOCATION", loc
 		"ADMINS",[{NAME,USER_ID,IMAGE},...]
 		"REQUESTS",[{NAME,USER_ID,IMAGE},...]			//if private - value = 0 
 		"SONGS",[{URL,TRACK_ID},...]
-		"PARTY_NAME","NAME"
+		"NAME",name
 		"IS_PRIVATE",bool IS_PRIVATE})
 		
 IDs:

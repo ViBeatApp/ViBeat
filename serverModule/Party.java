@@ -17,7 +17,7 @@ public class Party {
 	//Location location;
 	Party_Status status;
 	Playlist playlist;
-	List<User> admins;
+	int numOfAdmins = 0;
 	List<User> connected;
 	List<User> new_clients;
 	List<User> request; //only if private
@@ -30,65 +30,68 @@ public class Party {
 		this.party_id = party_id;
 		this.status = Party_Status.notPlaying;
 		this.playlist = new Playlist();
-		admins = new ArrayList<>();
 		connected = new ArrayList<>();
 		request = new ArrayList<>();
 		new_clients = new ArrayList<>();
 		this.is_private = is_private;
 		this.selector = Selector.open();
-		this.admins.add(admin);
+		addClient(admin);
+		makeAdmin(admin);
 		this.connected.add(admin);
 	}
 
 	public byte[] getPartyImage(){
-		return admins.get(0).get_image();
+		return connected.get(0).get_image();
 	}
 	//TODO
 	public void UpdateLocation(){  //pings
 
 	}
 
-	public void addAdmin(User user){
-		admins.add(user);
+	public void makeAdmin(User user){
+		if(!user.is_admin) {
+			user.is_admin = true;
+			++numOfAdmins;
+		}	
 	}
 	
-	public void removeAdmin(User user){
-		admins.remove(user);
+	public void disableAdmin(User user){
+		if(user.is_admin) {
+			user.is_admin = false;
+			--numOfAdmins;
+		}
+		if(numOfAdmins == 0) {
+			makeAdmin(connected.get(0));
+		}
 	}
 	
 	public void addClient(User user){
+		user.currentPartyId = this.party_id;
 		connected.add(user);
+		user.is_admin = false;
 	}
+	
+	public boolean removeClient(User user){
+		user.currentPartyId = -1;
+		disableAdmin(user);
+		return connected.remove(user);
+	}
+
+	public void addRequest(User user){
+		request.add(user);
+	}
+
+	public boolean removeRequest(User user){
+		return request.remove(user);
+	}
+	
 	//handle locks.
 	public void addNewClient(User user) {
 		new_clients.add(user);
 	}
 	
-	public void addRequest(User user){
-		request.add(user);
-	}
-
-	public void removeRequest(User user){
-		request.remove(user);
-	}
-	
-	public int comfirmedRequest(User user){
-		int index = request.indexOf(user);
-		if(index == -1){
-			return -1;
-		}
-		connected.add(user);
-		request.remove(index);
-		return 0;
-	}
-
-	public int rejectedRequest(User user){
-		int index = request.indexOf(user);
-		if(index == -1){
-			return -1;
-		}
-		request.remove(index);
-		return 0;
+	public int numOfClients() {
+		return connected.size();
 	}
 
 	public Track addSong(String url){ 		
@@ -115,7 +118,7 @@ public class Party {
 	public JSONObject getPublicJson() throws JSONException{
 		JSONObject publicJson = new JSONObject();
 		publicJson.put(jsonKey.NAME.name(), this.party_name);
-		publicJson.put(jsonKey.USER_ID.name(), this.party_id);
+		publicJson.put(jsonKey.PARTY_ID.name(), this.party_id);
 		publicJson.put(jsonKey.IMAGE.name(), new String(this.getPartyImage()));
 		return publicJson;
 	}
@@ -123,13 +126,11 @@ public class Party {
 	public JSONObject getFullJson() throws JSONException{
 		JSONObject fullJson = new JSONObject();
 		fullJson.put(jsonKey.NAME.name(), this.party_name);
-		fullJson.put(jsonKey.USER_ID.name(), this.party_id);
 		fullJson.put(jsonKey.IMAGE.name(), new String(this.getPartyImage()));
 		fullJson.put(jsonKey.LOCATION.name(), 0);
 		fullJson.put(jsonKey.SONGS.name(), playlist.getTrackArray());
 		fullJson.put(jsonKey.IS_PRIVATE.name(), is_private);
 		fullJson.put(jsonKey.USERS.name(), User.getUserArray(connected));
-		fullJson.put(jsonKey.ADMINS.name(), User.getUserArray(admins));
 		fullJson.put(jsonKey.REQUESTS.name(), User.getUserArray(request));
 		return fullJson;
 	}

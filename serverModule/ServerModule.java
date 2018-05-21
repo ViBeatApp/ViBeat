@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
-	static List<User>  authenticated_users = new ArrayList<>();
+	static List<User>  disconnected_users = new ArrayList<>();
 	static List<User>  comeback_users = new ArrayList<>();
 	static int partyID = 0;
 	static Selector selector;
@@ -72,7 +72,7 @@ public class ServerModule {
 			authenticated_users.add(user);
 			iter.remove();
 		}
-		
+
 	}
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
@@ -80,24 +80,30 @@ public class ServerModule {
 		Command cmd = readWriteAux.readSocket(client);
 		cmd.printCommand();
 		switch(cmd.cmd_type){
-		
+
 		case AUTHENTICATION:
 			String name = cmd.cmd_info.getString(jsonKey.NAME.name());
 			int id = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
 			byte[] image = cmd.cmd_info.getString(jsonKey.IMAGE.name()).getBytes();
 			
+			User disconnectedUser = isDisconnectedUser(id);
+			if(disconnectedUser != null) {
+				disconnectedUser.channel = client;
+				join_party(disconnectedUser,disconnectedUser.currentPartyId);
+				break;
+			}
+			
 			User newUser = new User(name,id,image, client);
-			authenticated_users.add(newUser);
 			key.attach(newUser);					///check this
 			break;
 
 		case NEARBY_PARTIES:
 			send_nearby_parties((User)key.attachment(),cmd.cmd_info);
 			break;
-			
+
 		case JOIN:
 			key.cancel();
-			join_party((User)key.attachment(),cmd.cmd_info);		
+			join_party((User)key.attachment(),cmd.cmd_info.getInt(jsonKey.PARTY_ID.name()));		
 			break;
 
 		case CREATE:
@@ -106,10 +112,9 @@ public class ServerModule {
 			break;
 
 		case DISCONNECTED:	
-			removeIfAuthenticated(key);
 			client.close();
 			break;
-			
+
 		case SEARCH_PARTY:
 			Command answer = getPartiesByName(cmd.cmd_info.getString(jsonKey.NAME.name()));
 			readWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
@@ -117,6 +122,18 @@ public class ServerModule {
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
+	}
+
+	private static User isDisconnectedUser(int id) {
+		Iterator<User> iter = disconnected_users.iterator();
+		while (iter.hasNext()){
+			User user = iter.next();
+			if(user.id == id) {	
+				iter.remove();
+				return user;
+			}
+		}
+		return null;
 	}
 
 	private static Command getPartiesByName(String name) throws JSONException {
@@ -131,21 +148,16 @@ public class ServerModule {
 		return new Command(CommandType.SEARCH_RESULT,resultInfo);
 	}
 
-	private static void removeIfAuthenticated(SelectionKey key) {
-		User user = (User) key.attachment();
-		if(user == null)
-			return;
-		authenticated_users.remove(user);
-
-	}
 	//TODO
 	public static void send_nearby_parties(User client,JSONObject info) {
 
 	}
-	
+
 	/* creating a new party
 	 * making admin the client who created the party */
-	public static void create_party(User party_creator, JSONObject info, Selector selector) throws JSONException, IOException {
+	public static void create_party(SelectionKey key, JSONObject info, Selector selector) throws JSONException, IOException {
+		User party_creator = (User)key.attachment();
+		key.cancel();
 		String name = info.getString(jsonKey.NAME.name());
 		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
 		
@@ -157,11 +169,13 @@ public class ServerModule {
 
 	}
 
-	private static void join_party(User client, JSONObject cmd_info) throws JSONException {
-		Party party = FindPartyByID(cmd_info.getInt(jsonKey.PARTY_ID.name()));
-		System.out.println("serverModule - looked for partyID: " + cmd_info.getInt(jsonKey.PARTY_ID.name()));
+	private static void join_party(SelectionKey key, int partyId) throws JSONException {
+		User client = (User)key.attachment();		
+		Party party = FindPartyByID(partyId);
+		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed it. serverModule.join_party());
 		System.out.println("serverModule - party: " + party);
 		party.addNewClient(client);
+		key.cancel();
 		party.selector.wakeup();	
 	}
 
@@ -173,11 +187,18 @@ public class ServerModule {
 		}
 		return null;
 	}
-	
+
 	//mini thread and locks.
 	//TODO
-	private static void addComebackUser(User user) {
+	static void addComebackUser(User user) throws ClosedChannelException {
 		comeback_users.add(user);
+		user.channel.register(selector, SelectionKey.OP_READ);
+	}
+
+	//mini thread and locks.
+	//TODO
+	static void addDisconenctedUser(User user) {
+		disconnected_users.add(user);
 	}
 
 }

@@ -11,6 +11,7 @@ public class User {
 	byte[] image;
 	boolean is_admin;
 	SocketChannel channel;
+	int currentPartyId = -1;				//if isn't part of some party so value = -1
 	
 	public User(String name, int id, byte[] image,SocketChannel channel) {
 		super();
@@ -18,6 +19,7 @@ public class User {
 		this.image = image;
 		this.id = id;
 		this.channel = channel;
+		this.is_admin = false;
 	}
 	
 	
@@ -34,6 +36,7 @@ public class User {
 		userJson.put(jsonKey.NAME.name(), this.name);
 		userJson.put(jsonKey.USER_ID.name(), this.id);
 		userJson.put(jsonKey.IMAGE.name(), this.image);
+		userJson.put(jsonKey.IS_ADMIN.name(), this.is_admin);
 		return userJson;
 	}
 	

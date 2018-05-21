@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.corba.se.spi.activation.Server;
+
 public class Party_thread implements Runnable {
 
 	public Party party;
@@ -45,7 +47,7 @@ public class Party_thread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			register_for_selection(party.admins.get(0));
+			register_for_selection(party.connected.get(0));
 			listen();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,7 +75,7 @@ public class Party_thread implements Runnable {
 				SocketChannel channel  = (SocketChannel) key.channel();
 				Command cmd = readWriteAux.readSocket(channel);
 				cmd.printCommand();
-				do_command(cmd, (User) key.attachment());
+				do_command(cmd, key);
 			}
 			keyIterator.remove();
 		}
@@ -123,7 +125,8 @@ public class Party_thread implements Runnable {
 		return (0.5*party.connected.size() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
 	}
 
-	public void do_command(Command cmd, User user) throws Exception {
+	public void do_command(Command cmd, SelectionKey key) throws Exception {
+		User user = (User) key.attachment();
 		switch (cmd.cmd_type) {
 		case PLAY_SONG:
 			startPlayProtocol(cmd);
@@ -135,7 +138,7 @@ public class Party_thread implements Runnable {
 			GetReady(cmd, user);
 			break;
 		case CONFIRM_REQUEST:
-			confirmRequest(cmd);							
+			confirmRequest(key,cmd);							
 			break;												//adding_and_removing_from_updateParty_json();
 			//add to lists.
 		case SWAP_SONGS:
@@ -159,28 +162,24 @@ public class Party_thread implements Runnable {
 			disconnect_user(user);
 			break;
 		case LEAVE_PARTY:	
-			LeaveParty(user);
+			returnToServerModule(key,user);
 			break;
 		case CLOSE_PARTY:	
-			disconnect_user(user);
+			destroyParty();
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void LeaveParty(User user) {
-		
-		
-	}
 
 	private void makeAdmin(Command cmd) throws JSONException {
 		int userId = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
 		User user = find_user(userId);
-		party.addAdmin(user);	
+		party.makeAdmin(user);	
 	}
 
-	private void confirmRequest(Command cmd) throws JSONException, IOException {
+	private void confirmRequest(SelectionKey key, Command cmd) throws JSONException, IOException {
 		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID.name()));
 		if(confirmed_user == null) return;				//no such user / other admin confirmed.
 		party.removeRequest(confirmed_user);
@@ -189,12 +188,8 @@ public class Party_thread implements Runnable {
 		}
 		else {
 			SendCommandToUser(confirmed_user, new Command(CommandType.REJECTED));
-			returnToServerModule(confirmed_user);
+			returnToServerModule(key,confirmed_user);
 		}
-		
-	}
-
-	public void returnToServerModule(User user) {
 		
 	}
 	
@@ -289,24 +284,30 @@ public class Party_thread implements Runnable {
 
 	//TODO
 	public void disconnect_user(User user) throws JSONException, Exception {
-		boolean removed_admin = party.admins.remove(user);
-		boolean removed_participent = party.connected.remove(user);
-		party.request.remove(user);
-		if (removed_participent || removed_admin) {
-			//number_of_participents--;
-			//Command cmd = new Command(null); /* upadting the party-participents */
-			//SendCommandToAll(cmd);
-			//if (ready_for_play.contains(user)) {
-			//ready_for_play.remove(user);
-			//ready_for_next_song--;
-			//}
-			//if (ready_for_next_song > 0.5*number_of_participents) {
-			//play_song = true;
-			//}
-		}
-		user.channel.close();
+		//user.channel.close();			//check
+		addDisconenctedUser(user);
+		
 	}
-
+	
+	public void returnToServerModule(SelectionKey key,User user) throws IOException {
+		boolean removed_participent = party.removeClient(user);
+		party.removeRequest(user);
+		if (removed_participent) {
+			if(party.numOfClients() == 0) {
+				destroyParty();
+				return;
+			}
+			ready_for_play.remove(user);		
+		}
+		newClients.remove(user);
+		key.cancel();
+		ServerModule.addComebackUser(user);
+	}
+	
+	private void destroyParty() {
+		keep_on = false;		
+	}
+	
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
 		SendCommandToList(cmd, party.connected, false);
 	}
