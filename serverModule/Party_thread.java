@@ -39,6 +39,7 @@ public class Party_thread implements Runnable {
 		play_command = new Command(CommandType.PLAY_SONG);
 		get_ready_command = new Command(CommandType.GET_READY);
 		keep_on = true;
+		total_offset = 0;
 		ready_for_play = new ArrayList<>();
 	}
 
@@ -114,9 +115,11 @@ public class Party_thread implements Runnable {
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
 		SendCommandToUser(user, sync_command);
-
-		update_get_ready_command();
-		SendCommandToUser(user, get_ready_command);
+		if (party.get_current_track_id() != -1) {
+			System.out.println("party-thread: total-offset = " + total_offset);
+			update_get_ready_command();
+			SendCommandToUser(user, get_ready_command);
+		}
 	}
 
 	public boolean play_condition() {
@@ -237,6 +240,7 @@ public class Party_thread implements Runnable {
 		switch(party.status) {
 		case playing:
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+			System.out.println("party-thread: pause: update total offset = " + total_offset);
 			update_play_command();
 			SendCommandToUser(user, play_command);
 			break;
@@ -254,9 +258,12 @@ public class Party_thread implements Runnable {
 	}
 
 	public void pause_song() throws IOException, JSONException {
-		if(party.status != Party.Party_Status.playing) 
+		if (party.status == Party.Party_Status.not_started) {
+			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+		} else if ((party.status == Party.Party_Status.pause) ||  (party.status == Party.Party_Status.not_started)) {
 			return;
-		party.status = Party.Party_Status.notPlaying;
+		}
+		party.status = Party.Party_Status.pause;
 		SendCommandToAll(pause_command);
 	}
 
@@ -281,7 +288,6 @@ public class Party_thread implements Runnable {
 			update_party.cmd_info.put(classifier, new JSONArray());
 		}
 		update_party.cmd_info.getJSONArray(classifier).put(JsonObject);
-
 	}
 
 

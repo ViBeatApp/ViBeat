@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class Party {
 	
 	public enum Party_Status {
-		notPlaying, preparing, playing
+		not_started, preparing, playing, pause,
 	}
 	
 	String party_name;
@@ -28,7 +28,7 @@ public class Party {
 		super();
 		this.party_name = party_name;
 		this.party_id = party_id;
-		this.status = Party_Status.notPlaying;
+		this.status = Party_Status.not_started;
 		this.playlist = new Playlist();
 		connected = new ArrayList<>();
 		request = new ArrayList<>();

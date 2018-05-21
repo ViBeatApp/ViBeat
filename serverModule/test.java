@@ -1,31 +1,42 @@
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
+import org.json.JSONException;
+
 public class test implements Runnable {
 	
+	public int user_id;
+	public String user_name;
+	
+	public test(int user_id, String user_name) {
+		this.user_id = user_id;
+		this.user_name = user_name;
+	}
+	
 	public void play_protocol_user(SocketChannel socket) throws Exception {
-		get_command(socket, CommandType.GET_READY, "user");
+		get_command(socket, CommandType.GET_READY, "user" + user_id);		
+		send_ready_command(socket, 0);
 		
-		Command ready_command = new Command(CommandType.IM_READY);
-		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		readWriteAux.writeSocket(socket, ready_command);
+		get_command(socket, CommandType.PLAY_SONG, "user" + user_id);
+
 		
-		get_command(socket, CommandType.PLAY_SONG, "user");
 		
-		Thread.sleep(1000);
-		Command pause_cmd = new Command(CommandType.PAUSE);
-		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		readWriteAux.writeSocket(socket, pause_cmd);
-		
-		get_command(socket, CommandType.PAUSE, "user");
+		// next cycle
+		if (user_id == 1) {
+			Thread.sleep(1000);	
+			get_command(socket, CommandType.PAUSE, "user" + user_id);
+			System.out.println("------------------------ user1 -------------------");
+			get_command(socket, CommandType.GET_READY, "user" + user_id);
+			send_ready_command(socket, 0);
+			get_command(socket, CommandType.PLAY_SONG, "user" + user_id);
+		}
 	}
 
 	public void join_party(SocketChannel socket) throws Exception {
 		Command auth = new Command(CommandType.AUTHENTICATION);
-		auth.cmd_info.put("NAME", "Tomer");
-		auth.cmd_info.put("USER_ID", 1);
+		auth.cmd_info.put("NAME", user_name);
+		auth.cmd_info.put("USER_ID", user_id);
 		auth.cmd_info.put("IMAGE", "aaa");
 		readWriteAux.writeSocket(socket, auth);
 		//Thread.sleep(1000);
@@ -35,22 +46,23 @@ public class test implements Runnable {
 		readWriteAux.writeSocket(socket, join_party);
 		//Thread.sleep(1000);
 		
-		System.out.println("client1 - asked to join");
-		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("client2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-		
-		reply = readWriteAux.readSocket(socket);
-		System.out.println("client3 get-ready: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("user"+user_id + "- asked to join");
+		get_command(socket, CommandType.GET_READY, "user" + user_id);
 	}
 	@Override
 	public void run() {
 		try {
+			System.out.println("----------- new user-id = " + user_id + " -------------");
 			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 			join_party(socket);
-			//play_protocol_user(socket);
+			play_protocol_user(socket);
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
+	}
+	
+	public static void launch_user(int id, String name) {
+		(new Thread(new test(id, name))).start();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -72,20 +84,22 @@ public class test implements Runnable {
 		//System.out.println(readWriteAux.readSocket(socket));
 		manage_songs(socket);
 		
-		(new Thread(new test())).start();
+		launch_user(1, "Tomer");
+		
 		Thread.sleep(1000);
-		accept_new_participent(socket);
-		//play_protocol_admin(socket);
-		//Thread.sleep(1000);
+		accept_new_participent(socket, 1);
+		Thread.sleep(1000);
+		play_protocol_admin(socket);
+		Thread.sleep(1000);
 	}
 	
-	private static void accept_new_participent(SocketChannel socket) throws Exception {
+	private static void accept_new_participent(SocketChannel socket, int user_id) throws Exception {
 		System.out.println("admin1 - in accept_new_participent");
 		Thread.sleep(1000);
 		Command reply = readWriteAux.readSocket(socket);
 		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
-		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
+		confirm_req.setAttribute(jsonKey.USER_ID.name(), user_id);
 		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
 		readWriteAux.writeSocket(socket, confirm_req);
 		//Thread.sleep(1000);
@@ -124,25 +138,46 @@ public class test implements Runnable {
 		}
 	}
 	
-	public static void play_protocol_admin(SocketChannel socket) throws Exception {
+	public static void send_play_command(SocketChannel socket, int offset, int track_id) throws Exception {
 		Command play_cmd = new Command(CommandType.PLAY_SONG);
-		play_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		play_cmd.setAttribute(jsonKey.OFFSET.name(), 0);
+		play_cmd.setAttribute(jsonKey.TRACK_ID.name(), track_id);
+		play_cmd.setAttribute(jsonKey.OFFSET.name(), offset);
 		readWriteAux.writeSocket(socket, play_cmd);
-		get_command(socket, CommandType.GET_READY, "admin");
-		
+	}
+	
+	public static void send_ready_command(SocketChannel socket, int track_id) throws Exception {
 		Command ready_command = new Command(CommandType.IM_READY);
-		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		ready_command.setAttribute(jsonKey.TRACK_ID.name(), track_id);
 		readWriteAux.writeSocket(socket, ready_command);
-		
-		get_command(socket, CommandType.PLAY_SONG, "admin");
-		
-		Thread.sleep(1000);
+	}
+	
+	public static void send_pause_command(SocketChannel socket, int track_id) throws Exception {
 		Command pause_cmd = new Command(CommandType.PAUSE);
 		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
 		readWriteAux.writeSocket(socket, pause_cmd);
+	}
+	
+	public static void play_protocol_admin(SocketChannel socket) throws Exception {
+		send_play_command(socket, 0, 0);
+		get_command(socket, CommandType.GET_READY, "admin");
 		
+		send_ready_command(socket, 0);
+		get_command(socket, CommandType.PLAY_SONG, "admin");
+		
+		Thread.sleep(1000);
+		send_pause_command(socket, 0);
 		get_command(socket, CommandType.PAUSE, "admin");
+		Thread.sleep(1000);
+		launch_user(2, "Dana");
+		accept_new_participent(socket, 2);
+		Thread.sleep(1000);
+		
+		// next cycle
+		System.out.println("------------------------ admin -------------------");
+		send_play_command(socket, 3500, 0);
+		get_command(socket, CommandType.GET_READY, "admin");
+		send_ready_command(socket, 0);
+		get_command(socket, CommandType.PLAY_SONG, "admin");
 	}
 
 	public static void printInfo(Party party){
