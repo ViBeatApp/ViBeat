@@ -160,6 +160,9 @@ public class Party_thread implements Runnable {
 			break;
 		case RENAME_PARTY:
 			party.party_name = cmd.cmd_info.getString(jsonKey.NAME.name());
+		case MAKE_PRIVATE:
+			//TODO
+			//Public to private - what to do with request.
 		case DISCONNECTED:	
 			returnToServerModule(key,user,true);
 			break;

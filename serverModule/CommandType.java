@@ -16,6 +16,7 @@ public enum CommandType {
 	GET_READY, 
 	
 	RENAME_PARTY,
+	MAKE_PRIVATE,
 	CONFIRM_REQUEST,
 	MAKE_ADMIN,
 	CLOSE_PARTY, 

@@ -136,6 +136,12 @@ public class Command {
 		return cmd;
 	}
 	
+	public static Command get_makePrivate_Command(boolean isPrivate) throws JSONException {
+		Command cmd = new Command(CommandType.MAKE_PRIVATE);
+		cmd.setAttribute(jsonKey.IS_PRIVATE.name(), isPrivate);
+		return cmd;
+	}
+	
 	public static Command get_renameParty_Command(String name) throws JSONException {
 		Command cmd = new Command(CommandType.RENAME_PARTY);
 		cmd.setAttribute(jsonKey.NAME.name(), name);
