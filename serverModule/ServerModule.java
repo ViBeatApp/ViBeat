@@ -71,7 +71,6 @@ public class ServerModule {
 			user.channel.register(selector, SelectionKey.OP_READ);
 			iter.remove();
 		}
-
 	}
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {

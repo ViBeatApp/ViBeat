@@ -113,7 +113,7 @@ public class Party {
 	}
 
 	public void next_song() {
-		// TODO Auto-generated method stub
+		playlist.deleteSong(playlist.get_current_track_id());
 		
 	}
 

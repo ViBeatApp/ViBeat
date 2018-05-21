@@ -55,7 +55,6 @@ public class readWriteAux {
 			System.out.println("error - bytesRead != length");
 			return null;
 		}
-		System.out.println("reading " + length + " bytes from client.");
 		buf.rewind();
 		return new Command(buf.array());
 	}
@@ -75,7 +74,6 @@ public class readWriteAux {
 				return -1;
 			}
 		}
-		System.out.println("writing " + writeRead + " bytes to client.");
 		return writeRead;
 	}
 }

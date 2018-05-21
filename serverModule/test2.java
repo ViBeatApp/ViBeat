@@ -52,6 +52,11 @@ public class test2 implements Runnable {
 		readWriteAux.writeSocket(tomer_socket, auth_tomer);
 		//Thread.sleep(1000);
 		
+		Command search_party = new Command (CommandType.SEARCH_PARTY);
+		search_party.setAttribute(jsonKey.NAME.name(), "Ido");
+		readWriteAux.writeSocket(tomer_socket, search_party);
+		Thread.sleep(2000);
+		
 		Command join_party = new Command (CommandType.JOIN);
 		join_party.setAttribute(jsonKey.PARTY_ID.name(), 0);
 		readWriteAux.writeSocket(tomer_socket, join_party);
