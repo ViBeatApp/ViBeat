@@ -3,50 +3,21 @@ import java.nio.channels.SocketChannel;
 import java.util.List;
 
 public class test2 implements Runnable {
-	
-	public void play_protocol_user(SocketChannel socket) throws Exception {
-		get_command(socket, CommandType.GET_READY, "user");
-		
-		Command ready_command = new Command(CommandType.IM_READY);
-		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		readWriteAux.writeSocket(socket, ready_command);
-		
-		get_command(socket, CommandType.PLAY_SONG, "user");
-		
-		Thread.sleep(1000);
-		Command pause_cmd = new Command(CommandType.PAUSE);
-		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		readWriteAux.writeSocket(socket, pause_cmd);
-		
-		get_command(socket, CommandType.PAUSE, "user");
+	SocketChannel socket;
+	String name;
+	public test2(SocketChannel socket, String string) {
+		this.socket = socket;
+		this.name = string;
 	}
 
-	public void join_party(SocketChannel socket) throws Exception {
-		Command auth = new Command(CommandType.AUTHENTICATION);
-		auth.cmd_info.put("NAME", "Tomer");
-		auth.cmd_info.put("USER_ID", 1);
-		auth.cmd_info.put("IMAGE", "aaa");
-		readWriteAux.writeSocket(socket, auth);
-		//Thread.sleep(1000);
-		
-		Command join_party = new Command (CommandType.JOIN);
-		join_party.setAttribute(jsonKey.PARTY_ID.name(), 0);
-		readWriteAux.writeSocket(socket, join_party);
-		//Thread.sleep(1000);
-		
-		System.out.println("client1 - asked to join");
-		Command reply = readWriteAux.readSocket(socket);
-		System.out.println("client2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-		
-		reply = readWriteAux.readSocket(socket);
-		System.out.println("client3 get-ready: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-	}
-	@Override
 	public void run() {
 		try {
-			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
-			join_party(socket);
-			//play_protocol_user(socket);
+			while(true) {
+				Command rep = readWriteAux.readSocket(socket);
+				if(rep.cmd_type == CommandType.DISCONNECTED)
+					break;
+				System.out.println("reply to " + name + ": " + rep.cmd_type.name() + " info:" + rep.cmd_info);
+			}
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
@@ -57,6 +28,8 @@ public class test2 implements Runnable {
 		System.out.println("ido");
 		SocketChannel ido_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
 		System.out.println("first connection");
+		
+		(new Thread(new test2(ido_socket,"ido"))).start();
 		
 		Command auth_ido = new Command(CommandType.AUTHENTICATION);
 		auth_ido.cmd_info.put("NAME", "Ido");
@@ -71,6 +44,7 @@ public class test2 implements Runnable {
 		
 		System.out.println("tomer");
 		SocketChannel tomer_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
+		(new Thread(new test2(tomer_socket,"tomer"))).start();
 		Command auth_tomer = new Command(CommandType.AUTHENTICATION);
 		auth_tomer.cmd_info.put("NAME", "Tomer");
 		auth_tomer.cmd_info.put("USER_ID", 1);
@@ -81,9 +55,6 @@ public class test2 implements Runnable {
 		Command join_party = new Command (CommandType.JOIN);
 		join_party.setAttribute(jsonKey.PARTY_ID.name(), 0);
 		readWriteAux.writeSocket(tomer_socket, join_party);
-		Command rep = readWriteAux.readSocket(tomer_socket);
-		System.out.println("reply:" + rep.cmd_type.name() + " info:" + rep.cmd_info);
-		rep = readWriteAux.readSocket(ido_socket);
 		
 		Command add_song = new Command(CommandType.ADD_SONG);
 		System.out.println("ido - sending add_song");
@@ -99,21 +70,13 @@ public class test2 implements Runnable {
 		
 		System.out.println("ido is opening new connection");
 		ido_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
+		(new Thread(new test2(ido_socket,"ido2"))).start();
 		System.out.println("second connection");
 		readWriteAux.writeSocket(ido_socket, auth_ido);
-		rep = readWriteAux.readSocket(ido_socket);
-		System.out.println("reply:" + rep.cmd_type.name() + " info:" + rep.cmd_info);
 				
 		Thread.sleep(5000);
 		
-		
-//		manage_songs(socket);
-//		
-//		(new Thread(new test())).start();
-//		Thread.sleep(1000);
-//		accept_new_participent(socket);
-		//play_protocol_admin(socket);
-		//Thread.sleep(1000);
+
 	}
 	
 	private static void accept_new_participent(SocketChannel socket) throws Exception {

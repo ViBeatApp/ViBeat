@@ -10,7 +10,7 @@ Disconnected
 ADD_SONG (URL)
 DELETE_SONG(TrackID)
 SWAP_SONGS(TRACK_ID_1,TrackID_2)
-PLAY_SONG(TRACK_ID,OFFSET)
+PLAY_SONG(TRACK_ID,OFFSET)			//if it's the last song - don't send message. 
 IM_READY(TRACK_ID)
 PAUSE(TRACK_ID)
 
@@ -30,6 +30,7 @@ REJECTED - json info is empty {} !!
 GET_READY(TRACK_ID,OFFSET)				//if offset == -1, there is not songs in list.
 PLAY_SONG(TRACK_ID,OFFSET)
 PAUSE()
+CLOSE_PARTY()
 	
 SYNC_PARTY({
 		"USERS",[{NAME,USER_ID,IMAGE,IS_ADMIN},...]

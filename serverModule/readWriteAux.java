@@ -35,7 +35,6 @@ public class readWriteAux {
 				bytesRead += channel.read(buf);
 			} 
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				return -1;
 			}
 		}
