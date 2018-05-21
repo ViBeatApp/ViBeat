@@ -71,8 +71,9 @@ public class Party {
 		user.is_admin = false;
 	}
 	
-	public boolean removeClient(User user){
-		user.currentPartyId = -1;
+	public boolean removeClient(User user,boolean disconnected){
+		if(!disconnected)
+			user.currentPartyId = -1;
 		disableAdmin(user);
 		return connected.remove(user);
 	}

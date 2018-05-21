@@ -82,19 +82,22 @@ public class ServerModule {
 
 		case AUTHENTICATION:
 			String name = cmd.cmd_info.getString(jsonKey.NAME.name());
-			int id = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
+			int userId = cmd.cmd_info.getInt(jsonKey.USER_ID.name());
 			byte[] image = cmd.cmd_info.getString(jsonKey.IMAGE.name()).getBytes();
 			
-			User disconnectedUser = isDisconnectedUser(id);
+			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
-				if(join_party((User)key.attachment(),cmd.cmd_info.getInt(jsonKey.PARTY_ID.name()))) {		//sync problem
-					key.cancel();		
+				int partyID = cmd.cmd_info.getInt(jsonKey.PARTY_ID.name());
+				Party party = FindPartyByID(partyID);
+				if (party != null) {
+					key.cancel();
+					join_party(disconnectedUser,partyID);
 					break;
 				}
 			}
 			
-			User newUser = new User(name,id,image, client);
+			User newUser = new User(name,userId,image, client);
 			key.attach(newUser);					///check this
 			break;
 

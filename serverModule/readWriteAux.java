@@ -32,6 +32,9 @@ public class readWriteAux {
 		ByteBuffer buf = ByteBuffer.allocate(4);		
 		while (buf.hasRemaining()) { 
 			bytesRead += channel.read(buf);
+			System.out.println(bytesRead);
+			if(bytesRead == -1)
+				return -1;
 		}
 		if(bytesRead < 4) return -1;
 		buf.rewind();
