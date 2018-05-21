@@ -169,7 +169,6 @@ public class ServerModule {
 
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		System.out.println("serverModule - party.party_id = " + party.party_id);
-		System.out.println("serverModule - partyID = " + partyID);
 		current_parties.add(party);
 		(new Thread(new Party_thread(party,selector))).start();
 

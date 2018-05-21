@@ -13,8 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sun.corba.se.spi.activation.Server;
-
 public class Party_thread implements Runnable {
 
 	public Party party;
@@ -282,12 +280,6 @@ public class Party_thread implements Runnable {
 
 	}
 
-	//TODO
-	public void disconnect_user(User user) throws JSONException, Exception {
-		//user.channel.close();			//check
-		ServerModule.addDisconenctedUser(user);
-		
-	}
 	
 	public void returnToServerModule(SelectionKey key,User user,boolean disconnected) throws IOException {
 		boolean removed_participent = party.removeClient(user,disconnected);
@@ -338,6 +330,8 @@ public class Party_thread implements Runnable {
 
 	private void syncPartyToAll() throws JSONException, IOException {
 		// TODO Auto-generated method stub
+		if(party.numOfClients() == 0)
+			return;
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = new Command(CommandType.SYNC_PARTY, party_info);
 		SendCommandToAll(sync_command);
@@ -345,6 +339,7 @@ public class Party_thread implements Runnable {
 
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {
+		
 		get_ready_command.cmd_info.put(jsonKey.OFFSET.name(), total_offset);
 		get_ready_command.cmd_info.put(jsonKey.TRACK_ID.name(), party.get_current_track_id());
 	}

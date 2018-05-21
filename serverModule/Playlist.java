@@ -22,6 +22,12 @@ public class Playlist {
 		return track;
 	}
 	
+	public int get_current_track_id() {
+		if(songs.size() == 0) 
+			return -1;
+		return songs.get(0).trackId;
+	}
+	
 	public int deleteSong(int trackID){
 		Iterator<Track> iter = songs.iterator();
 		while (iter.hasNext()){

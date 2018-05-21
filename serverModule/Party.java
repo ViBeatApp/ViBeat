@@ -107,7 +107,7 @@ public class Party {
 	}
 
 	public int get_current_track_id() {
-		return playlist.songs.get(0).trackId;
+		return playlist.get_current_track_id();
 	}
 
 	public void next_song() {
