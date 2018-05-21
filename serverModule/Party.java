@@ -33,6 +33,7 @@ public class Party {
 		admins = new ArrayList<>();
 		connected = new ArrayList<>();
 		request = new ArrayList<>();
+		new_clients = new ArrayList<>();
 		this.is_private = is_private;
 		this.selector = Selector.open();
 		this.admins.add(admin);

@@ -150,12 +150,17 @@ public class ServerModule {
 		boolean is_private = info.getBoolean(jsonKey.IS_PRIVATE.name());
 		
 		Party party = new Party(name,partyID++,party_creator,is_private);
+		System.out.println("serverModule - party.party_id = " + party.party_id);
+		System.out.println("serverModule - partyID = " + partyID);
+		current_parties.add(party);
 		(new Thread(new Party_thread(party,selector))).start();
 
 	}
 
 	private static void join_party(User client, JSONObject cmd_info) throws JSONException {
 		Party party = FindPartyByID(cmd_info.getInt(jsonKey.PARTY_ID.name()));
+		System.out.println("serverModule - looked for partyID: " + cmd_info.getInt(jsonKey.PARTY_ID.name()));
+		System.out.println("serverModule - party: " + party);
 		party.addNewClient(client);
 		party.selector.wakeup();	
 	}
