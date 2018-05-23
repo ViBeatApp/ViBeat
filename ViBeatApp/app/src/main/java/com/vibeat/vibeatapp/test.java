@@ -1,3 +1,7 @@
+package com.vibeat.vibeatapp;
+
+import android.util.Log;
+
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.List;
@@ -50,8 +54,8 @@ public class test implements Runnable {
 		try {
 			System.out.println("----------- new user-id = " + user_id + " -------------");
 			SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
-			join_party(socket);
-			play_protocol_user(socket);
+            join_party(socket);
+            play_protocol_user(socket);
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}
@@ -61,10 +65,16 @@ public class test implements Runnable {
 		(new Thread(new test(id, name))).start();
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void test() throws Exception {
 		//check_enum();
-		SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
-		System.out.println("create new party");
+        SocketChannel socket = null;
+        try {
+			socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
+		} catch(Exception e){
+			Log.e("ERROR", "opening socket failed\n");
+			e.printStackTrace();
+		}
+		//System.out.println("create new party");
 		
 		Command auth = new Command(CommandType.AUTHENTICATION);
 		auth.cmd_info.put("NAME", "Ido");
@@ -174,31 +184,5 @@ public class test implements Runnable {
 		get_command(socket, CommandType.GET_READY, "admin");
 		send_ready_command(socket, 0);
 		get_command(socket, CommandType.PLAY_SONG, "admin");
-	}
-
-	public static void printInfo(Party party){
-		System.out.println("party name: " + party.party_name);
-		System.out.println("party id: " + party.party_id);
-		System.out.println("party's admins: ");
-		//printUserList(party.admins);
-		System.out.println("party's clients: ");
-		printUserList(party.connected);
-		System.out.println("party's requests: ");
-		printUserList(party.request);
-		System.out.println("party's playlist: ");
-		printPlayList(party.playlist);
-		System.out.println("\n\n");
-	}
-
-	private static void printUserList(List<User> list) {
-		for(int i = 0; i < list.size(); ++i){
-			System.out.println("	" + list.get(i).name);	
-		}
-	}
-	
-	private static void printPlayList(Playlist playlist) {
-		for(int i = 0; i < playlist.songs.size(); ++i){
-			System.out.println("	" + playlist.songs.get(i).url);	
-		}
 	}
 }

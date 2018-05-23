@@ -21,6 +21,7 @@ import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
+import com.vibeat.vibeatapp.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public class EnterPartyActivity extends AppCompatActivity {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(EnterPartyActivity.this, CreatePartyActivity.class);
                 startActivity(intent);
             }

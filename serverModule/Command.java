@@ -104,7 +104,7 @@ public class Command {
 	}
 	
 	public static Command get_addSons_Command(String url) throws JSONException {
-		Command cmd = new Command(CommandType.PLAY_SONG);
+		Command cmd = new Command(CommandType.ADD_SONG);
 		cmd.setAttribute(jsonKey.URL.name(), url);
 		return cmd;
 	}

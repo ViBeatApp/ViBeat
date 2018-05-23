@@ -25,6 +25,7 @@ import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.test;
 
 
 public class MainActivity extends AppCompatActivity {

@@ -10,6 +10,7 @@ import com.vibeat.vibeatapp.Activities.PlaylistActivity;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.ServerMsg;
+import com.vibeat.vibeatapp.test;
 
 import static com.vibeat.vibeatapp.Objects.MSGType.*;
 
@@ -21,12 +22,17 @@ public class ListenerThread extends Thread {
     public Intent intent;
 
     public ListenerThread(Activity current_activity) {
+
         this.current_activity = current_activity;
         media_manager = ((MyApplication) current_activity.getApplication()).media_manager;
     }
 
     @Override
     public void run() {
+
+        try{
+            test.test();}catch(Exception e){}
+            
         while (!this.isInterrupted()) {
             ServerMsg m = null;
             try {
