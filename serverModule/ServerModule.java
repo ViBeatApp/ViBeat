@@ -25,7 +25,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("192.168.43.238",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress(args[0],2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
