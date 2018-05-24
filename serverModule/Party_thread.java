@@ -229,12 +229,15 @@ public class Party_thread implements Runnable {
 
 	/* we wait for half of the party participants to be ready before we actually start playing */
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
+		System.out.println("--- party-thread: party-songs-#: " + party.playlist.songs.size());
 		if((party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing) && cmd.cmd_info.getInt("TrackID") == party.get_current_track_id()) {
 			return;
 		}
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		party.next_song();
+		if (cmd.getIntAttribute(jsonKey.TRACK_ID.name()) != party.get_current_track_id()) {
+			party.next_song();
+		}
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET.name());
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		update_get_ready_command();
