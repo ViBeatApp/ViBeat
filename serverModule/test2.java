@@ -16,7 +16,7 @@ public class test2 implements Runnable {
 				Command rep = readWriteAux.readSocket(socket);
 				if(rep.cmd_type == CommandType.DISCONNECTED)
 					break;
-				System.out.println("reply to " + name + ": " + rep.cmd_type.name() + " info:" + rep.cmd_info);
+				System.out.println("reply to " + name + ": " + rep.cmd_type + " info:" + rep.cmd_info);
 			}
 		} catch (Exception e) {	
 			e.printStackTrace();
@@ -53,12 +53,12 @@ public class test2 implements Runnable {
 		//Thread.sleep(1000);
 		
 		Command search_party = new Command (CommandType.SEARCH_PARTY);
-		search_party.setAttribute(jsonKey.NAME.name(), "Ido");
+		search_party.setAttribute(jsonKey.NAME, "Ido");
 		readWriteAux.writeSocket(tomer_socket, search_party);
 		Thread.sleep(2000);
 		
 		Command join_party = new Command (CommandType.JOIN);
-		join_party.setAttribute(jsonKey.PARTY_ID.name(), 0);
+		join_party.setAttribute(jsonKey.PARTY_ID, 0);
 		readWriteAux.writeSocket(tomer_socket, join_party);
 		
 		Command add_song = new Command(CommandType.ADD_SONG);
@@ -66,7 +66,7 @@ public class test2 implements Runnable {
 		add_song.cmd_info.put("URL", "www.youtube1");
 		readWriteAux.writeSocket(ido_socket, add_song);	
 		//rep = readWriteAux.readSocket(ido_socket);
-		//System.out.println("reply:" + rep.cmd_type.name() + " info:" + rep.cmd_info);
+		//System.out.println("reply:" + rep.cmd_type + " info:" + rep.cmd_info);
 		
 		ido_socket.close();
 		
@@ -88,15 +88,15 @@ public class test2 implements Runnable {
 //		System.out.println("admin1 - in accept_new_participent");
 //		Thread.sleep(1000);
 //		Command reply = readWriteAux.readSocket(socket);
-//		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+//		System.out.println("admin2 - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 //		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
-//		confirm_req.setAttribute(jsonKey.USER_ID.name(), 1);
-//		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
+//		confirm_req.setAttribute(jsonKey.USER_ID, 1);
+//		confirm_req.setAttribute(jsonKey.CONFIRMED, true);
 //		readWriteAux.writeSocket(socket, confirm_req);
 //		//Thread.sleep(1000);
 //		
 //		reply = readWriteAux.readSocket(socket);
-//		System.out.println("admin3 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+//		System.out.println("admin3 - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 //	}
 //	
 	public static void manage_songs(SocketChannel socket) throws Exception {
@@ -109,20 +109,20 @@ public class test2 implements Runnable {
 		System.out.println("admin - send URL1");
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
-		System.out.println("admin - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("admin - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		
 		add_song.cmd_info.put("URL", "www.youtube2");
 		readWriteAux.writeSocket(socket, add_song);
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
-		System.out.println("command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		System.out.println("command: " + reply.cmd_type + " info:" + reply.cmd_info);
 	}
 	
 	
 	public static void get_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
 		while (true) {
 			Command reply = readWriteAux.readSocket(socket);
-			System.out.println(user_name + " - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+			System.out.println(user_name + " - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 			if (reply.cmd_type == type) {
 				break;
 			}
@@ -131,20 +131,20 @@ public class test2 implements Runnable {
 	
 	public static void play_protocol_admin(SocketChannel socket) throws Exception {
 		Command play_cmd = new Command(CommandType.PLAY_SONG);
-		play_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
-		play_cmd.setAttribute(jsonKey.OFFSET.name(), 0);
+		play_cmd.setAttribute(jsonKey.TRACK_ID, 0);
+		play_cmd.setAttribute(jsonKey.OFFSET, 0);
 		readWriteAux.writeSocket(socket, play_cmd);
 		get_command(socket, CommandType.GET_READY, "admin");
 		
 		Command ready_command = new Command(CommandType.IM_READY);
-		ready_command.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		ready_command.setAttribute(jsonKey.TRACK_ID, 0);
 		readWriteAux.writeSocket(socket, ready_command);
 		
 		get_command(socket, CommandType.PLAY_SONG, "admin");
 		
 		Thread.sleep(1000);
 		Command pause_cmd = new Command(CommandType.PAUSE);
-		pause_cmd.setAttribute(jsonKey.TRACK_ID.name(), 0);
+		pause_cmd.setAttribute(jsonKey.TRACK_ID, 0);
 		readWriteAux.writeSocket(socket, pause_cmd);
 		
 		get_command(socket, CommandType.PAUSE, "admin");

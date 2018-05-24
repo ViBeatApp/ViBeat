@@ -79,7 +79,7 @@ public class ServerModule {
 		switch(cmd.cmd_type){
 
 		case AUTHENTICATION:
-			int userId = cmd.getIntAttribute(jsonKey.USER_ID.name());		
+			int userId = cmd.getIntAttribute(jsonKey.USER_ID);		
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.channel = client;
@@ -92,8 +92,8 @@ public class ServerModule {
 				}
 			}
 			
-			String name = cmd.getStringAttribute(jsonKey.NAME.name());
-			String image = cmd.getStringAttribute(jsonKey.IMAGE.name());
+			String name = cmd.getStringAttribute(jsonKey.NAME);
+			String image = cmd.getStringAttribute(jsonKey.IMAGE);
 			User newUser = new User(name,userId,image, client);
 			key.attach(newUser);					///check this
 			break;
@@ -103,7 +103,7 @@ public class ServerModule {
 			break;
 
 		case JOIN:
-			int partyID = cmd.getIntAttribute(jsonKey.PARTY_ID.name());
+			int partyID = cmd.getIntAttribute(jsonKey.PARTY_ID);
 			Party party = FindPartyByID(partyID);
 			if (party == null)
 				break;
@@ -121,7 +121,7 @@ public class ServerModule {
 			break;
 
 		case SEARCH_PARTY:
-			Command answer = getPartiesByName(cmd.getStringAttribute(jsonKey.NAME.name()));
+			Command answer = getPartiesByName(cmd.getStringAttribute(jsonKey.NAME));
 			readWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
@@ -148,7 +148,7 @@ public class ServerModule {
 				resultArray.put(party.getPublicJson());
 			}
 		}
-		return Command.get_searchResult_command(resultArray);
+		return Command.create_searchResult_command(resultArray);
 	}
 
 	//TODO
@@ -159,8 +159,8 @@ public class ServerModule {
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(User party_creator, Command cmd, Selector selector) throws JSONException, IOException {
-		String name = cmd.getStringAttribute(jsonKey.NAME.name());
-		boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE.name());
+		String name = cmd.getStringAttribute(jsonKey.NAME);
+		boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE);
 
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		System.out.println("serverModule - party.party_id = " + party.party_id);

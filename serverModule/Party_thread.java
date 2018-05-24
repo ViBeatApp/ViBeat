@@ -92,19 +92,19 @@ public class Party_thread implements Runnable {
 	/* to handle */
 	public void handler_new_clients() throws Exception {
 		get_newClients();
-		String updateMsg;
+		jsonKey updateMsg;
 		Iterator<User> iter = newClients.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
 			if (party.is_private) { 
 				party.addRequest(user);				
-				updateMsg = jsonKey.REQUESTS.name();
+				updateMsg = jsonKey.REQUESTS;
 			} 
 			/* the party is public, tell the user to get ready */
 			else { 
 				addClientToParty(user);
-				updateMsg = jsonKey.USERS.name();
+				updateMsg = jsonKey.USERS;
 			}
 			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
@@ -115,7 +115,7 @@ public class Party_thread implements Runnable {
 	public void addClientToParty(User user) throws JSONException, IOException {
 		party.addClient(user);
 		JSONObject party_info = party.getFullJson();
-		Command sync_command = Command.get_syncParty_Command(party_info);
+		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
 			if (party.status == Party.Party_Status.playing) {
@@ -163,7 +163,7 @@ public class Party_thread implements Runnable {
 			updateLocation(cmd);
 			break;
 		case RENAME_PARTY:
-			party.party_name = cmd.cmd_info.getString(jsonKey.NAME.name());
+			party.party_name = cmd.getStringAttribute(jsonKey.NAME);
 		case MAKE_PRIVATE:
 			//TODO
 			//Public to private - what to do with request.
@@ -183,20 +183,20 @@ public class Party_thread implements Runnable {
 
 
 	private void makeAdmin(Command cmd) throws JSONException {
-		int userId = cmd.getIntAttribute(jsonKey.USER_ID.name());
+		int userId = cmd.getIntAttribute(jsonKey.USER_ID);
 		User user = find_user(userId);
 		party.makeAdmin(user);	
 	}
 
 	private void confirmRequest(SelectionKey key, Command cmd) throws JSONException, IOException {
-		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID.name()));
+		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID));
 		if(confirmed_user == null) return;				//no such user / other admin confirmed.
 		party.removeRequest(confirmed_user);
-		if(cmd.getBoolAttribute(jsonKey.CONFIRMED.name())) {
+		if(cmd.getBoolAttribute(jsonKey.CONFIRMED)) {
 			addClientToParty(confirmed_user);
 		}
 		else {
-			SendCommandToUser(confirmed_user, Command.get_rejected_Command());
+			SendCommandToUser(confirmed_user, Command.create_rejected_Command());
 			returnToServerModule(key,confirmed_user,false);
 		}
 
@@ -239,10 +239,10 @@ public class Party_thread implements Runnable {
 		}
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		if (cmd.getIntAttribute(jsonKey.TRACK_ID.name()) != party.get_current_track_id()) {
+		if (cmd.getIntAttribute(jsonKey.TRACK_ID) != party.get_current_track_id()) {
 			party.next_song();
 		}
-		total_offset = cmd.getIntAttribute(jsonKey.OFFSET.name());
+		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		update_get_ready_command();
 		SendCommandToAll(get_ready_command);
@@ -281,26 +281,26 @@ public class Party_thread implements Runnable {
 	}
 
 	public void DeleteSong(Command cmd) throws JSONException {
-		party.deleteSong(cmd.cmd_info.getInt(jsonKey.TRACK_ID.name()));
-		addToJSONArray(jsonKey.DELETE_SONGS.name(),cmd.cmd_info);
+		party.deleteSong(cmd.getIntAttribute(jsonKey.TRACK_ID));
+		addToJSONArray(jsonKey.DELETE_SONGS,cmd.cmd_info);
 	}
 
 	public void SwapSongs(Command cmd) throws JSONException {
-		party.changeSongsOrder(cmd.cmd_info.getInt(jsonKey.TRACK_ID_1.name()),cmd.cmd_info.getInt(jsonKey.TRACK_ID_2.name()));
-		addToJSONArray(jsonKey.SWAP_SONGS.name(),cmd.cmd_info);
+		party.changeSongsOrder(cmd.getIntAttribute(jsonKey.TRACK_ID_1),cmd.getIntAttribute(jsonKey.TRACK_ID_2));
+		addToJSONArray(jsonKey.SWAP_SONGS,cmd.cmd_info);
 	}
 
 	public void AddSong(Command cmd) throws JSONException {
-		Track newTrack = party.addSong(cmd.cmd_info.getString(jsonKey.URL.name()));
+		Track newTrack = party.addSong(cmd.getStringAttribute(jsonKey.URL));
 		JSONObject trackJSON = newTrack.get_JSON();
-		addToJSONArray(jsonKey.NEW_SONGS.name(),trackJSON);
+		addToJSONArray(jsonKey.NEW_SONGS,trackJSON);
 	}
 
-	private void addToJSONArray(String classifier, JSONObject JsonObject) throws JSONException {
-		if(!update_party.cmd_info.has(classifier)) {
-			update_party.cmd_info.put(classifier, new JSONArray());
+	private void addToJSONArray(jsonKey classifier, JSONObject JsonObject) throws JSONException {
+		if(!update_party.cmd_info.has(classifier.name())) {
+			update_party.cmd_info.put(classifier.name(), new JSONArray());
 		}
-		update_party.cmd_info.getJSONArray(classifier).put(JsonObject);
+		update_party.cmd_info.getJSONArray(classifier.name()).put(JsonObject);
 	}
 
 
@@ -369,19 +369,19 @@ public class Party_thread implements Runnable {
 		}
 		JSONObject party_info = party.getFullJson();
 		
-		Command sync_command = Command.get_syncParty_Command(party_info);
+		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToAll(sync_command);
 	}
 
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {
-		get_ready_command.setAttribute(jsonKey.OFFSET.name(), total_offset);
-		get_ready_command.setAttribute(jsonKey.TRACK_ID.name(), party.get_current_track_id());
+		get_ready_command.setAttribute(jsonKey.OFFSET, total_offset);
+		get_ready_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
 	}
 
 	/* updates the play command */
 	public void update_play_command() throws JSONException {
-		play_command.setAttribute(jsonKey.OFFSET.name(), total_offset);
-		play_command.setAttribute(jsonKey.TRACK_ID.name(), party.get_current_track_id());
+		play_command.setAttribute(jsonKey.OFFSET, total_offset);
+		play_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
 	}
 }
