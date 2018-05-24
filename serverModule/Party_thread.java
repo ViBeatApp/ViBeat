@@ -120,9 +120,8 @@ public class Party_thread implements Runnable {
 		if (party.get_current_track_id() != -1) {
 			if (party.status == Party.Party_Status.playing) {
 				System.out.println("party-thread: total-offset = " + total_offset);
-				total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+				update_get_ready_command(true);
 			}
-			update_get_ready_command();
 			SendCommandToUser(user, get_ready_command);
 		}
 	}
@@ -244,16 +243,15 @@ public class Party_thread implements Runnable {
 		}
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
-		update_get_ready_command();
+		update_get_ready_command(false); // not updating the offset
 		SendCommandToAll(get_ready_command);
 	}
 
 	public void GetReady(Command cmd, User user) throws IOException, JSONException {
 		switch(party.status) {
 		case playing:
-			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
 			System.out.println("party-thread: GetReady: update total offset = " + total_offset);
-			update_play_command();
+			update_play_command(true);
 			SendCommandToUser(user, play_command);
 			break;
 		case preparing:
@@ -359,7 +357,7 @@ public class Party_thread implements Runnable {
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {
-		update_play_command();
+		update_play_command(false); // not updating the offset
 		SendCommandToList(play_command, ready_for_play, true);
 	}
 
@@ -374,13 +372,19 @@ public class Party_thread implements Runnable {
 	}
 
 	/* updates the GetReady command */
-	public void update_get_ready_command() throws JSONException {
+	public void update_get_ready_command(boolean update_offset) throws JSONException {
+		if (update_offset) {
+			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+		}
 		get_ready_command.setAttribute(jsonKey.OFFSET, total_offset);
 		get_ready_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
 	}
 
 	/* updates the play command */
-	public void update_play_command() throws JSONException {
+	public void update_play_command(boolean update_offset) throws JSONException {
+		if (update_offset) {
+			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+		}
 		play_command.setAttribute(jsonKey.OFFSET, total_offset);
 		play_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
 	}
