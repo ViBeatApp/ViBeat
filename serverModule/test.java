@@ -132,7 +132,7 @@ public class test implements Runnable {
 		System.out.println("admin - sending new_command");
 		add_song.cmd_info.put("URL", "www.youtube1");
 		readWriteAux.writeSocket(socket, add_song);
-		//Thread.sleep(1000);
+		
 		System.out.println("admin - send URL1");
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
