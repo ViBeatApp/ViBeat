@@ -2,6 +2,10 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class test implements Runnable {
 	
 	public int user_id;
@@ -20,7 +24,7 @@ public class test implements Runnable {
 
 		// next cycle
 		if (user_id == 1) {
-			Thread.sleep(1000);	
+			Thread.sleep(500);	
 			get_command(socket, CommandType.PAUSE, "user" + user_id);
 			System.out.println("------------------------ user1 -------------------");
 			get_command(socket, CommandType.GET_READY, "user" + user_id);
@@ -49,7 +53,8 @@ public class test implements Runnable {
 	public void run() {
 		try {
 			System.out.println("----------- new user-id = " + user_id + " -------------");
-			SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
+			//SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
+			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 2000));
 			join_party(socket);
 			play_protocol_user(socket);
 		} catch (Exception e) {	
@@ -63,7 +68,8 @@ public class test implements Runnable {
 	
 	public static void main(String[] args) throws Exception {
 		//check_enum();
-		SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
+		//SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
+		SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 2000));
 		System.out.println("create new party");
 		
 		Command auth = new Command(CommandType.AUTHENTICATION);
@@ -71,13 +77,11 @@ public class test implements Runnable {
 		auth.cmd_info.put("USER_ID", 0);
 		auth.cmd_info.put("IMAGE", "abcd");
 		readWriteAux.writeSocket(socket, auth);
-		//Thread.sleep(1000);
 		Command create = new Command(CommandType.CREATE);
 		create.cmd_info.put("NAME", "Ido's party");
 		create.cmd_info.put("IS_PRIVATE", true);
 		readWriteAux.writeSocket(socket, create);
-		//Thread.sleep(1000);
-		//System.out.println(readWriteAux.readSocket(socket));
+		
 		manage_songs(socket);
 		
 		launch_user(1, "Tomer");
@@ -86,22 +90,40 @@ public class test implements Runnable {
 		accept_new_participent(socket, 1);
 		Thread.sleep(1000);
 		play_protocol_admin(socket);
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 	}
 	
+	public static void accept_a_lot(SocketChannel socket, int first_guest_id, int new_guests_n) throws Exception {
+		for (int i = 0; i < new_guests_n; i++) {
+			int current_guest_id = first_guest_id+i;
+			launch_user(current_guest_id, "Idan" + Integer.toString(current_guest_id));
+			Thread.sleep(20);
+		}
+		int accept_counter = 0;
+		while (accept_counter <= new_guests_n) {
+			Command reply = get_command(socket, CommandType.SYNC_PARTY, "Ido-admin");
+			JSONArray req = reply.getSyncPartyAttribute(jsonKey.REQUESTS.name());
+			for (int j = 0; j < req.length(); j++) {
+				JSONObject usr = req.getJSONObject(j);
+				int new_req = (int) usr.get(jsonKey.USER_ID.name());
+				send_conf_command(socket, new_req);
+				accept_counter++;
+				System.out.println("accept user:" +  Integer.toString(new_req));
+			}
+		}
+	}
+
 	private static void accept_new_participent(SocketChannel socket, int user_id) throws Exception {
 		System.out.println("admin1 - in accept_new_participent");
-		Thread.sleep(1000);
+		Thread.sleep(10);
 		Command reply = readWriteAux.readSocket(socket);
 		System.out.println("admin2 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
-		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
-		confirm_req.setAttribute(jsonKey.USER_ID.name(), user_id);
-		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
-		readWriteAux.writeSocket(socket, confirm_req);
+		send_conf_command(socket, user_id);
 		//Thread.sleep(1000);
 		
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin3 - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
+		
 	}
 	
 	public static void manage_songs(SocketChannel socket) throws Exception {
@@ -124,14 +146,23 @@ public class test implements Runnable {
 	}
 	
 	
-	public static void get_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
+	public static Command get_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
+		Command reply;
 		while (true) {
-			Command reply = readWriteAux.readSocket(socket);
+			reply = readWriteAux.readSocket(socket);
 			System.out.println(user_name + " - command: " + reply.cmd_type.name() + " info:" + reply.cmd_info);
 			if (reply.cmd_type == type) {
 				break;
 			}
 		}
+		return reply;
+	}
+	
+	public static void send_conf_command(SocketChannel socket, int user_id) throws Exception {
+		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
+		confirm_req.setAttribute(jsonKey.USER_ID.name(), user_id);
+		confirm_req.setAttribute(jsonKey.CONFIRMED.name(), true);
+		readWriteAux.writeSocket(socket, confirm_req);
 	}
 	
 	public static void send_play_command(SocketChannel socket, int offset, int track_id) throws Exception {
@@ -160,17 +191,21 @@ public class test implements Runnable {
 		send_ready_command(socket, 0);
 		get_command(socket, CommandType.PLAY_SONG, "admin");
 		
-		Thread.sleep(1000);
+		Thread.sleep(1500);
+		
+		// some users entered the party
+		accept_a_lot(socket, 2, 3);
+		
 		send_pause_command(socket, 0);
 		get_command(socket, CommandType.PAUSE, "admin");
 		Thread.sleep(1000);
-		launch_user(2, "Dana");
+		launch_user(5, "Dana");
 		accept_new_participent(socket, 2);
-		Thread.sleep(2000);
+		Thread.sleep(1000);
 		
 		// next cycle
 		System.out.println("------------------------ admin -------------------");
-		send_play_command(socket, 3500, 0);
+		send_play_command(socket, 0, 1);
 		get_command(socket, CommandType.GET_READY, "admin");
 		send_ready_command(socket, 0);
 		get_command(socket, CommandType.PLAY_SONG, "admin");

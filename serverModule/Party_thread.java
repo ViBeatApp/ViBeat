@@ -41,6 +41,7 @@ public class Party_thread implements Runnable {
 		keep_on = true;
 		total_offset = 0;
 		ready_for_play = new ArrayList<>();
+		last_play_time = null;
 	}
 
 	@Override
@@ -117,7 +118,10 @@ public class Party_thread implements Runnable {
 		Command sync_command = Command.get_syncParty_Command(party_info);
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
-			System.out.println("party-thread: total-offset = " + total_offset);
+			if (party.status == Party.Party_Status.playing) {
+				System.out.println("party-thread: total-offset = " + total_offset);
+				total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+			}
 			update_get_ready_command();
 			SendCommandToUser(user, get_ready_command);
 		}
