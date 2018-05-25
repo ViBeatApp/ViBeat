@@ -13,12 +13,14 @@ public class Party {
 
     public String party_name;
     public boolean is_private;
+    public int id;
 
-    public Party(User creator, String party_name, boolean is_private){
+    public Party(User creator, String party_name, boolean is_private, int id){
         this.admin.add(creator);
         this.party_name = party_name;
         this.is_private = is_private;
         this.playlist = new Playlist();
+        this.id = id;
     }
 
     public void addConnected(User user){
