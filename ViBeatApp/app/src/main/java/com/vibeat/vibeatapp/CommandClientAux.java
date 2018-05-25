@@ -12,13 +12,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommandClientAux {
-	
-}
+
 	public JSONArray getPartyArray(Command cmd) throws JSONException {
-		if(cmd.cmd_type != jsonKey.SEARCH_RESULT)
+		if(cmd.cmd_type != CommandType.SEARCH_RESULT)
 			return null;
 		JSONArray partyArray = new JSONArray();
-		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.SEARCH_RESULT);
+		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.RESULT);
 		for(int i = 0; i < objectArray.length(); ++i) {
 			JSONObject partyJsonObject = objectArray.getJSONObject(i);
 			
@@ -33,7 +32,7 @@ public class CommandClientAux {
 
 	
 	public JSONArray getSyncPartyAttribute(Command cmd, jsonKey key) throws JSONException {
-		if(cmd.cmd_type != jsonKey.SYNC_PARTY)
+		if(cmd.cmd_type != CommandType.SYNC_PARTY)
 			return null;
 		JSONArray result = null;
 		switch(key) {
@@ -64,7 +63,7 @@ public class CommandClientAux {
 		return result;
 	}
 	
-	private JSONArray createUserArray(Command cmd) {
+	private JSONArray createUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
 		for(int i = 0; i < objectArray.length(); ++i) {
@@ -75,7 +74,7 @@ public class CommandClientAux {
 			int id = userJsonObject.getInt(jsonKey.USER_ID.name());	
 			boolean is_admin = userJsonObject.getBoolean(jsonKey.IS_ADMIN.name());	
 			
-			userArray.put(new User(name,path,id,is_admin));
+			//userArray.put(new User(name,path,id,is_admin));
 		}
 		return userArray;
 	}
@@ -92,7 +91,7 @@ public class CommandClientAux {
 		return songArray;
 	}
 	
-	private JSONArray createRequestUserArray(Command cmd) {
+	private JSONArray createRequestUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
 		for(int i = 0; i < objectArray.length(); ++i) {
