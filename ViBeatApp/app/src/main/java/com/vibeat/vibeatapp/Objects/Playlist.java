@@ -1,7 +1,5 @@
 package com.vibeat.vibeatapp.Objects;
 
-import com.vibeat.vibeatapp.ListClasses.ListAdapterable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,5 +25,13 @@ public class Playlist{
         tracks.add(t);
         if (tracks.size() == 1)
             cur_track = 0;
+    }
+
+    public int searchTrack(int play_track_id) {
+        for (int i = 0; i < this.tracks.size(); i++ ) {
+            if(tracks.get(i).track_id == play_track_id)
+                return i;
+        }
+        return -1;
     }
 }

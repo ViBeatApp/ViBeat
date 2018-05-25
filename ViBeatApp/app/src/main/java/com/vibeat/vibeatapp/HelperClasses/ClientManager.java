@@ -39,10 +39,14 @@ public class ClientManager {
 
         senderThread.start();
         try {
-            senderThread.addCmd(Command.get_authentication_command(user.name, user.id, user.img_path.getBytes()));
+            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path.getBytes()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        app.media_manager = new MediaPlayerManager();
+        app.listener_thread = new ListenerThread(app, senderThread.conn);
+        app.listener_thread.start();
 
         this.app = app;
     }
@@ -50,13 +54,13 @@ public class ClientManager {
     public void createParty(){
         is_admin = true;
         try {
-            senderThread.addCmd(Command.get_create_Command(party.party_name,party.is_private));
+            senderThread.addCmd(Command.create_create_Command(party.party_name,party.is_private));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void connectParty(){
+    public void connectParty(Party party){
         /*if (party.is_private) {
             party.addRequest(user);
             conn.updateParty(this.party);
@@ -70,7 +74,7 @@ public class ClientManager {
         this.is_admin = false;
         return true;*/
         try {
-            senderThread.addCmd(Command.get_join_Command(party.id));
+            senderThread.addCmd(Command.create_join_Command(party.id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -79,7 +83,7 @@ public class ClientManager {
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
         try {
-            senderThread.addCmd(Command.get_addSong_Command(track.track_path));
+            senderThread.addCmd(Command.create_addSons_Command(track.track_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -87,7 +91,8 @@ public class ClientManager {
 
     public void nextSong(){
         try {
-            senderThread.addCmd(Command.get_playSong_Command(party.playlist.cur_track+1, 0));
+            int id = party.playlist.tracks.get(party.playlist.cur_track+1).track_id;
+            senderThread.addCmd(Command.create_playSong_Command(id, 0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -95,7 +100,7 @@ public class ClientManager {
 
     public void swapTrack(int pos1, int pos2){
         try {
-            senderThread.addCmd(Command.get_swapSongs_Command(pos1,pos2));
+            senderThread.addCmd(Command.create_swapSongs_Command(pos1,pos2));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -110,7 +115,7 @@ public class ClientManager {
     public void answerRequest(User requested, boolean answer){
         this.party.changeRequestStatus(requested,answer);
         try {
-            senderThread.addCmd(Command.get_confirmRequest_Command(requested.id,answer));
+            senderThread.addCmd(Command.create_confirmRequest_Command(requested.id,answer));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,7 +124,7 @@ public class ClientManager {
     public void makeAdmin(User connected){
         this.party.makeAdmin(connected);
         try {
-            senderThread.addCmd(Command.get_makeAdmin_Command(connected.id));
+            senderThread.addCmd(Command.create_makeAdmin_Command(connected.id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -145,7 +150,7 @@ public class ClientManager {
 
                             if( is_admin ) {
                                 try {
-                                    senderThread.addCmd(Command.get_updateLocation_Command(0));
+                                    senderThread.addCmd(Command.create_updateLocation_Command(0));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -168,9 +173,9 @@ public class ClientManager {
         }
     }
 
-    public void getPartiesNearby() throws InterruptedException {
+    public void getPartiesNearby(){
         try {
-            senderThread.addCmd(Command.get_nearbyParties_Command(0));
+            senderThread.addCmd(Command.create_nearbyParties_Command(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -191,7 +196,7 @@ public class ClientManager {
         this.party.playlist.is_playing = !this.party.playlist.is_playing;
 
         try {
-            senderThread.addCmd(Command.get_playSong_Command(this.party.playlist.cur_track,app.media_manager.getOffset()));
+            senderThread.addCmd(Command.create_playSong_Command(this.party.playlist.cur_track,app.media_manager.getOffset()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -207,7 +212,7 @@ public class ClientManager {
         //in the server : conn.updateParty(this.party);
 
         try {
-            senderThread.addCmd(Command.get_makePrivate_Command(false));
+            senderThread.addCmd(Command.create_makePrivate_Command(false));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -219,7 +224,7 @@ public class ClientManager {
         this.party.request = new ArrayList<User>();
 
         try {
-            senderThread.addCmd(Command.get_makePrivate_Command(true));
+            senderThread.addCmd(Command.create_makePrivate_Command(true));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -228,7 +233,7 @@ public class ClientManager {
     //WHY LOCATION?
     public void leaveParty(){
         try {
-            senderThread.addCmd(Command.get_leaveParty_Command(0));
+            senderThread.addCmd(Command.create_leaveParty_Command(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -237,5 +242,14 @@ public class ClientManager {
 
     public void logout(){
         senderThread.logout();
+    }
+
+    public void changePartyName(String party_name) {
+        this.party.party_name = party_name;
+        try {
+            senderThread.addCmd(Command.create_renameParty_Command(party_name));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

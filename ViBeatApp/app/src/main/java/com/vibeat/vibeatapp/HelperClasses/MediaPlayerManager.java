@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.vibeat.vibeatapp.Objects.Playlist;
 
@@ -10,12 +11,18 @@ import java.io.IOException;
 public class MediaPlayerManager {
 
     public Playlist playlist;
+
     public MediaPlayer mediaPlayer1;
     public MediaPlayer mediaPlayer2;
+
     public boolean prepared_current;
     public boolean prepared_next;
+
     public boolean isMute;
     public int playing;
+    public boolean waitingReady = false;
+    public int track_id_1;
+    public int track_id_2;
 
     public MediaPlayerManager(Playlist playlist){
         this();
@@ -32,7 +39,51 @@ public class MediaPlayerManager {
         this.prepared_next = false;
         this.isMute = false;
         this.playing = 1;
+
+        mediaPlayer1.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                if(playing == 1){
+                    prepared_current = true;
+                    if( waitingReady ){
+
+                    }
+                }
+                else{
+                    prepared_next = true;
+                }
+                if ( waitingReady && playing == 2)
+
+            }
+        });
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void updatePlaylist(Playlist playlist){
         this.playlist = playlist;
@@ -51,6 +102,14 @@ public class MediaPlayerManager {
         MediaPlayer mediaPlayer = (this.playing == 1) ? mediaPlayer1 : mediaPlayer2;
         mediaPlayer.start();
         mediaPlayer.seekTo(offset);
+    }
+
+    public void play(int offset, int track_id){
+        Log.e("PLAY","started playing");
+    }
+
+    public void prepare(int offset, int track_id){
+        Log.e("PREPARE","started preparing");
     }
 
     public void pause(){
@@ -78,7 +137,7 @@ public class MediaPlayerManager {
         mediaPlayer.reset();
         String url = this.playlist.tracks.get(index).track_path;
         mediaPlayer.setDataSource(url);
-        mediaPlayer.prepare(); // might take long! (for buffering, etc)
+        mediaPlayer.prepareAsync(); // might take long! (for buffering, etc)
     }
 
     public void prepareSong() throws IOException{

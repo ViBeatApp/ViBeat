@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -17,10 +18,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.vibeat.vibeatapp.HelperClasses.AuthenticationManager;
 import com.vibeat.vibeatapp.HelperClasses.ClientManager;
-import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
-import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
+import com.vibeat.vibeatapp.ListClasses.GUIManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         app = (MyApplication) this.getApplication();
 
+        app.gui_manager = new GUIManager(MainActivity.this, (List<Adapter>) null);
+        app.gui_manager.start();
+
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_FINE_LOCATION},
@@ -50,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if( account != null ){
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
-            login();
+            app.gui_manager.login();
         }
 
         SignInButton signInButton = findViewById(R.id.googleLogin);
@@ -65,14 +70,6 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    public void login() {
-        app.media_manager = new MediaPlayerManager();
-        app.listener_thread = new ListenerThread(MainActivity.this, app.client_manager.senderThread.conn);
-        app.listener_thread.start();
-        Intent intent = new Intent(this, EnterPartyActivity.class);
-        startActivity(intent);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
-                login();
+                app.gui_manager.login();
 
             } catch (ApiException e) {
                 Log.w("TAG", "signInResult:failed code=" + e.getStatusCode());

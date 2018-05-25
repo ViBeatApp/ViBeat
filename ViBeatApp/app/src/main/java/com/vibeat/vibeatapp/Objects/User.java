@@ -1,17 +1,17 @@
 package com.vibeat.vibeatapp.Objects;
 
-import android.location.Location;
-
 public class User {
 
     public String name;
     public String img_path;
     public int id;
+    public boolean is_admin;
 
-    public User(String name, String path, int id) {
+    public User(String name, String path, int id, boolean is_admin) {
         this.name = name;
         this.img_path = path;
         this.id = id;
+        this.is_admin = is_admin;
     }
 
 }

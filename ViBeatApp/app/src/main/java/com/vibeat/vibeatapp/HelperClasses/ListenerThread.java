@@ -1,41 +1,34 @@
 package com.vibeat.vibeatapp.HelperClasses;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.widget.Toast;
-
-import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
-import com.vibeat.vibeatapp.Activities.PlaylistActivity;
 import com.vibeat.vibeatapp.Command;
+import com.vibeat.vibeatapp.CommandClientAux;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.ServerMsg;
+import com.vibeat.vibeatapp.Objects.Party;
+import com.vibeat.vibeatapp.Objects.Playlist;
+import com.vibeat.vibeatapp.Objects.Track;
+import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.jsonKey;
-import com.vibeat.vibeatapp.test;
 import com.vibeat.vibeatapp.readWriteAux;
+import com.vibeat.vibeatapp.song;
+import com.vibeat.vibeatapp.test;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-
-import static com.vibeat.vibeatapp.CommandType.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ListenerThread extends Thread {
 
-    public Activity current_activity;
-    public  MyApplication app;
-    public Intent intent;
-
-    public MediaPlayerManager media_manager;
     public readWriteAux readWriteAux;
+    public  MyApplication app;
 
-    public ListenerThread(Activity current_activity, readWriteAux readWriteAux) {
-
-        this.current_activity = current_activity;
-        app = (MyApplication) current_activity.getApplication();
-        media_manager = ((MyApplication) current_activity.getApplication()).media_manager;
+    public ListenerThread(MyApplication app, readWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
+        this.app = app;
     }
+
 
     @Override
     public void run() {
@@ -53,20 +46,6 @@ public class ListenerThread extends Thread {
                 break;
             } catch (JSONException e){
                 break;
-            }
-            if (m.msg_type == RequestAnswer) {
-                if (m.bool_info) {
-
-                    intent = new Intent(current_activity, PlaylistActivity.class);
-                    current_activity.startActivity(intent);
-                }
-                else {
-                    Toast.makeText(current_activity,
-                            "Sorry, your request was not accepted...",
-                            Toast.LENGTH_LONG).show();
-                    intent = new Intent(current_activity, EnterPartyActivity.class);
-                    current_activity.startActivity(intent);
-                }
             }
         }
     }
@@ -88,57 +67,97 @@ public class ListenerThread extends Thread {
             return;
 
         switch (cmd.cmd_type){
-            case AUTHENTICATION:
+
+            case SYNC_PARTY:
+                JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.USERS);
+                // no party image at the moment.
+                //JSONArray image = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IMAGE);
+                JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.REQUESTS);
+                JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.SONGS);
+                JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.NAME);
+                JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IS_PRIVATE);
+
+                boolean move = false;
+                if (app.client_manager.party == null) {
+                    app.client_manager.party = new Party();
+                    move = true;
+                }
+
+                app.client_manager.party.is_private = is_private.getBoolean(0);
+                app.client_manager.party.party_name = name.getString(0);
+
+                updateUserList(getUserListFromJSON(users),app.client_manager.party);
+                app.client_manager.party.request = getUserListFromJSON(requests);
+
+                if(app.client_manager.party.playlist != null)
+                    app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
+                else
+                    app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
+
+                if(move)
+                    app.gui_manager.completeJoin();
+                else
+                    app.gui_manager.syncParty();
                 break;
-            case NEARBY_PARTIES:
-                cmd.getSyncPartyAttribute(jsonKey.PARTY_INFO.name());
+
+            case SEARCH_RESULT:
+                JSONArray parties = cmd.getSyncPartyAttribute(jsonKey.PARTY_INFO);
+                List<Party> party_list = null;
+                app.gui_manager.putPartyResults(party_list);
+
+            case GET_READY:
+                int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
+                int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
+                app.media_manager.prepare(prep_offset , app.client_manager.party.playlist.searchTrack(prep_track_id));
+                break;
+            case PLAY_SONG:
+                int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
+                int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
+                app.gui_manager.play(play_track_id);
+                app.media_manager.play(play_offset , app.client_manager.party.playlist.searchTrack(play_track_id));
+                break;
+            case PAUSE:
+                app.gui_manager.pause();
+                app.media_manager.pause();
+                break;
+
+            case REJECTED:
+                app.gui_manager.rejected();
+                break;
+            case CLOSE_PARTY:
+                break;
             case DISCONNECTED:
                 break;
 
-            case ADD_SONG:
-                int add_id = cmd.getIntAttribute(jsonKey.TRACK_ID.name());
-                app.client_manager.party.playlist.addTrack(DBManager.getTrack(add_id));
-                break;
-            case DELETE_SONG:
-                int remove_id = cmd.getIntAttribute(jsonKey.TRACK_ID.name());
-                app.client_manager.party.playlist.tracks.remove(remove_id);
-                break;
-            case SWAP_SONGS:
-                    break;
-
-            case GET_READY:
-                break;
-            case PLAY_SONG:
-                    break;
-            case PAUSE:
-                    break;
-
-            case RENAME_PARTY:
-                String party_name = cmd.getStringAttribute(jsonKey.PARTY_RENAME.name());
-                app.client_manager.party.party_name = party_name;
-                break;
-            case MAKE_PRIVATE:
-                boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE.name());
-                if(!is_private) {
-                    app.client_manager.party.connected.addAll(app.client_manager.party.request);
-                    app.client_manager.party.request.clear();
-                }
-                app.client_manager.party.is_private = is_private;
-                break;
-            case CONFIRM_REQUEST:
-                    break;
-            case CLOSE_PARTY:
-                    break;
+        }
+    }
 
 
-            case REJECTED:
-                    break;
-            case UPDATE_PARTY:
-                    break;
-            case SYNC_PARTY:
-                    break;
-            case SEARCH_RESULT:
-                    break;
+    private List<Track> getTrackListFromJSON(JSONArray arr) throws JSONException{
+        List<Track> tracks = new ArrayList<Track>();
+        for (int i = 0; i < arr.length(); i++ ){
+            song s = (song)arr.get(i);
+            Track track = DBManager.getTrackByURL(s.track_path, s.track_id);
+            tracks.add(track);
+        }
+        return tracks;
+    }
+
+    private List<User> getUserListFromJSON(JSONArray arr) throws JSONException{
+        List<User> users = new ArrayList<User>();
+        for (int i = 0; i < arr.length(); i++ ){
+            User u = (User)arr.get(i);
+            users.add(u);
+        }
+        return users;
+    }
+
+    private void updateUserList(List<User> users, Party party){
+        for (User user : users){
+            if (user.is_admin)
+                party.admin.add(user);
+            else
+                party.connected.add(user);
         }
     }
 }

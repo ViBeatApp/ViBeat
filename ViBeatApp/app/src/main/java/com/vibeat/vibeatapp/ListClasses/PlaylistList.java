@@ -2,26 +2,16 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.Activities.AddMusicActivity;
-import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
-import com.vibeat.vibeatapp.Activities.PlaylistActivity;
-import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
-import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
-import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 public class PlaylistList implements ListAdapterable {
@@ -45,20 +35,7 @@ public class PlaylistList implements ListAdapterable {
             @Override
             public void onClick(View v) {
 
-                if (activity instanceof CreatePartyActivity){
-                    app.client_manager.createParty();
-                    app.client_manager.party.request.add(new User("Idan Cohen",
-                            "/storage/emulated/0/ViBeat/idan.jpg", 2));
-                    app.client_manager.addTrack(track);
-                    app.media_manager.updatePlaylist(app.client_manager.party.playlist);
-                    Intent intent = new Intent(activity, PlaylistActivity.class);
-                    activity.startActivity(intent);
-                }
-                else if( activity instanceof AddMusicActivity) {
-                    app.client_manager.addTrack(track);
-                    Intent intent = new Intent(activity, PlaylistActivity.class);
-                    activity.startActivity(intent);
-                }
+                app.gui_manager.songChosen(track);
             }
         });
 

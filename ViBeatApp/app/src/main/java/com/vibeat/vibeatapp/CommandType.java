@@ -1,5 +1,4 @@
 package com.vibeat.vibeatapp;
-
 public enum CommandType {
 	AUTHENTICATION,
 	NEARBY_PARTIES,

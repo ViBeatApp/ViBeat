@@ -1,68 +1,34 @@
 package com.vibeat.vibeatapp.Activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.view.WindowManager;
+import android.widget.Adapter;
 import android.widget.ListView;
-import android.widget.Switch;
-import android.widget.TextView;
 
-import com.vibeat.vibeatapp.ListClasses.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.ConnectedList;
+import com.vibeat.vibeatapp.ListClasses.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.RequestList;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.Party;
-import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectedActivity extends AppCompatActivity {
 
-    ListView connected_list;
-    ListView request_list;
+    public ListView connected_list;
+    public ListView request_list;
     MyApplication app;
-
-    /*User user0 = new User("Izzy", R.drawable.izzy, 0, true);
-    User user1 = new User("Dana Oshri", R.drawable.dana, 1, false);
-    User user2 = new User("Idan Cohen", R.drawable.idan, 2, true);
-    User user3 = new User("Ido Abulafya", R.drawable.ido, 3, false);
-    User user4 = new User("Tomer Solomon", R.drawable.tomer, 4, false);
-
-    User[] users = { user0, user1, user2, user4};
-    User[] waiting = {user3};*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connected);
 
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         app = (MyApplication) this.getApplication();
-
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) findViewById(R.id.this_user);
-        TextView user_name = (TextView) findViewById(R.id.hello_user);
-
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
 
         final CostumeListAdapter connected_adapter = new CostumeListAdapter(ConnectedActivity.this,
                 new ConnectedList(app.client_manager.party));
@@ -75,68 +41,10 @@ public class ConnectedActivity extends AppCompatActivity {
         request_list = (ListView) findViewById(R.id.waiting_list);
         request_list.setAdapter(request_adapter);
 
-        final TextView req_title = (TextView) findViewById(R.id.connected2);
-
-        if (!app.client_manager.party.is_private){
-            req_title.setVisibility(View.GONE);
-            request_list.setVisibility(View.GONE);
-        }
-
-        final Party party = app.client_manager.party;
-
-        EditText partyName = (EditText) findViewById(R.id.editText);
-        partyName.setText(party.party_name);
-        partyName.clearFocus();
-
-        partyName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String party_name = s.toString();
-                party.party_name = party_name;
-            }
-        });
-
-        final ImageView isPrivate = (ImageView) findViewById(R.id.isPrivate);
-        if (!app.client_manager.party.is_private)
-            isPrivate.setImageResource(R.drawable.ic_unlock);
-
-        isPrivate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!app.client_manager.party.is_private) {
-                    isPrivate.setImageResource(R.drawable.ic_lock);
-                    app.client_manager.turnToPrivate();
-                    req_title.setVisibility(View.VISIBLE);
-                    request_list.setVisibility(View.VISIBLE);
-
-                    connected_adapter.notifyDataSetChanged();
-                    request_adapter.notifyDataSetChanged();
-                }
-                else {
-                    isPrivate.setImageResource(R.drawable.ic_unlock);
-                    app.client_manager.turnToPublic();
-                    req_title.setVisibility(View.GONE);
-                    request_list.setVisibility(View.GONE);
-
-                    connected_adapter.notifyDataSetChanged();
-                    request_adapter.notifyDataSetChanged();
-                }
-            }
-        });
-
-        ImageButton back = (ImageButton) findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConnectedActivity.this, PlaylistActivity.class);
-                startActivity(intent);
-            }
-        });
+        List<Adapter> l = new ArrayList<Adapter>();
+        l.add(connected_adapter);
+        l.add(request_adapter);
+        app.gui_manager.changeActivity(ConnectedActivity.this, l);
+        app.gui_manager.initConnectedActivity();
     }
 }

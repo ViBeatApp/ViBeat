@@ -11,9 +11,11 @@ public class Party {
     public List<User> connected = new ArrayList<User>();
     public List<User> request = new ArrayList<User>();
 
-    public String party_name;
-    public boolean is_private;
-    public int id;
+    public String party_name = null;
+    public boolean is_private = false;
+    public int id = -1;
+
+    public Party(){}
 
     public Party(User creator, String party_name, boolean is_private, int id){
         this.admin.add(creator);

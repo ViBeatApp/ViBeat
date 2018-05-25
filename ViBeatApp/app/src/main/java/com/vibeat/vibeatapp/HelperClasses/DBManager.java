@@ -45,13 +45,13 @@ public class DBManager {
         tracks.add(song4);
 
         User user1 = new User("Dana Oshri",
-                "/storage/emulated/0/ViBeat/dana.jpg", 1);
+                "/storage/emulated/0/ViBeat/dana.jpg", 1, false);
         User user2 = new User("Idan Cohen",
-                "/storage/emulated/0/ViBeat/idan.jpg", 2);
+                "/storage/emulated/0/ViBeat/idan.jpg", 2,false);
         User user3 = new User("Ido Abulafya",
-                "/storage/emulated/0/ViBeat/ido.jpg", 3);
+                "/storage/emulated/0/ViBeat/ido.jpg", 3,false);
         User user4 = new User("Tomer Solomon",
-                "/storage/emulated/0/ViBeat/tomer.jpg", 4);
+                "/storage/emulated/0/ViBeat/tomer.jpg", 4,false);
         users.add(user1);
         users.add(user2);
         users.add(user3);
@@ -69,6 +69,14 @@ public class DBManager {
 
     public static Track getTrack(int id){
         return tracks.get(id);
+    }
+
+    public static Track getTrackByURL(String url, int track_id){
+        for(Track t : tracks){
+            if( t.track_path.equals(url) )
+                return new Track(track_id,t.title,t.artist,t.img_path,t.track_path);
+        }
+        return null;
     }
 
     public static User getUser(int id){

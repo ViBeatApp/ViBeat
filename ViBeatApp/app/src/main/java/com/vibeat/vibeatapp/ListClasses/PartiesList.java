@@ -2,20 +2,15 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
@@ -23,12 +18,9 @@ import com.vibeat.vibeatapp.R;
 
 import java.util.List;
 
-import static com.vibeat.vibeatapp.R.color.colorAccentlight;
-import static com.vibeat.vibeatapp.R.color.colorPrimary;
-
 public class PartiesList implements ListAdapterable {
 
-    List<Party> nearby_parties;
+    public List<Party> nearby_parties;
 
     public PartiesList(List<Party> nearby_parties){
         this.nearby_parties = nearby_parties;
@@ -67,7 +59,7 @@ public class PartiesList implements ListAdapterable {
             @Override
             public void onClick(View v) {
                 Party party = nearby_parties.get(2*position);
-                join(activity, party);
+                ((MyApplication)activity.getApplication()).gui_manager.requestJoin(party);
             }
         });
 
@@ -75,7 +67,7 @@ public class PartiesList implements ListAdapterable {
             @Override
             public void onClick(View v) {
                 Party party = nearby_parties.get(2*position+1);
-                join(activity, party);
+                ((MyApplication)activity.getApplication()).gui_manager.requestJoin(party);
             }
         });
 
@@ -100,14 +92,6 @@ public class PartiesList implements ListAdapterable {
     @Override
     public long getItemId(int position) {
         return position;
-    }
-
-    public void join(Activity c, Party party) {
-        MyApplication app = (MyApplication) c.getApplication();
-        app.client_manager.party = party;
-        app.media_manager.updatePlaylist(app.client_manager.party.playlist);
-        Intent intent = new Intent(c, LoadingActivity.class);
-        c.startActivity(intent);
     }
 
     @SuppressLint("ResourceAsColor")
