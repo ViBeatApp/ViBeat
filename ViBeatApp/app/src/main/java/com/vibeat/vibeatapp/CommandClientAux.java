@@ -1,3 +1,4 @@
+package vibeatapp;
 import com.vibeat.vibeatapp.Command;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.jsonKey;
