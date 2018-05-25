@@ -5,7 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Command {
-	CommandType cmd_type;
+	public CommandType cmd_type;
 	JSONObject cmd_info;
 	
 	public Command(CommandType cmd_type) throws JSONException {
@@ -105,7 +105,7 @@ public class Command {
 		return cmd;
 	}
 	
-	public static Command get_addSons_Command(String url) throws JSONException {
+	public static Command get_addSong_Command(String url) throws JSONException {
 		Command cmd = new Command(CommandType.ADD_SONG);
 		cmd.setAttribute(jsonKey.URL.name(), url);
 		return cmd;
