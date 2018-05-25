@@ -1,12 +1,11 @@
-package com.vibeat.vibeatapp;
-
+package serverModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Command {
 	public CommandType cmd_type;
-	JSONObject cmd_info;
+	public JSONObject cmd_info;
 	
 	public Command(CommandType cmd_type) throws JSONException {
 		this.cmd_type = cmd_type;
@@ -43,150 +42,151 @@ public class Command {
 		return new JSONObject(new String(message));
 	}
 	
-	public void setAttribute(String key, String string) throws JSONException {
-		this.cmd_info.put(key,string);
+	public void setAttribute(jsonKey key, String string) throws JSONException {
+		this.cmd_info.put(key.name(),string);
 	}
 	
-	public void setAttribute(String key, int num) throws JSONException {
-		this.cmd_info.put(key,num);
+	public void setAttribute(jsonKey key, int num) throws JSONException {
+		this.cmd_info.put(key.name(),num);
 	}
 	
-	public void setAttribute(String key, boolean bool) throws JSONException {
-		this.cmd_info.put(key,bool);
+	public void setAttribute(jsonKey key, boolean bool) throws JSONException {
+		this.cmd_info.put(key.name(),bool);
 	}
 	
-	public void setAttribute(String key, JSONArray resultArray) throws JSONException {
-		this.cmd_info.put(key,resultArray);
+	public void setAttribute(jsonKey key, JSONArray resultArray) throws JSONException {
+		this.cmd_info.put(key.name(),resultArray);
 	}
 	
-	public String getStringAttribute(String key) throws JSONException {
-		return this.cmd_info.getString(key);
+	public String getStringAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getString(key.name());
 	}
 	
-	public int getIntAttribute(String key) throws JSONException {
-		return this.cmd_info.getInt(key);
+	public int getIntAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getInt(key.name());
 	}
 	
-	public boolean getBoolAttribute(String key) throws JSONException {
-		return this.cmd_info.getBoolean(key);
+	public boolean getBoolAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getBoolean(key.name());
 	}
 	
-	public JSONArray getSyncPartyAttribute(String key) throws JSONException {
-		return cmd_info.getJSONArray(key);
+	public JSONArray getSyncPartyAttribute(jsonKey key) throws JSONException {
+		return cmd_info.getJSONArray(key.name());
 	}
-	public static Command get_authentication_command(String name,int userID,byte[] image) throws JSONException {
+	
+	public static Command create_authentication_command(String name,int userID,byte[] image) throws JSONException {
 		Command cmd = new Command(CommandType.AUTHENTICATION);
-		cmd.setAttribute(jsonKey.NAME.name(), name);
-		cmd.setAttribute(jsonKey.USER_ID.name(), userID);
-		cmd.setAttribute(jsonKey.IMAGE.name(), new String(image));
+		cmd.setAttribute(jsonKey.NAME, name);
+		cmd.setAttribute(jsonKey.USER_ID, userID);
+		cmd.setAttribute(jsonKey.IMAGE, new String(image));
 		return cmd;
 	}
-	public static Command get_nearbyParties_Command(int Location) throws JSONException {
+	public static Command create_nearbyParties_Command(int Location) throws JSONException {
 		Command cmd = new Command(CommandType.NEARBY_PARTIES);
-		cmd.setAttribute(jsonKey.LOCATION.name(), Location);
+		cmd.setAttribute(jsonKey.LOCATION, Location);
 		return cmd;
 	}
-	public static Command get_searchParty_Command(String name) throws JSONException {
+	public static Command create_searchParty_Command(String name) throws JSONException {
 		Command cmd = new Command(CommandType.SEARCH_PARTY);
-		cmd.setAttribute(jsonKey.NAME.name(), name);
+		cmd.setAttribute(jsonKey.NAME, name);
 		return cmd;
 	}
 	
-	public static Command get_join_Command(int partyID) throws JSONException {
+	public static Command create_join_Command(int partyID) throws JSONException {
 		Command cmd = new Command(CommandType.JOIN);
-		cmd.setAttribute(jsonKey.PARTY_ID.name(), partyID);
+		cmd.setAttribute(jsonKey.PARTY_ID, partyID);
 		return cmd;
 	}
 	
-	public static Command get_create_Command(String name,boolean isPrivate) throws JSONException {
+	public static Command create_create_Command(String name,boolean isPrivate) throws JSONException {
 		Command cmd = new Command(CommandType.CREATE);
-		cmd.setAttribute(jsonKey.NAME.name(), name);
-		cmd.setAttribute(jsonKey.IS_PRIVATE.name(), isPrivate);
+		cmd.setAttribute(jsonKey.NAME, name);
+		cmd.setAttribute(jsonKey.IS_PRIVATE, isPrivate);
 		return cmd;
 	}
 	
-	public static Command get_addSong_Command(String url) throws JSONException {
+	public static Command create_addSons_Command(String url) throws JSONException {
 		Command cmd = new Command(CommandType.ADD_SONG);
-		cmd.setAttribute(jsonKey.URL.name(), url);
+		cmd.setAttribute(jsonKey.URL, url);
 		return cmd;
 	}
-	public static Command get_deleteSong_Command(int trackId) throws JSONException {
+	public static Command create_deleteSong_Command(int trackId) throws JSONException {
 		Command cmd = new Command(CommandType.DELETE_SONG);
-		cmd.setAttribute(jsonKey.TRACK_ID.name(), trackId);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
-	public static Command get_swapSongs_Command(int trackId_1,int trackId_2) throws JSONException {
+	public static Command create_swapSongs_Command(int trackId_1,int trackId_2) throws JSONException {
 		Command cmd = new Command(CommandType.SWAP_SONGS);
-		cmd.setAttribute(jsonKey.TRACK_ID_1.name(), trackId_1);
-		cmd.setAttribute(jsonKey.TRACK_ID_2.name(), trackId_2);
+		cmd.setAttribute(jsonKey.TRACK_ID_1, trackId_1);
+		cmd.setAttribute(jsonKey.TRACK_ID_2, trackId_2);
 		return cmd;
 	}
-	public static Command get_playSong_Command(int trackId,int offset) throws JSONException {
+	public static Command create_playSong_Command(int trackId,int offset) throws JSONException {
 		Command cmd = new Command(CommandType.PLAY_SONG);
-		cmd.setAttribute(jsonKey.TRACK_ID.name(), trackId);
-		cmd.setAttribute(jsonKey.OFFSET.name(), offset);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
 		return cmd;
 	}
-	public static Command get_imReady_Command(int trackId) throws JSONException {
+	public static Command create_imReady_Command(int trackId) throws JSONException {
 		Command cmd = new Command(CommandType.IM_READY);
-		cmd.setAttribute(jsonKey.TRACK_ID.name(), trackId);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
-	public static Command get_pause_Command(int trackId) throws JSONException {
+	public static Command create_pause_Command(int trackId) throws JSONException {
 		Command cmd = new Command(CommandType.PAUSE);
-		cmd.setAttribute(jsonKey.TRACK_ID.name(), trackId);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
 	
-	public static Command get_makePrivate_Command(boolean isPrivate) throws JSONException {
+	public static Command create_makePrivate_Command(boolean isPrivate) throws JSONException {
 		Command cmd = new Command(CommandType.MAKE_PRIVATE);
-		cmd.setAttribute(jsonKey.IS_PRIVATE.name(), isPrivate);
+		cmd.setAttribute(jsonKey.IS_PRIVATE, isPrivate);
 		return cmd;
 	}
 	
-	public static Command get_renameParty_Command(String name) throws JSONException {
+	public static Command create_renameParty_Command(String name) throws JSONException {
 		Command cmd = new Command(CommandType.RENAME_PARTY);
-		cmd.setAttribute(jsonKey.NAME.name(), name);
+		cmd.setAttribute(jsonKey.NAME, name);
 		return cmd;
 	}
-	public static Command get_confirmRequest_Command(int userId,boolean confirmed) throws JSONException {
+	public static Command create_confirmRequest_Command(int userId,boolean confirmed) throws JSONException {
 		Command cmd = new Command(CommandType.CONFIRM_REQUEST);
-		cmd.setAttribute(jsonKey.USER_ID.name(), userId);
-		cmd.setAttribute(jsonKey.CONFIRMED.name(), confirmed);
+		cmd.setAttribute(jsonKey.USER_ID, userId);
+		cmd.setAttribute(jsonKey.CONFIRMED, confirmed);
 		return cmd;
 	}
-	public static Command get_makeAdmin_Command(int userId) throws JSONException {
+	public static Command create_makeAdmin_Command(int userId) throws JSONException {
 		Command cmd = new Command(CommandType.MAKE_ADMIN);
-		cmd.setAttribute(jsonKey.USER_ID.name(), userId);
+		cmd.setAttribute(jsonKey.USER_ID, userId);
 		return cmd;
 	}
-	public static Command get_updateLocation_Command(int Location) throws JSONException {
+	public static Command create_updateLocation_Command(int Location) throws JSONException {
 		Command cmd = new Command(CommandType.UPDATE_LOCATION);
-		cmd.setAttribute(jsonKey.LOCATION.name(), Location);
+		cmd.setAttribute(jsonKey.LOCATION, Location);
 		return cmd;
 	}
-	public static Command get_closeParty_Command(int Location) throws JSONException {
+	public static Command create_closeParty_Command(int Location) throws JSONException {
 		Command cmd = new Command(CommandType.CLOSE_PARTY);
 		return cmd;
 	}
-	public static Command get_leaveParty_Command(int Location) throws JSONException {
+	public static Command create_leaveParty_Command(int Location) throws JSONException {
 		Command cmd = new Command(CommandType.LEAVE_PARTY);
 		return cmd;
 	}
 	
-	public static Command get_syncParty_Command(JSONObject partyInfo) throws JSONException {
+	public static Command create_syncParty_Command(JSONObject partyInfo) throws JSONException {
 		Command cmd = new Command(CommandType.SYNC_PARTY,partyInfo);
 		return cmd;
 	}
 	
-	public static Command get_rejected_Command() throws JSONException {
+	public static Command create_rejected_Command() throws JSONException {
 		Command cmd = new Command(CommandType.REJECTED);
 		return cmd;
 	}
 
-	public static Command get_searchResult_command(JSONArray resultArray) throws JSONException {
+	public static Command create_searchResult_command(JSONArray resultArray) throws JSONException {
 		Command cmd = new Command(CommandType.SEARCH_RESULT);
-		cmd.setAttribute(jsonKey.RESULT.name(), resultArray);
+		cmd.setAttribute(jsonKey.RESULT, resultArray);
 		return cmd;
 	}
 }
