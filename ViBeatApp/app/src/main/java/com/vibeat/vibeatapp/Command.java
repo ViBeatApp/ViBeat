@@ -1,4 +1,4 @@
-package vibeatapp;
+package com.vibeat.vibeatapp;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -1,4 +1,4 @@
-package vibeatapp;
+package com.vibeat.vibeatapp;
 
 public class partyInfo {
 	public String party_name;

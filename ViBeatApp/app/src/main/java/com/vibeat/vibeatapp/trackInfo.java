@@ -1,4 +1,4 @@
-package vibeatapp;
+package com.vibeat.vibeatapp;
 
 public class trackInfo {
 	public int track_id;
