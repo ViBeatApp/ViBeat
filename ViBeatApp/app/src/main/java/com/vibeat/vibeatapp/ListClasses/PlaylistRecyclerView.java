@@ -1,36 +1,37 @@
 package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
 
 import java.util.Collections;
 
+import static com.vibeat.vibeatapp.R.color.colorAccent;
+import static com.vibeat.vibeatapp.R.color.colorAccentlight;
+
 public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> {
 
     private Context context;
     private Playlist playlist;
-    private MyApplication app;
 
     public PlaylistRecyclerView(Context context, Playlist playlist) {
         this.context = context;
         this.playlist = playlist;
-        this.app = (MyApplication) (((Activity) context).getApplication());
     }
 
     @Override
@@ -63,7 +64,6 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     public boolean onItemMove(int fromPosition, int toPosition) {
         if (toPosition != playlist.cur_track){
             Collections.swap(playlist.tracks, fromPosition, toPosition);
-            app.client_manager.swapTrack(fromPosition,toPosition);
             notifyItemMoved(fromPosition, toPosition);
             return true;
         }

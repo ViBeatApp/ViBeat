@@ -124,9 +124,4 @@ public class MediaPlayerManager {
         this.prepared_next = false;
     }
 
-    public int getOffset(){
-        MediaPlayer mediaPlayer = (this.playing == 1) ? mediaPlayer1 : mediaPlayer2;
-        return mediaPlayer.getCurrentPosition();
-    }
-
 }

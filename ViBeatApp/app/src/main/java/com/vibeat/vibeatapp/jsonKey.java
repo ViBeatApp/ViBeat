@@ -1,6 +1,6 @@
 package com.vibeat.vibeatapp;
 
-public enum jsonKey {
+enum jsonKey {
 	NAME,
 	
 	IMAGE,

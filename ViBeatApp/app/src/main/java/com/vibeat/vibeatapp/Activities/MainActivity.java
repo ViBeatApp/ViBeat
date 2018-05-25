@@ -2,11 +2,14 @@ package com.vibeat.vibeatapp.Activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,7 +23,9 @@ import com.vibeat.vibeatapp.HelperClasses.ClientManager;
 import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
 import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
 import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.test;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void login() {
         app.media_manager = new MediaPlayerManager();
-        app.listener_thread = new ListenerThread(MainActivity.this, app.client_manager.senderThread.conn);
+        app.listener_thread = new ListenerThread(MainActivity.this);
         app.listener_thread.start();
         Intent intent = new Intent(this, EnterPartyActivity.class);
         startActivity(intent);

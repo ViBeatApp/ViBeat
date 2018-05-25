@@ -11,16 +11,15 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.vibeat.vibeatapp.Command;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 
-import org.json.JSONException;
-
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientManager {
 
@@ -28,36 +27,28 @@ public class ClientManager {
     public Party party;
     public boolean is_admin;
     public MyApplication app;
+
+    public ServerConnection conn;
     public Location location;
-    public SenderThread senderThread;
 
     public ClientManager(User user, MyApplication app){
         this.user= user;
         this.party = null;
         this.is_admin = false;
-        this.senderThread = new SenderThread();
 
-        senderThread.start();
-        try {
-            senderThread.addCmd(Command.get_authentication_command(user.name, user.id, user.img_path.getBytes()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn = new ServerConnection();
+        conn.connectToServer(this.user);
 
         this.app = app;
     }
 
     public void createParty(){
         is_admin = true;
-        try {
-            senderThread.addCmd(Command.get_create_Command(party.party_name,party.is_private));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.addNewParty(this.party);
     }
 
-    public void connectParty(){
-        /*if (party.is_private) {
+    public boolean connectParty(){
+        if (party.is_private) {
             party.addRequest(user);
             conn.updateParty(this.party);
         }
@@ -68,64 +59,49 @@ public class ClientManager {
             conn.updateParty(this.party);
         }
         this.is_admin = false;
-        return true;*/
-        try {
-            senderThread.addCmd(Command.get_join_Command(party.id));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        return true;
     }
+
 
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
-        try {
-            senderThread.addCmd(Command.get_addSong_Command(track.track_path));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.updateParty(this.party);
     }
 
     public void nextSong(){
         try {
-            senderThread.addCmd(Command.get_playSong_Command(party.playlist.cur_track+1, 0));
-        } catch (JSONException e) {
+            app.media_manager.playNext();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void swapTrack(int pos1, int pos2){
-        try {
-            senderThread.addCmd(Command.get_swapSongs_Command(pos1,pos2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    // get track item and change the current track index to track's index.
+    public void changeTrack(Track track){
+        int pos = this.party.playlist.tracks.indexOf(track);
+        this.party.playlist.cur_track = pos;
+        conn.sendTrackCommand(this.party, pos);
     }
 
-    // not with server
     public Playlist searchTracks(String search_string){
-        return new Playlist(DBManager.getTracksByString(search_string),
+        return new Playlist(conn.getTracksByString(search_string),
                 false,0);
     }
 
+
     public void answerRequest(User requested, boolean answer){
         this.party.changeRequestStatus(requested,answer);
-        try {
-            senderThread.addCmd(Command.get_confirmRequest_Command(requested.id,answer));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.updateParty(this.party);
+        conn.sendRequestAnswer(this.party, requested, answer);
     }
 
     public void makeAdmin(User connected){
         this.party.makeAdmin(connected);
-        try {
-            senderThread.addCmd(Command.get_makeAdmin_Command(connected.id));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.updateParty(this.party);
     }
 
-    //CHANGE THE VALUE SENT TO SERVER
+
+    //update self location and ping to server
     public void initLocationTracking(final Activity activity){
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -143,13 +119,8 @@ public class ClientManager {
                             location = new_location;
                             Toast.makeText(activity, "Location Changed", Toast.LENGTH_SHORT).show();
 
-                            if( is_admin ) {
-                                try {
-                                    senderThread.addCmd(Command.get_updateLocation_Command(0));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                            if( is_admin )
+                                conn.updateAdminLocation(party, location);
                         }
 
                         @Override
@@ -168,17 +139,14 @@ public class ClientManager {
         }
     }
 
-    public void getPartiesNearby() throws InterruptedException {
-        try {
-            senderThread.addCmd(Command.get_nearbyParties_Command(0));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public List<Party> getPartiesNearby(){
+        return conn.getPartiesByLocation(this.location);
     }
+
 
     public void commandPlayPause(){
         //conn.sendPlayPauseCommand(this.party);
-        /*if (!this.party.playlist.is_playing) {
+        if (!this.party.playlist.is_playing) {
             try {
                 app.media_manager.play();
             }
@@ -187,55 +155,32 @@ public class ClientManager {
             }
         }
         else
-            app.media_manager.pause();*/
+            app.media_manager.pause();
         this.party.playlist.is_playing = !this.party.playlist.is_playing;
-
-        try {
-            senderThread.addCmd(Command.get_playSong_Command(this.party.playlist.cur_track,app.media_manager.getOffset()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public void turnToPublic(){
         this.party.is_private = false;
         this.party.connected.addAll(this.party.request);
         for (User u : this.party.request){
-            //in the server : conn.sendRequestAnswer(this.party, u, true);
+            conn.sendRequestAnswer(this.party, u, true);
         }
         this.party.request.clear();
-        //in the server : conn.updateParty(this.party);
-
-        try {
-            senderThread.addCmd(Command.get_makePrivate_Command(false));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        conn.updateParty(this.party);
     }
 
     public void turnToPrivate(){
         this.party.is_private = true;
         this.party.request = new ArrayList<User>();
-
-        try {
-            senderThread.addCmd(Command.get_makePrivate_Command(true));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.updateParty(this.party);
     }
 
-    //WHY LOCATION?
     public void leaveParty(){
-        try {
-            senderThread.addCmd(Command.get_leaveParty_Command(0));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        conn.sendLeaveParty();
         this.party = null;
     }
 
     public void logout(){
-        senderThread.logout();
+        conn.closeConnection();
     }
 }
