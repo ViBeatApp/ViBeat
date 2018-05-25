@@ -1,10 +1,11 @@
+package serverModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Command {
-	CommandType cmd_type;
-	JSONObject cmd_info;
+	public CommandType cmd_type;
+	public JSONObject cmd_info;
 	
 	public Command(CommandType cmd_type) throws JSONException {
 		this.cmd_type = cmd_type;

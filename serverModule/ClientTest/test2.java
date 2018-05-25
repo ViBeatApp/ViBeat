@@ -1,6 +1,11 @@
+package ClientTest;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.List;
+
+import serverModule.Command;
+import serverModule.CommandType;
+import serverModule.jsonKey;
+import serverModule.readWriteAux;
 
 public class test2 implements Runnable {
 	SocketChannel socket;
@@ -148,31 +153,5 @@ public class test2 implements Runnable {
 		readWriteAux.writeSocket(socket, pause_cmd);
 		
 		get_command(socket, CommandType.PAUSE, "admin");
-	}
-
-	public static void printInfo(Party party){
-		System.out.println("party name: " + party.party_name);
-		System.out.println("party id: " + party.party_id);
-		System.out.println("party's admins: ");
-		//printUserList(party.admins);
-		System.out.println("party's clients: ");
-		printUserList(party.connected);
-		System.out.println("party's requests: ");
-		printUserList(party.request);
-		System.out.println("party's playlist: ");
-		printPlayList(party.playlist);
-		System.out.println("\n\n");
-	}
-
-	private static void printUserList(List<User> list) {
-		for(int i = 0; i < list.size(); ++i){
-			System.out.println("	" + list.get(i).name);	
-		}
-	}
-	
-	private static void printPlayList(Playlist playlist) {
-		for(int i = 0; i < playlist.songs.size(); ++i){
-			System.out.println("	" + playlist.songs.get(i).url);	
-		}
 	}
 }

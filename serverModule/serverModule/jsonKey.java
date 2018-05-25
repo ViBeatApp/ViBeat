@@ -1,5 +1,6 @@
+package serverModule;
 
-enum jsonKey {
+public enum jsonKey {
 	NAME,
 	
 	IMAGE,

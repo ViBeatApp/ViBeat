@@ -1,9 +1,14 @@
+package ClientTest;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import serverModule.Command;
+import serverModule.CommandType;
+import serverModule.jsonKey;
+import serverModule.readWriteAux;
 
 public class test implements Runnable {
 	
@@ -42,9 +47,9 @@ public class test implements Runnable {
 
 	public void join_party(SocketChannel socket) throws Exception {
 		Command auth = new Command(CommandType.AUTHENTICATION);
-		auth.cmd_info.put("NAME", user_name);
-		auth.cmd_info.put("USER_ID", user_id);
-		auth.cmd_info.put("IMAGE", "aaa");
+		auth.setAttribute(jsonKey.NAME, user_name);
+		auth.setAttribute(jsonKey.USER_ID, user_id);
+		auth.setAttribute(jsonKey.IMAGE, "aaa");
 		readWriteAux.writeSocket(socket, auth);
 		//Thread.sleep(1000);
 		
@@ -81,13 +86,13 @@ public class test implements Runnable {
 		System.out.println("create new party");
 		
 		Command auth = new Command(CommandType.AUTHENTICATION);
-		auth.cmd_info.put("NAME", "Ido");
-		auth.cmd_info.put("USER_ID", 0);
-		auth.cmd_info.put("IMAGE", "abcd");
+		auth.setAttribute(jsonKey.NAME, "Ido");
+		auth.setAttribute(jsonKey.USER_ID, 0);
+		auth.setAttribute(jsonKey.IMAGE, "abcd");
 		readWriteAux.writeSocket(socket, auth);
 		Command create = new Command(CommandType.CREATE);
-		create.cmd_info.put("NAME", "Ido's party");
-		create.cmd_info.put("IS_PRIVATE", true);
+		create.setAttribute(jsonKey.NAME, "Ido's party");
+		create.setAttribute(jsonKey.IS_PRIVATE, true);
 		readWriteAux.writeSocket(socket, create);
 		
 		manage_songs(socket);
@@ -139,7 +144,7 @@ public class test implements Runnable {
 		Command add_song = new Command(CommandType.ADD_SONG);
 		Command reply;
 		System.out.println("admin - sending new_command");
-		add_song.cmd_info.put("URL", "www.youtube1");
+		add_song.setAttribute(jsonKey.URL, "www.youtube1");
 		readWriteAux.writeSocket(socket, add_song);
 		
 		System.out.println("admin - send URL1");
@@ -147,7 +152,7 @@ public class test implements Runnable {
 		System.out.println("admin - got reply");
 		System.out.println("admin - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		
-		add_song.cmd_info.put("URL", "www.youtube2");
+		add_song.setAttribute(jsonKey.URL, "www.youtube2");
 		readWriteAux.writeSocket(socket, add_song);
 		reply = readWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
@@ -227,31 +232,5 @@ public class test implements Runnable {
 		wait_for_command(socket, CommandType.GET_READY, "admin");
 		send_ready_command(socket, 0);
 		wait_for_command(socket, CommandType.PLAY_SONG, "admin");
-	}
-
-	public static void printInfo(Party party){
-		System.out.println("party name: " + party.party_name);
-		System.out.println("party id: " + party.party_id);
-		System.out.println("party's admins: ");
-		//printUserList(party.admins);
-		System.out.println("party's clients: ");
-		printUserList(party.connected);
-		System.out.println("party's requests: ");
-		printUserList(party.request);
-		System.out.println("party's playlist: ");
-		printPlayList(party.playlist);
-		System.out.println("\n\n");
-	}
-
-	private static void printUserList(List<User> list) {
-		for(int i = 0; i < list.size(); ++i){
-			System.out.println("	" + list.get(i).name);	
-		}
-	}
-	
-	private static void printPlayList(Playlist playlist) {
-		for(int i = 0; i < playlist.songs.size(); ++i){
-			System.out.println("	" + playlist.songs.get(i).url);	
-		}
 	}
 }
