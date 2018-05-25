@@ -1,4 +1,7 @@
-package ClientTest;
+import com.vibeat.vibeatapp.Command;
+import com.vibeat.vibeatapp.Objects.User;
+import com.vibeat.vibeatapp.jsonKey;
+
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
@@ -6,12 +9,31 @@ import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import serverModule.Command;
-import serverModule.jsonKey;
 
 public class CommandClientAux {
+	
+}
+	public JSONArray getPartyArray(Command cmd) throws JSONException {
+		if(cmd.cmd_type != jsonKey.SEARCH_RESULT)
+			return null;
+		JSONArray partyArray = new JSONArray();
+		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.SEARCH_RESULT);
+		for(int i = 0; i < objectArray.length(); ++i) {
+			JSONObject partyJsonObject = objectArray.getJSONObject(i);
+			
+			String name = partyJsonObject.getString(jsonKey.NAME.name());
+			String image = partyJsonObject.getString(jsonKey.IMAGE.name());
+			int id = partyJsonObject.getInt(jsonKey.PARTY_ID.name());	
+			
+			partyArray.put(new partyInfo(name,image,id));
+		}
+		return partyArray;	
+	}
 
-	public JSONArray getSyncPartyAttribute(Command cmd,jsonKey key) throws JSONException {
+	
+	public JSONArray getSyncPartyAttribute(Command cmd, jsonKey key) throws JSONException {
+		if(cmd.cmd_type != jsonKey.SYNC_PARTY)
+			return null;
 		JSONArray result = null;
 		switch(key) {
 		case USERS:
@@ -52,7 +74,7 @@ public class CommandClientAux {
 			int id = userJsonObject.getInt(jsonKey.USER_ID.name());	
 			boolean is_admin = userJsonObject.getBoolean(jsonKey.IS_ADMIN.name());	
 			
-			userArray.put(new User(name,path,id,is_admin));	
+			userArray.put(new User(name,path,id,is_admin));
 		}
 		return userArray;
 	}
@@ -64,7 +86,7 @@ public class CommandClientAux {
 			JSONObject songJsonObject = objectArray.getJSONObject(i);
 			int trackId = songJsonObject.getInt(jsonKey.TRACK_ID.name());
 			String path = songJsonObject.getString(jsonKey.URL.name());	
-			songArray.put(new song(trackId,path));	
+			songArray.put(new trackInfo(trackId,path));
 		}
 		return songArray;
 	}
