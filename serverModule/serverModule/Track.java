@@ -1,3 +1,4 @@
+package serverModule;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,8 +14,8 @@ public class Track {
 	
 	public JSONObject get_JSON() throws JSONException {
 		JSONObject trackJson = new JSONObject();
-		trackJson.put("url", this.url);
-		trackJson.put("trackId", this.trackId);
+		trackJson.put(jsonKey.URL.name(), this.url);
+		trackJson.put(jsonKey.URL.name(), this.trackId);
 		return trackJson;
 	}
 }

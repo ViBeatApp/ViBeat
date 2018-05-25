@@ -37,7 +37,6 @@ SYNC_PARTY({
 		"USERS",[{NAME,USER_ID,IMAGE,IS_ADMIN},...]
 		"IMAGE", byte[]
 		"LOCATION", loc
-		"ADMINS",[{NAME,USER_ID,IMAGE},...]
 		"REQUESTS",[{NAME,USER_ID,IMAGE},...]			//if private - value = 0 
 		"SONGS",[{URL,TRACK_ID},...]
 		"NAME",name
