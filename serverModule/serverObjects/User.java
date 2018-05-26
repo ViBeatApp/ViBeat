@@ -1,4 +1,5 @@
-package serverModule;
+package serverObjects;
+import java.io.IOException;
 import java.nio.channels.SocketChannel;
 import java.util.List;
 
@@ -6,13 +7,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import serverModule.jsonKey;
+
 public class User {
-	String name;
-	int id;
-	String image;
-	boolean is_admin;
-	SocketChannel channel;
-	int currentPartyId = -1;				//if isn't part of some party so value = -1
+	public String name;
+	public int id;
+	public String image;
+	public boolean is_admin;
+	public SocketChannel channel;
+	public int currentPartyId = -1;				//if isn't part of some party so value = -1
 	
 	public User(String name, int id, String image,SocketChannel channel) {
 		super();
@@ -47,5 +50,15 @@ public class User {
 			jsonArray.put(user.get_JSON());
 		}
 		return jsonArray;
+	}
+	
+	public void closeChannel() throws IOException {
+		channel.close();
+	}
+	public void setChannel(SocketChannel channel) throws IOException {
+		this.channel = channel;
+	}
+	public SocketChannel getChannel() throws IOException {
+		return channel;
 	}
 }

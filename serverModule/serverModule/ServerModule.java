@@ -1,7 +1,6 @@
 package serverModule;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -13,6 +12,9 @@ import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import serverObjects.Party;
+import serverObjects.User;
 
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
@@ -64,11 +66,11 @@ public class ServerModule {
 		}
 	}
 
-	private static void handle_comeback_users() throws ClosedChannelException {
+	private static void handle_comeback_users() throws IOException {
 		Iterator<User> iter = comeback_users.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
-			user.channel.register(selector, SelectionKey.OP_READ);
+			user.getChannel().register(selector, SelectionKey.OP_READ);
 			iter.remove();
 		}
 	}
@@ -83,7 +85,7 @@ public class ServerModule {
 			int userId = cmd.getIntAttribute(jsonKey.USER_ID);		
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
-				disconnectedUser.channel = client;
+				disconnectedUser.setChannel(client);
 				int partyID = disconnectedUser.currentPartyId;
 				Party party = FindPartyByID(partyID);
 				if (party != null) {
@@ -192,9 +194,9 @@ public class ServerModule {
 
 	//mini thread and locks.
 	//TODO
-	static void addComebackUser(User user) throws ClosedChannelException {
+	static void addComebackUser(User user) throws IOException {
 		comeback_users.add(user);
-		user.channel.register(selector, SelectionKey.OP_READ);
+		user.getChannel().register(selector, SelectionKey.OP_READ);
 	}
 
 	//mini thread and locks.

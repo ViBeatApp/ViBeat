@@ -14,6 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import serverObjects.Party;
+import serverObjects.Track;
+import serverObjects.User;
+
 public class Party_thread implements Runnable {
 
 	public Party party;
@@ -48,7 +52,7 @@ public class Party_thread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			register_for_selection(party.connected.get(0));
+			register_for_selection(party.getAdmin());
 			listen();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,7 +132,7 @@ public class Party_thread implements Runnable {
 	}
 
 	public boolean play_condition() {
-		return (0.5*party.connected.size() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
+		return (0.5*party.numOfClients() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
 	}
 
 	public void do_command(Command cmd, SelectionKey key) throws Exception {
@@ -233,7 +237,7 @@ public class Party_thread implements Runnable {
 
 	/* we wait for half of the party participants to be ready before we actually start playing */
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
-		System.out.println("--- party-thread: party-songs-#: " + party.playlist.songs.size());
+		System.out.println("--- party-thread: party-songs-#: " + party.get_playlist_size());
 		if ((party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing)
 				&& cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id()) {
 			return;
@@ -318,7 +322,7 @@ public class Party_thread implements Runnable {
 
 		if(disconnected) {
 			ServerModule.addDisconenctedUser(user);
-			user.channel.close();
+			user.closeChannel();
 		}
 		else {
 			key.cancel();

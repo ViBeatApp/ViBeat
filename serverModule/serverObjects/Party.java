@@ -1,4 +1,4 @@
-package serverModule;
+package serverObjects;
 import java.io.IOException;
 import java.nio.channels.Selector;
 import java.util.ArrayList;
@@ -7,23 +7,25 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import serverModule.jsonKey;
+
 public class Party {
 	
 	public enum Party_Status {
 		not_started, preparing, playing, pause,
 	}
 	
-	String party_name;
-	int party_id;
-	//Location location;
-	Party_Status status;
-	Playlist playlist;
-	int numOfAdmins = 0;
-	List<User> connected;
-	List<User> new_clients;
-	List<User> request; //only if private
-	Selector selector; //for wakeUp
-	boolean is_private;
+	public String party_name;
+	public int party_id;
+	//public Location location;
+	public Party_Status status;
+	public Playlist playlist;
+	public int numOfAdmins = 0;
+	public List<User> connected;
+	public List<User> new_clients;
+	public List<User> request; //only if private
+	public Selector selector; //for wakeUp
+	public boolean is_private;
 
 	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException {
 		super();
@@ -46,6 +48,13 @@ public class Party {
 	//TODO
 	public void UpdateLocation(){  //pings
 
+	}
+	
+	public User getAdmin() {
+		if (this.connected.size() > 0)
+			return this.connected.get(0);
+		System.out.println("error getAdmin(0) - party.");
+		return null;
 	}
 
 	public void makeAdmin(User user){
@@ -108,7 +117,11 @@ public class Party {
 	public int changeSongsOrder(int trackID_1, int trackID_2){	
 		return playlist.changeSongsOrder(trackID_1,trackID_2);
 	}
-
+	
+	public int get_playlist_size() {
+		return playlist.get_list_size();
+	}
+	
 	public int get_current_track_id() {
 		return playlist.get_current_track_id();
 	}
@@ -137,7 +150,7 @@ public class Party {
 		fullJson.put(jsonKey.REQUESTS.name(), User.getUserArray(request));
 		return fullJson;
 	}
-	
+
 	
 
 }

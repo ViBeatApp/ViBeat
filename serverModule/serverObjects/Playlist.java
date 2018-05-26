@@ -1,4 +1,4 @@
-package serverModule;
+package serverObjects;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,9 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 public class Playlist {
-	List<Track> songs;
-	int nextTrackID = 0;
-	int songCounter; //played so far - for sync when song ends.
+	public List<Track> songs;
+	public int nextTrackID = 0;
+	public int songCounter; //played so far - for sync when song ends.
 	
 	public Playlist() {
 		super();
@@ -27,6 +27,10 @@ public class Playlist {
 		if(songs.size() == 0) 
 			return -1;
 		return songs.get(0).trackId;
+	}
+	
+	public int get_list_size() {
+		return songs.size();
 	}
 	
 	public int deleteSong(int trackID){
