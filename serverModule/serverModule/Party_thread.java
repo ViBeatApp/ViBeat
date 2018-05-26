@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +32,7 @@ public class Party_thread implements Runnable {
 	public boolean keep_on;
 
 	public List<User> ready_for_play;
-	public List<User> newClients = new ArrayList<>();
+	public List<User> newClients;
 
 	public Instant last_play_time;
 	public int total_offset;
@@ -46,6 +47,7 @@ public class Party_thread implements Runnable {
 		keep_on = true;
 		total_offset = 0;
 		ready_for_play = new ArrayList<>();
+		newClients = new ArrayList<>();
 		last_play_time = null;
 	}
 
@@ -218,15 +220,18 @@ public class Party_thread implements Runnable {
 	/*TODO handling the locks */
 	public void get_newClients() {
 		newClients = new ArrayList<>();
-		clone_User_list(party.new_clients,newClients);
+		clone_User_list(party.new_clients, newClients);
 	}
-
-	public void clone_User_list(List<User> oldList,List<User> newList) {
-		Iterator<User> iter = oldList.iterator();
-		while (iter.hasNext()){
-			User user = iter.next();
-			newList.add(user);
-			iter.remove();
+	
+    // importing the new users from the the party syncronized list to local list
+	public void clone_User_list(List<User> oldList, List<User> newList) {
+		synchronized(oldList) {
+			Iterator<User> iter = oldList.iterator();
+			while (iter.hasNext()){
+				User user = iter.next();
+				newList.add(user);
+				iter.remove();
+			}	
 		}
 	}
 
@@ -307,9 +312,8 @@ public class Party_thread implements Runnable {
 		update_party.cmd_info.getJSONArray(classifier.name()).put(JsonObject);
 	}
 
-
-	public void returnToServerModule(SelectionKey key,User user,boolean disconnected) throws IOException {
-		boolean removed_participent = party.removeClient(user,disconnected);
+	public void returnToServerModule(final SelectionKey key, final User user, boolean disconnected) throws IOException {
+		boolean removed_participent = party.removeClient(user, disconnected);
 		party.removeRequest(user);
 		if (removed_participent) {
 			if(party.numOfClients() == 0) {
@@ -321,12 +325,33 @@ public class Party_thread implements Runnable {
 		newClients.remove(user);
 
 		if(disconnected) {
-			ServerModule.addDisconenctedUser(user);
-			user.closeChannel();
-		}
-		else {
-			key.cancel();
-			ServerModule.addComebackUser(user);
+			CompletableFuture.runAsync(new Runnable() {
+			    @Override
+			    public void run() {
+			    	System.out.println("party-thread - user " + user.name + " has disconnected");
+			    	ServerModule.addDisconenctedUser(user);
+			    	try {
+						user.closeChannel();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			});
+		} else {
+			CompletableFuture.runAsync(new Runnable() {
+			    @Override
+			    public void run() {
+					try {
+						key.cancel();
+						ServerModule.addComebackUser(user);
+						System.out.println("party-thread - user " + user.name + " has left the party");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			});
 		}
 	}
 
@@ -354,7 +379,7 @@ public class Party_thread implements Runnable {
 		iter = disconnectedUsers.iterator();
 		SelectionKey key = null;
 		while (iter.hasNext()){
-			returnToServerModule(key,iter.next(),true);
+			returnToServerModule(key, iter.next(), true);
 		}
 	}
 

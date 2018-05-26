@@ -2,6 +2,7 @@ package serverObjects;
 import java.io.IOException;
 import java.nio.channels.Selector;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONException;
@@ -35,7 +36,7 @@ public class Party {
 		this.playlist = new Playlist();
 		connected = new ArrayList<>();
 		request = new ArrayList<>();
-		new_clients = new ArrayList<>();
+		new_clients = Collections.synchronizedList(new ArrayList<User>());
 		this.is_private = is_private;
 		this.selector = Selector.open();
 		addClient(admin);
@@ -77,15 +78,17 @@ public class Party {
 		user.is_admin = false;
 	}
 	
-	public boolean removeClient(User user,boolean disconnected){
-		if(!disconnected)
+	public boolean removeClient(User user, boolean disconnected){
+		if(!disconnected) {
 			user.currentPartyId = -1;
+		}
 		
 		disableAdmin(user);
 		boolean response =  connected.remove(user);
 		
-		if(numOfAdmins == 0 && numOfClients() != 0) 
+		if(numOfAdmins == 0 && numOfClients() != 0) {
 			makeAdmin(connected.get(0));
+		}
 		return response;
 	}
 
@@ -97,7 +100,7 @@ public class Party {
 		return request.remove(user);
 	}
 	
-	//handle locks.
+	// new_clients is a synchronized object
 	public void addNewClient(User user) {
 		new_clients.add(user);
 	}

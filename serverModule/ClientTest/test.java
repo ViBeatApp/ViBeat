@@ -3,6 +3,7 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import serverModule.Command;
@@ -18,6 +19,11 @@ public class test implements Runnable {
 	public test(int user_id, String user_name) {
 		this.user_id = user_id;
 		this.user_name = user_name;
+	}
+	
+	public void leave_party(SocketChannel socket) throws Exception {
+		Command leave_party_cmd = Command.create_leaveParty_Command();
+		readWriteAux.writeSocket(socket, leave_party_cmd);
 	}
 	
 	public void play_protocol_user(SocketChannel socket) throws Exception {
@@ -38,11 +44,14 @@ public class test implements Runnable {
 	}
 	
 	public void move_to_next_song_client(SocketChannel socket) throws Exception {
-		Command cmd = wait_for_command(socket, CommandType.GET_READY, "user" + user_id);
+		System.out.println("user" + user_id + " waiting for next song");
+		Command cmd = wait_for_command(socket, CommandType.GET_READY, "GET_READY-user" + user_id);
 		int track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
 		Thread.sleep(500);
 		send_ready_command(socket, track_id);
-		wait_for_command(socket, CommandType.PLAY_SONG, "user" + user_id);
+		wait_for_command(socket, CommandType.PLAY_SONG, "user-PLAY_SONG" + user_id);
+		System.out.println("user" + user_id + "finished waiting for PLAY_SONG");
+		
 	}
 
 	public void join_party(SocketChannel socket) throws Exception {
@@ -68,8 +77,13 @@ public class test implements Runnable {
 			//SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
 			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 2000));
 			join_party(socket);
-			play_protocol_user(socket);
-			move_to_next_song_client(socket);
+			//play_protocol_user(socket);
+			//move_to_next_song_client(socket);
+			Thread.sleep(1000);
+			System.out.println("----------- user-id = " + user_id + " is out -------------");
+			leave_party(socket);
+			Thread.sleep(2000);
+			
 		} catch (Exception e) {	
 			e.printStackTrace();
 		}

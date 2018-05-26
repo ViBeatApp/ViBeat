@@ -6,6 +6,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +19,8 @@ import serverObjects.User;
 
 public class ServerModule {
 	static List<Party> current_parties = new ArrayList<>();
-	static List<User>  disconnected_users = new ArrayList<>();
-	static List<User>  comeback_users = new ArrayList<>();
+	static List<User>  disconnected_users = Collections.synchronizedList(new ArrayList<User>());
+	static List<User>  comeback_users = Collections.synchronizedList(new ArrayList<User>());
 	static int partyID = 0;
 	static Selector selector;
 
@@ -195,13 +196,25 @@ public class ServerModule {
 	//mini thread and locks.
 	//TODO
 	static void addComebackUser(User user) throws IOException {
-		comeback_users.add(user);
-		user.getChannel().register(selector, SelectionKey.OP_READ);
+		try {
+			user.getChannel().register(selector, SelectionKey.OP_READ);
+			comeback_users.add(user);
+			System.out.println("server-module user " + user.name + " has left the party");
+		} catch (Exception e){ //TODO
+			// the user has disconnected in the meantime
+			user.closeChannel();
+			System.out.println("server-module user " + user.name + " has disconnected while coming-back");
+			addDisconenctedUser(user);
+			
+		}
+		
+		
 	}
 
 	//mini thread and locks.
 	//TODO
 	static void addDisconenctedUser(User user) {
+		System.out.println("server-module user " + user.name + " has disconnected");
 		disconnected_users.add(user);
 	}
 
