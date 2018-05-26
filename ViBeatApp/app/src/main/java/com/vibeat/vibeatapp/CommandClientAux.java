@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class CommandClientAux {
 
-	public JSONArray getPartyArray(Command cmd) throws JSONException {
+	public static JSONArray getPartyArray(Command cmd) throws JSONException {
 		if(cmd.cmd_type != CommandType.SEARCH_RESULT)
 			return null;
 		JSONArray partyArray = new JSONArray();
@@ -24,8 +24,7 @@ public class CommandClientAux {
 		return partyArray;
 	}
 
-
-	public JSONArray getSyncPartyAttribute(Command cmd, jsonKey key) throws JSONException {
+	public static JSONArray getSyncPartyAttribute(Command cmd, jsonKey key) throws JSONException {
 		if(cmd.cmd_type != CommandType.SYNC_PARTY)
 			return null;
 		JSONArray result = null;
@@ -57,7 +56,7 @@ public class CommandClientAux {
 		return result;
 	}
 
-	private JSONArray createUserArray(Command cmd) throws JSONException {
+	private static JSONArray createUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
 		for(int i = 0; i < objectArray.length(); ++i) {
@@ -73,7 +72,7 @@ public class CommandClientAux {
 		return userArray;
 	}
 
-	private JSONArray createSongsArray(Command cmd) throws JSONException {
+	private static JSONArray createSongsArray(Command cmd) throws JSONException {
 		JSONArray songArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.SONGS);
 		for(int i = 0; i < objectArray.length(); ++i) {
@@ -85,7 +84,7 @@ public class CommandClientAux {
 		return songArray;
 	}
 
-	private JSONArray createRequestUserArray(Command cmd) throws JSONException {
+	private static JSONArray createRequestUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
 		for(int i = 0; i < objectArray.length(); ++i) {

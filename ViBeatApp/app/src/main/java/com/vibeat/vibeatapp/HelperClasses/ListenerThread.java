@@ -1,4 +1,5 @@
 package com.vibeat.vibeatapp.HelperClasses;
+
 import com.vibeat.vibeatapp.Command;
 import com.vibeat.vibeatapp.CommandClientAux;
 import com.vibeat.vibeatapp.MyApplication;
@@ -7,8 +8,9 @@ import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.jsonKey;
+import com.vibeat.vibeatapp.partyInfo;
 import com.vibeat.vibeatapp.readWriteAux;
-import com.vibeat.vibeatapp.test;
+import com.vibeat.vibeatapp.trackInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,8 +34,7 @@ public class ListenerThread extends Thread {
     @Override
     public void run() {
 
-        try{
-            test.test();}catch(Exception e){}
+        try{ /*connection test*/ } catch(Exception e){}
 
         while (!this.isInterrupted()) {
             Command cmd = null;
@@ -100,7 +101,7 @@ public class ListenerThread extends Thread {
                 break;
 
             case SEARCH_RESULT:
-                JSONArray parties = cmd.getSyncPartyAttribute(jsonKey.PARTY_INFO);
+                JSONArray parties = CommandClientAux.getPartyArray(cmd);
                 List<Party> party_list = null;
                 app.gui_manager.putPartyResults(party_list);
 
@@ -135,7 +136,7 @@ public class ListenerThread extends Thread {
     private List<Track> getTrackListFromJSON(JSONArray arr) throws JSONException{
         List<Track> tracks = new ArrayList<Track>();
         for (int i = 0; i < arr.length(); i++ ){
-            song s = (song)arr.get(i);
+            trackInfo s = (trackInfo)arr.get(i);
             Track track = DBManager.getTrackByURL(s.track_path, s.track_id);
             tracks.add(track);
         }
@@ -149,6 +150,18 @@ public class ListenerThread extends Thread {
             users.add(u);
         }
         return users;
+    }
+
+    private List<Party> getPartyListFromJSON(JSONArray arr) throws JSONException{
+        List<Party> parties = new ArrayList<Party>();
+        for (int i = 0; i < arr.length(); i++ ){
+            partyInfo p = (partyInfo)arr.get(i);
+            Party party = new Party();
+            party.party_name = p.party_name;
+            party.id = p.id;
+            parties.add(party);
+        }
+        return parties;
     }
 
     private void updateUserList(List<User> users, Party party){
