@@ -17,7 +17,7 @@ public class Track {
 	public JSONObject get_JSON() throws JSONException {
 		JSONObject trackJson = new JSONObject();
 		trackJson.put(jsonKey.URL.name(), this.url);
-		trackJson.put(jsonKey.URL.name(), this.trackId);
+		trackJson.put(jsonKey.TRACK_ID.name(), this.trackId);
 		return trackJson;
 	}
 }

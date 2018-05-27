@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
+import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;

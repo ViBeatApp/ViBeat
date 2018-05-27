@@ -98,6 +98,7 @@ public class Party_thread implements Runnable {
 
 	/* to handle */
 	public void handler_new_clients() throws Exception {
+		System.out.println("1");
 		get_newClients();
 		jsonKey updateMsg;
 		Iterator<User> iter = newClients.iterator();
@@ -105,11 +106,13 @@ public class Party_thread implements Runnable {
 			User user = iter.next();
 			register_for_selection(user);
 			if (party.is_private) { 
+				System.out.println("2");
 				party.addRequest(user);				
 				updateMsg = jsonKey.REQUESTS;
 			} 
 			/* the party is public, tell the user to get ready */
 			else { 
+				System.out.println("3");
 				addClientToParty(user);
 				updateMsg = jsonKey.USERS;
 			}
@@ -123,6 +126,7 @@ public class Party_thread implements Runnable {
 		party.addClient(user);
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = Command.create_syncParty_Command(party_info);
+		System.out.println("send to idan");
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
 			if (party.status == Party.Party_Status.playing) {
@@ -170,8 +174,10 @@ public class Party_thread implements Runnable {
 			break;
 		case RENAME_PARTY:
 			party.party_name = cmd.getStringAttribute(jsonKey.NAME);
+			break;
 		case MAKE_PRIVATE:
 			//TODO
+			break;
 			//Public to private - what to do with request.
 		case DISCONNECTED:	
 			returnToServerModule(key,user,true);

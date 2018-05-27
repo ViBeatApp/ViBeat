@@ -8,7 +8,7 @@ import org.json.JSONException;
 
 public class Playlist {
 	public List<Track> songs;
-	public int nextTrackID = 0;
+	public int nextTrackID = 50;
 	public int songCounter; //played so far - for sync when song ends.
 	
 	public Playlist() {

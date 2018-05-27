@@ -9,8 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.vibeat.vibeatapp.HelperClasses.RecyclerTouchHelper;
-import com.vibeat.vibeatapp.HelperClasses.RecyclerTouchHelperListener;
+import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelper;
+import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelperListener;
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;

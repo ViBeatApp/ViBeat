@@ -1,7 +1,10 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
-import com.vibeat.vibeatapp.Command;
-import com.vibeat.vibeatapp.readWriteAux;
+import android.util.Log;
+
+import com.vibeat.vibeatapp.ServerSide.Command;
+import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
 
 import org.json.JSONException;
 
@@ -11,28 +14,48 @@ import java.util.LinkedList;
 
 public class SenderThread extends Thread {
 
-    public readWriteAux conn;
+    MyApplication app;
+
+    public ReadWriteAux conn;
     public LinkedList<Command> task_queue;
     public boolean connected;
 
-    public SenderThread() {
+    public SenderThread(MyApplication app) {
         this.task_queue = new LinkedList<Command>();
         this.connected = true;
+        this.app = app;
     }
 
     @Override
     public void run() {
         try {
-            conn = new readWriteAux();
+            conn = new ReadWriteAux();
+
+            app.listener_thread = new ListenerThread(app, conn);
+            app.listener_thread.start();
+
             while(connected) {
                 synchronized (task_queue) {
                     try {
                         // Calling wait() will block this thread until another thread
                         // calls notify() on the object.
+                        Log.e("SENDER","waiting");
                         task_queue.wait();
-                    } catch (InterruptedException e) {
+                        Log.e("SENDER","got interrupted");
                         while (connected && !task_queue.isEmpty()) {
                             try {
+                                Log.e("SENDER","doing pop to send queue");
+                                conn.send(task_queue.pop());
+                            } catch (JSONException e1) {
+                                Log.e("SENDER","send failed");
+                                e1.printStackTrace();
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        Log.e("SENDER","got interrupted");
+                        while (connected && !task_queue.isEmpty()) {
+                            try {
+                                Log.e("SENDER","doing pop to send queue");
                                 conn.send(task_queue.pop());
                             } catch (JSONException e1) {
                                 e1.printStackTrace();
@@ -49,9 +72,12 @@ public class SenderThread extends Thread {
 
     public void addCmd(Command cmd){
         synchronized(task_queue) {
+            Log.e("SENDER","doing add command synchpnized");
             task_queue.add(cmd);
-            if(task_queue.size() == 1)
+            if(task_queue.size() >= 1) {
                 task_queue.notify();
+                Log.e("SENDER","after notify");
+            }
         }
     }
 

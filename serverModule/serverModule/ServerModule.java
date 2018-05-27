@@ -156,8 +156,12 @@ public class ServerModule {
 	}
 
 	//TODO
-	public static void send_nearby_parties(User client,Command cmd) {
-
+	public static void send_nearby_parties(User client,Command cmd) throws JSONException {
+		JSONArray partyArray = new JSONArray();
+		for (Party party : current_parties){
+			partyArray.put(party.getPublicJson());
+		}
+		readWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
 	}
 
 	/* creating a new party
@@ -178,7 +182,6 @@ public class ServerModule {
 		if (party == null)
 			return false;
 		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed this. serverModule.join_party()");
-		System.out.println("serverModule - party: " + party);
 		party.addNewClient(client);
 		party.selector.wakeup();
 		return true;

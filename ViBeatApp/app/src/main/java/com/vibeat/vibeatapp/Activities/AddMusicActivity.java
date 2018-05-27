@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Adapter;
 import android.widget.ListView;
 
-import com.vibeat.vibeatapp.ListClasses.CostumeListAdapter;
+import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;

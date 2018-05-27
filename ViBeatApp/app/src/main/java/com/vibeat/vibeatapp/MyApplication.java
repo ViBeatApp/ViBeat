@@ -2,11 +2,11 @@ package com.vibeat.vibeatapp;
 
 import android.app.Application;
 
-import com.vibeat.vibeatapp.HelperClasses.ClientManager;
+import com.vibeat.vibeatapp.Managers.ClientManager;
 import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
-import com.vibeat.vibeatapp.HelperClasses.MediaPlayerManager;
+import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
-import com.vibeat.vibeatapp.ListClasses.GUIManager;
+import com.vibeat.vibeatapp.Managers.GUIManager;
 
 public class MyApplication extends Application {
     public ClientManager client_manager = null;

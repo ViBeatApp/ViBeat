@@ -9,6 +9,7 @@ import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;

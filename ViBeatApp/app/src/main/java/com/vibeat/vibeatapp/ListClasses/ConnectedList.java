@@ -2,8 +2,6 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.Adapter;
@@ -11,8 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.Activities.ConnectedActivity;
-import com.vibeat.vibeatapp.HelperClasses.*;
+import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
 

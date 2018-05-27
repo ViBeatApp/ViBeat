@@ -1,20 +1,17 @@
 package com.vibeat.vibeatapp.ListClasses;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
+import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
-import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 public class RequestList implements ListAdapterable {

@@ -15,7 +15,10 @@ public class Party {
     public boolean is_private = false;
     public int id = -1;
 
-    public Party(){}
+    public Party(){
+        User user = new User("bla","/storage/emulated/0/ViBeat/ido.jpg",-1,true);
+        admin.add(user);
+    }
 
     public Party(User creator, String party_name, boolean is_private, int id){
         this.admin.add(creator);
