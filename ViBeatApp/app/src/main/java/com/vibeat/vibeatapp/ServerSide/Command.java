@@ -165,11 +165,11 @@ public class Command {
 		cmd.setAttribute(jsonKey.LOCATION, Location);
 		return cmd;
 	}
-	public static Command create_closeParty_Command(int Location) throws JSONException {
+	public static Command create_closeParty_Command() throws JSONException {
 		Command cmd = new Command(CommandType.CLOSE_PARTY);
 		return cmd;
 	}
-	public static Command create_leaveParty_Command(int Location) throws JSONException {
+	public static Command create_leaveParty_Command() throws JSONException {
 		Command cmd = new Command(CommandType.LEAVE_PARTY);
 		return cmd;
 	}

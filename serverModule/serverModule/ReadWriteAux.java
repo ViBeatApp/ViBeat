@@ -7,11 +7,11 @@ import java.nio.channels.SocketChannel;
 import org.json.JSONException;
 
 
-public class readWriteAux {
+public class ReadWriteAux {
 	SocketChannel socket;
 	
-	public readWriteAux() throws IOException {
-		socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
+	public ReadWriteAux(String ipAddress) throws IOException {
+		socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
 	}
 	
 	public Command recieve() throws IOException, JSONException {

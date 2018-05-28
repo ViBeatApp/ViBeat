@@ -10,8 +10,8 @@ import org.json.JSONException;
 public class ReadWriteAux {
 	SocketChannel socket;
 	
-	public ReadWriteAux() throws IOException {
-		socket = SocketChannel.open(new InetSocketAddress("172.17.168.68", 2000));
+	public ReadWriteAux(String ipAddress) throws IOException {
+		socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
 	}
 	
 	public Command recieve() throws IOException, JSONException {

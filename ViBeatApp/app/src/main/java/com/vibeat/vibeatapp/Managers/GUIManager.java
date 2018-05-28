@@ -3,10 +3,13 @@ package com.vibeat.vibeatapp.Managers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,6 +24,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vibeat.vibeatapp.imageLoader;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
@@ -28,6 +32,7 @@ import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
 import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
+import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
@@ -38,6 +43,8 @@ import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GUIManager{
@@ -169,23 +176,16 @@ public class GUIManager{
     }
 
 
-    public void initEnterPartyActivity(){
+    public void initEnterPartyActivity() {
         User user = app.client_manager.user;
         ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
         TextView user_name = (TextView) act.findViewById(R.id.hello_user);
+        List<String> img_paths = new ArrayList<String>();
+        List<ImageView> views = new ArrayList<ImageView>();
+        img_paths .add(user.img_path);
+        views.add(user_img);
 
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
+        imageLoader.loadImage(act,img_paths,views);
 
         user_name.setText("Hi, "+user.name);
 

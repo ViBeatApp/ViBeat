@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import serverModule.Command;
 import serverModule.CommandType;
 import serverModule.jsonKey;
-import serverModule.readWriteAux;
+import serverModule.ReadWriteAux;
 
 public class test implements Runnable {
 	
@@ -23,7 +23,7 @@ public class test implements Runnable {
 	
 	public void leave_party(SocketChannel socket) throws Exception {
 		Command leave_party_cmd = Command.create_leaveParty_Command();
-		readWriteAux.writeSocket(socket, leave_party_cmd);
+		ReadWriteAux.writeSocket(socket, leave_party_cmd);
 	}
 	
 	public void play_protocol_user(SocketChannel socket) throws Exception {
@@ -59,12 +59,12 @@ public class test implements Runnable {
 		auth.setAttribute(jsonKey.NAME, user_name);
 		auth.setAttribute(jsonKey.USER_ID, user_id);
 		auth.setAttribute(jsonKey.IMAGE, "aaa");
-		readWriteAux.writeSocket(socket, auth);
+		ReadWriteAux.writeSocket(socket, auth);
 		//Thread.sleep(1000);
 		
 		Command join_party = new Command (CommandType.JOIN);
 		join_party.setAttribute(jsonKey.PARTY_ID, 0);
-		readWriteAux.writeSocket(socket, join_party);
+		ReadWriteAux.writeSocket(socket, join_party);
 		//Thread.sleep(1000);
 		
 		System.out.println("user"+user_id + "- asked to join");
@@ -74,8 +74,7 @@ public class test implements Runnable {
 	public void run() {
 		try {
 			System.out.println("----------- new user-id = " + user_id + " -------------");
-			//SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
-			SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 2000));
+			SocketChannel socket = SocketChannel.open(new InetSocketAddress("10.0.0.11", 2000));
 			join_party(socket);
 			//play_protocol_user(socket);
 			//move_to_next_song_client(socket);
@@ -96,18 +95,18 @@ public class test implements Runnable {
 	public static void main(String[] args) throws Exception {
 		//check_enum();
 		//SocketChannel socket = SocketChannel.open(new InetSocketAddress("192.168.43.238", 2000));
-		SocketChannel socket = SocketChannel.open(new InetSocketAddress("localhost", 2000));
+		SocketChannel socket = SocketChannel.open(new InetSocketAddress("10.0.0.11", 2000));
 		System.out.println("create new party");
 		
 		Command auth = new Command(CommandType.AUTHENTICATION);
 		auth.setAttribute(jsonKey.NAME, "Ido");
 		auth.setAttribute(jsonKey.USER_ID, 0);
 		auth.setAttribute(jsonKey.IMAGE, "abcd");
-		readWriteAux.writeSocket(socket, auth);
+		ReadWriteAux.writeSocket(socket, auth);
 		Command create = new Command(CommandType.CREATE);
 		create.setAttribute(jsonKey.NAME, "Ido's party");
 		create.setAttribute(jsonKey.IS_PRIVATE, true);
-		readWriteAux.writeSocket(socket, create);
+		ReadWriteAux.writeSocket(socket, create);
 		
 		manage_songs(socket);
 		
@@ -144,12 +143,12 @@ public class test implements Runnable {
 	private static void accept_new_participent(SocketChannel socket, int user_id) throws Exception {
 		System.out.println("admin1 - in accept_new_participent");
 		Thread.sleep(10);
-		Command reply = readWriteAux.readSocket(socket);
+		Command reply = ReadWriteAux.readSocket(socket);
 		System.out.println("admin2 - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		send_conf_command(socket, user_id);
 		//Thread.sleep(1000);
 		
-		reply = readWriteAux.readSocket(socket);
+		reply = ReadWriteAux.readSocket(socket);
 		System.out.println("admin3 - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		
 	}
@@ -159,16 +158,16 @@ public class test implements Runnable {
 		Command reply;
 		System.out.println("admin - sending new_command");
 		add_song.setAttribute(jsonKey.URL, "www.youtube1");
-		readWriteAux.writeSocket(socket, add_song);
+		ReadWriteAux.writeSocket(socket, add_song);
 		
 		System.out.println("admin - send URL1");
-		reply = readWriteAux.readSocket(socket);
+		reply = ReadWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
 		System.out.println("admin - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		
 		add_song.setAttribute(jsonKey.URL, "www.youtube2");
-		readWriteAux.writeSocket(socket, add_song);
-		reply = readWriteAux.readSocket(socket);
+		ReadWriteAux.writeSocket(socket, add_song);
+		reply = ReadWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");
 		System.out.println("command: " + reply.cmd_type + " info:" + reply.cmd_info);
 	}
@@ -177,7 +176,7 @@ public class test implements Runnable {
 	public static Command wait_for_command(SocketChannel socket, CommandType type,String user_name) throws Exception {
 		Command reply;
 		while (true) {
-			reply = readWriteAux.readSocket(socket);
+			reply = ReadWriteAux.readSocket(socket);
 			System.out.println(user_name + " - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 			if (reply.cmd_type == type) {
 				break;
@@ -190,26 +189,26 @@ public class test implements Runnable {
 		Command confirm_req = new Command(CommandType.CONFIRM_REQUEST);
 		confirm_req.setAttribute(jsonKey.USER_ID, user_id);
 		confirm_req.setAttribute(jsonKey.CONFIRMED, true);
-		readWriteAux.writeSocket(socket, confirm_req);
+		ReadWriteAux.writeSocket(socket, confirm_req);
 	}
 	
 	public static void send_play_command(SocketChannel socket, int offset, int track_id) throws Exception {
 		Command play_cmd = new Command(CommandType.PLAY_SONG);
 		play_cmd.setAttribute(jsonKey.TRACK_ID, track_id);
 		play_cmd.setAttribute(jsonKey.OFFSET, offset);
-		readWriteAux.writeSocket(socket, play_cmd);
+		ReadWriteAux.writeSocket(socket, play_cmd);
 	}
 	
 	public static void send_ready_command(SocketChannel socket, int track_id) throws Exception {
 		Command ready_command = new Command(CommandType.IM_READY);
 		ready_command.setAttribute(jsonKey.TRACK_ID, track_id);
-		readWriteAux.writeSocket(socket, ready_command);
+		ReadWriteAux.writeSocket(socket, ready_command);
 	}
 	
 	public static void send_pause_command(SocketChannel socket, int track_id) throws Exception {
 		Command pause_cmd = new Command(CommandType.PAUSE);
 		pause_cmd.setAttribute(jsonKey.TRACK_ID, 0);
-		readWriteAux.writeSocket(socket, pause_cmd);
+		ReadWriteAux.writeSocket(socket, pause_cmd);
 	}
 	
 	public static void initiate_song(SocketChannel socket, int track_id) throws Exception {

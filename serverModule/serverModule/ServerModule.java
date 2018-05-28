@@ -29,7 +29,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress(args[0],2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.11",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -78,7 +78,7 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
-		Command cmd = readWriteAux.readSocket(client);
+		Command cmd = ReadWriteAux.readSocket(client);
 		cmd.printCommand();
 		switch(cmd.cmd_type){
 
@@ -126,7 +126,7 @@ public class ServerModule {
 
 		case SEARCH_PARTY:
 			Command answer = getPartiesByName(cmd.getStringAttribute(jsonKey.NAME));
-			readWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
+			ReadWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
@@ -161,7 +161,7 @@ public class ServerModule {
 		for (Party party : current_parties){
 			partyArray.put(party.getPublicJson());
 		}
-		readWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
+		ReadWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
 	}
 
 	/* creating a new party

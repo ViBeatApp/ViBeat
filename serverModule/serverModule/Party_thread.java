@@ -80,7 +80,7 @@ public class Party_thread implements Runnable {
 			SelectionKey key = keyIterator.next();
 			if (key.isReadable()) {
 				SocketChannel channel  = (SocketChannel) key.channel();
-				Command cmd = readWriteAux.readSocket(channel);
+				Command cmd = ReadWriteAux.readSocket(channel);
 				System.out.print("from user " + ((User)key.attachment()).name + " to server: ");
 				cmd.printCommand();
 				do_command(cmd, key);
@@ -390,7 +390,7 @@ public class Party_thread implements Runnable {
 	}
 
 	public int SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
-		return readWriteAux.writeSocket(user.get_channel(), cmd);
+		return ReadWriteAux.writeSocket(user.get_channel(), cmd);
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {

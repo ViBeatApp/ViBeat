@@ -21,6 +21,7 @@ import com.vibeat.vibeatapp.Managers.ClientManager;
 import com.vibeat.vibeatapp.Managers.DBManager;
 import com.vibeat.vibeatapp.Managers.GUIManager;
 import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if a user has already signed in with google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
         if( account != null ){
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
             app.gui_manager.login();
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (ApiException e) {
                 Log.w("TAG", "signInResult:failed code=" + e.getStatusCode());
+                e.printStackTrace();
             }
         }
     }
