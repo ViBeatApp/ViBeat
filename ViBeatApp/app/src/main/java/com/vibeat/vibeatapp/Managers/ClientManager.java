@@ -11,13 +11,14 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
+import com.vibeat.vibeatapp.ServerSide.Command;
+import com.vibeat.vibeatapp.ServerSide.partyInfo;
 
 import org.json.JSONException;
 
@@ -40,7 +41,7 @@ public class ClientManager {
 
         senderThread.start();
         try {
-            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path.getBytes()));
+            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -60,19 +61,7 @@ public class ClientManager {
         }
     }
 
-    public void connectParty(Party party){
-        /*if (party.is_private) {
-            party.addRequest(user);
-            conn.updateParty(this.party);
-        }
-        else{
-            this.party = party;
-            conn.syncParty(this.party);
-            this.party.addConnected(user);
-            conn.updateParty(this.party);
-        }
-        this.is_admin = false;
-        return true;*/
+    public void connectParty(partyInfo party){
         try {
             senderThread.addCmd(Command.create_join_Command(party.id));
         } catch (JSONException e) {
@@ -224,6 +213,7 @@ public class ClientManager {
     public void leaveParty(){
         try {
             senderThread.addCmd(Command.create_leaveParty_Command());
+            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
