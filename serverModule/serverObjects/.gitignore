@@ -3,3 +3,8 @@
 /Playlist.class
 /Track.class
 /User.class
+/Command.class
+/CommandType.class
+/Location.class
+/ReadWriteAux.class
+/jsonKey.class

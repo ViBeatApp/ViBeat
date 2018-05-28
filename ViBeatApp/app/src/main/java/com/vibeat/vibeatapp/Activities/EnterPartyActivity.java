@@ -6,11 +6,11 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
-import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
+import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.ServerSide.partyInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class EnterPartyActivity extends AppCompatActivity {
     public MyApplication app;
     public ListView listOfParties;
 
-    List<Party> nearby_parties = new ArrayList<Party>();
+    List<partyInfo> nearby_parties = new ArrayList<partyInfo>();
 
     //private String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 

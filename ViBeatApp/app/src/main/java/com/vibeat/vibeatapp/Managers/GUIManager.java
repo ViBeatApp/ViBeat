@@ -3,13 +3,10 @@ package com.vibeat.vibeatapp.Managers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -24,7 +21,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.vibeat.vibeatapp.imageLoader;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
@@ -32,18 +28,17 @@ import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
 import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
-import com.vibeat.vibeatapp.HelperClasses.pictureChange;
-import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
+import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.ServerSide.partyInfo;
+import com.vibeat.vibeatapp.imageLoader;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +104,7 @@ public class GUIManager{
         act.startActivity(intent);
     }
 
-    public void requestJoin(Party party) {
+    public void requestJoin(partyInfo party) {
         app.client_manager.connectParty(party);
         Intent intent = new Intent(act, LoadingActivity.class);
         act.startActivity(intent);
@@ -120,7 +115,7 @@ public class GUIManager{
         act.startActivity(intent);
     }
 
-    public void putPartyResults(List<Party> party_list) {
+    public void putPartyResults(List<partyInfo> party_list) {
         if(act instanceof EnterPartyActivity) {
             CostumeListAdapter adap =(CostumeListAdapter) adapters.get(0);
             ((PartiesList) adap.list_obj).nearby_parties = party_list;
@@ -568,5 +563,4 @@ public class GUIManager{
 
         }
     }
-
 }

@@ -43,7 +43,6 @@
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_mute" />
 
-
         <ImageButton
             android:id="@+id/play_pause"
             android:layout_width="0dp"
@@ -53,7 +52,6 @@
             android:layout_weight="20"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_play" />
-
 
         <ImageButton
             android:id="@+id/next"

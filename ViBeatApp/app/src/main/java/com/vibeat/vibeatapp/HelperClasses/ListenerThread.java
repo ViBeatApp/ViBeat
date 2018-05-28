@@ -117,7 +117,7 @@ public class ListenerThread extends Thread {
 
             case SEARCH_RESULT:
                 JSONArray parties = CommandClientAux.getPartyArray(cmd);
-                List<Party> party_list = getPartyListFromJSON(parties);
+                List<partyInfo> party_list = getPartyListFromJSON(parties);
                 app.gui_manager.putPartyResults(party_list);
 
             case GET_READY:
@@ -168,15 +168,11 @@ public class ListenerThread extends Thread {
         return users;
     }
 
-    private List<Party> getPartyListFromJSON(JSONArray arr) throws JSONException{
-        List<Party> parties = new ArrayList<Party>();
+    private List<partyInfo> getPartyListFromJSON(JSONArray arr) throws JSONException{
+        List<partyInfo> parties = new ArrayList<partyInfo>();
         for (int i = 0; i < arr.length(); i++ ){
             partyInfo p = (partyInfo)arr.get(i);
-            Party party = new Party();
-            party.party_name = p.party_name;
-            party.id = p.id;
-            parties.add(party);
-            parties.add(party);
+            parties.add(p);
         }
         return parties;
     }
