@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION},
                 0);
         try {
-                app.client_manager = new ClientManager(new User("ido", "http://www.pngmart.com/files/5/Hamburger-Transparent-PNG.png", 0, false), app);
-                app.gui_manager.login();
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
+            app.client_manager = new ClientManager(new User("ido", "http://www.pngmart.com/files/5/Hamburger-Transparent-PNG.png", 0, false), app);
+            app.gui_manager.login();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

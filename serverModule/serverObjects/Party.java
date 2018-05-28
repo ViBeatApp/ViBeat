@@ -155,7 +155,7 @@ public class Party {
 	public JSONObject getFullJson() throws JSONException{
 		JSONObject fullJson = new JSONObject();
 		fullJson.put(jsonKey.NAME.name(), new JSONArray().put(party_name));
-		fullJson.put(jsonKey.IMAGE.name(), new JSONArray().put(new String(this.getPartyImage())));
+		fullJson.put(jsonKey.IMAGE.name(), new JSONArray().put(this.getPartyImage()));
 		fullJson.put(jsonKey.LOCATION.name(), new JSONArray().put(0));
 		fullJson.put(jsonKey.SONGS.name(), playlist.getTrackArray());
 		fullJson.put(jsonKey.IS_PRIVATE.name(), new JSONArray().put(is_private));

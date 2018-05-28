@@ -176,8 +176,8 @@ public class ClientManager {
 
     public void getPartiesNearby(){
         try {
-            senderThread.addCmd(Command.create_nearbyParties_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
-        } catch (JSONException e) {
+            senderThread.addCmd(Command.create_nearbyParties_Command(location.getLongitude() ,location.getLatitude(),location.getAltitude()));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -31,58 +31,45 @@ public class test2 implements Runnable {
 	public static void main(String[] args) throws Exception {
 		//check_enum();
 		System.out.println("ido");
-		SocketChannel ido_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
-		System.out.println("first connection");
+		SocketChannel ido_socket = SocketChannel.open(new InetSocketAddress("10.0.0.11", 2000));
+		SocketChannel tomer_socket = SocketChannel.open(new InetSocketAddress("10.0.0.11", 2000));
 		
 		(new Thread(new test2(ido_socket,"ido"))).start();
+		(new Thread(new test2(tomer_socket,"tomer"))).start();
 		
-		Command auth_ido = new Command(CommandType.AUTHENTICATION);
-		auth_ido.cmd_info.put("NAME", "Ido");
-		auth_ido.cmd_info.put("USER_ID", 0);
-		auth_ido.cmd_info.put("IMAGE", "abcd");
+		Command auth_ido = serverObjects.Command.create_authentication_command("Ido", 0, "ido_path");
 		ReadWriteAux.writeSocket(ido_socket, auth_ido);
 		
-		Command create = new Command(CommandType.CREATE);
-		create.cmd_info.put("NAME", "Ido's party");
-		create.cmd_info.put("IS_PRIVATE", false);
-		ReadWriteAux.writeSocket(ido_socket, create);
-		
-		System.out.println("tomer");
-		SocketChannel tomer_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
-		(new Thread(new test2(tomer_socket,"tomer"))).start();
-		Command auth_tomer = new Command(CommandType.AUTHENTICATION);
-		auth_tomer.cmd_info.put("NAME", "Tomer");
-		auth_tomer.cmd_info.put("USER_ID", 1);
-		auth_tomer.cmd_info.put("IMAGE", "aaa");
+		Command auth_tomer = Command.create_authentication_command("Tomer", 1, "Tomer_path");
 		ReadWriteAux.writeSocket(tomer_socket, auth_tomer);
-		//Thread.sleep(1000);
 		
-		Command search_party = new Command (CommandType.SEARCH_PARTY);
-		search_party.setAttribute(jsonKey.NAME, "Ido");
+		Command create = Command.create_create_Command("Ido's party", true);
+		ReadWriteAux.writeSocket(ido_socket, create);
+
+		Command search_party = Command.create_searchParty_Command("Ido");
 		ReadWriteAux.writeSocket(tomer_socket, search_party);
-		Thread.sleep(2000);
 		
-		Command join_party = new Command (CommandType.JOIN);
-		join_party.setAttribute(jsonKey.PARTY_ID, 0);
+		Command join_party = Command.create_join_Command(0);
 		ReadWriteAux.writeSocket(tomer_socket, join_party);
 		
-		Command add_song = new Command(CommandType.ADD_SONG);
-		System.out.println("ido - sending add_song");
-		add_song.cmd_info.put("URL", "www.youtube1");
+		Command add_song = Command.create_addSons_Command("url 1");
 		ReadWriteAux.writeSocket(ido_socket, add_song);	
-		//rep = readWriteAux.readSocket(ido_socket);
-		//System.out.println("reply:" + rep.cmd_type + " info:" + rep.cmd_info);
 		
-		ido_socket.close();
 		
-		System.out.println("ido closed his socket and go to sleep");
-		Thread.sleep(1000);
+		Command makePrivate = Command.create_makePrivate_Command(false);
+		System.out.println("ido - making public");
+		ReadWriteAux.writeSocket(ido_socket, makePrivate);	
 		
-		System.out.println("ido is opening new connection");
-		ido_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
-		(new Thread(new test2(ido_socket,"ido2"))).start();
-		System.out.println("second connection");
-		ReadWriteAux.writeSocket(ido_socket, auth_ido);
+//		ido_socket.close();
+//		
+//		System.out.println("ido closed his socket and go to sleep");
+//		Thread.sleep(1000);
+		
+//		System.out.println("ido is opening new connection");
+//		ido_socket = SocketChannel.open(new InetSocketAddress("localhost", 9999));
+//		(new Thread(new test2(ido_socket,"ido2"))).start();
+//		System.out.println("second connection");
+//		ReadWriteAux.writeSocket(ido_socket, auth_ido);
 				
 		Thread.sleep(5000);
 		

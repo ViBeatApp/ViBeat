@@ -129,10 +129,7 @@ public class Party_thread implements Runnable {
 		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
-			if (party.status == Party.Party_Status.playing) {
-				System.out.println("party-thread: total-offset = " + total_offset);
-				update_get_ready_command(true);
-			}
+			update_get_ready_command();
 			SendCommandToUser(user, get_ready_command);
 		}
 	}
@@ -199,8 +196,8 @@ public class Party_thread implements Runnable {
 
 		while (iter.hasNext()){
 			User userReq = iter.next();
-			addClientToParty(userReq);
 			iter.remove();
+			addClientToParty(userReq);
 		}		
 	}
 
@@ -271,7 +268,7 @@ public class Party_thread implements Runnable {
 		}
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
-		update_get_ready_command(false); // not updating the offset
+		update_get_ready_command(); // not updating the offset
 		SendCommandToAll(get_ready_command);
 	}
 
@@ -417,8 +414,8 @@ public class Party_thread implements Runnable {
 	}
 
 	/* updates the GetReady command */
-	public void update_get_ready_command(boolean update_offset) throws JSONException {
-		if (update_offset) {
+	public void update_get_ready_command() throws JSONException {	
+		if (party.status == Party.Party_Status.playing) {
 			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
 		}
 		get_ready_command.setAttribute(jsonKey.OFFSET, total_offset);

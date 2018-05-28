@@ -1,21 +1,16 @@
 package serverObjects;
 public enum CommandType {
+	
+	//from client to server
 	AUTHENTICATION,
 	NEARBY_PARTIES,
 	SEARCH_PARTY,
 	JOIN, 
 	CREATE, 
-	DISCONNECTED, 
-	
 	ADD_SONG, 
 	DELETE_SONG, 
 	SWAP_SONGS,
 	IM_READY,
-	
-	PLAY_SONG, 
-	PAUSE,
-	GET_READY, 
-	
 	RENAME_PARTY,
 	MAKE_PRIVATE,
 	CONFIRM_REQUEST,
@@ -24,9 +19,18 @@ public enum CommandType {
 	LEAVE_PARTY,
 	UPDATE_LOCATION,
 	
+	//both
+	PLAY_SONG, 
+	PAUSE,
+	
+	//from server to client
+	GET_READY, 
 	REJECTED,
 	UPDATE_PARTY,
 	SYNC_PARTY, 
-	SEARCH_RESULT;
+	SEARCH_RESULT,
+	
+	//get if the other side fall
+	DISCONNECTED;
 	
 }

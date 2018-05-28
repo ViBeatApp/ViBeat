@@ -82,11 +82,11 @@ public class Command {
 		return cmd_info.getJSONArray(key.name());
 	}
 	
-	public static Command create_authentication_command(String name,int userID,byte[] image) throws JSONException {
+	public static Command create_authentication_command(String name,int userID,String image) throws JSONException {
 		Command cmd = new Command(CommandType.AUTHENTICATION);
 		cmd.setAttribute(jsonKey.NAME, name);
 		cmd.setAttribute(jsonKey.USER_ID, userID);
-		cmd.setAttribute(jsonKey.IMAGE, new String(image));
+		cmd.setAttribute(jsonKey.IMAGE, image);
 		return cmd;
 	}
 	public static Command create_nearbyParties_Command(double longitude,double latitude,double altitude) throws JSONException {
