@@ -103,6 +103,8 @@ public class ServerModule {
 			break;
 
 		case DISCONNECTED:	
+			if(key.attachment() != null)
+				addDisconenctedUser((User)key.attachment());
 			client.close();
 			break;
 
@@ -145,7 +147,7 @@ public class ServerModule {
 		return Command.create_searchResult_command(resultArray);
 	}
 
-	//TODO
+
 	public static void send_nearby_parties(User client,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
 		JSONArray partyArray = new JSONArray();
@@ -229,7 +231,6 @@ public class ServerModule {
 	}
 
 	//mini thread and locks.
-	//TODO
 	static void addDisconenctedUser(User user) {
 		System.out.println("server-module user " + user.name + " has disconnected");
 		disconnected_users.add(user);
