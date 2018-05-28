@@ -15,13 +15,13 @@ public enum CommandType {
 	MAKE_PRIVATE,
 	CONFIRM_REQUEST,
 	MAKE_ADMIN,
-	CLOSE_PARTY, 
 	LEAVE_PARTY,
 	UPDATE_LOCATION,
 	
 	//both
 	PLAY_SONG, 
 	PAUSE,
+	CLOSE_PARTY, 
 	
 	//from server to client
 	GET_READY, 
