@@ -150,7 +150,8 @@ public class ClientManager {
 
                             if( is_admin ) {
                                 try {
-                                    senderThread.addCmd(Command.create_updateLocation_Command(0));
+
+                                    senderThread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -175,7 +176,7 @@ public class ClientManager {
 
     public void getPartiesNearby(){
         try {
-            senderThread.addCmd(Command.create_nearbyParties_Command(0));
+            senderThread.addCmd(Command.create_nearbyParties_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -220,10 +221,9 @@ public class ClientManager {
         }
     }
 
-    //WHY LOCATION?
     public void leaveParty(){
         try {
-            senderThread.addCmd(Command.create_leaveParty_Command(0));
+            senderThread.addCmd(Command.create_leaveParty_Command());
         } catch (JSONException e) {
             e.printStackTrace();
         }

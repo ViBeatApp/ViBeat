@@ -5,10 +5,10 @@ import java.nio.channels.SocketChannel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import serverModule.Command;
-import serverModule.CommandType;
-import serverModule.ReadWriteAux;
-import serverModule.jsonKey;
+import serverObjects.Command;
+import serverObjects.CommandType;
+import serverObjects.ReadWriteAux;
+import serverObjects.jsonKey;
 
 public class test implements Runnable {
 	

@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import serverModule.jsonKey;
-
 public class Party {
 	
 	public enum Party_Status {
@@ -19,7 +17,7 @@ public class Party {
 	
 	public String party_name;
 	public int party_id;
-	//public Location location;
+	public Location location;
 	public Party_Status status;
 	public Playlist playlist;
 	public int numOfAdmins = 0;
@@ -42,6 +40,7 @@ public class Party {
 		this.is_private = is_private;
 		this.selector = Selector.open();
 		this.keep_on = true;
+		this.location = new Location(0,0,0);
 		addClient(admin);
 		makeAdmin(admin);
 	}
@@ -50,8 +49,16 @@ public class Party {
 		return connected.get(0).get_image();
 	}
 	//TODO
-	public void UpdateLocation(){  //pings
-
+	public void UpdateLocation(Location location){ 
+		synchronized(this.location) {
+			this.location = location;
+		}
+	}
+	
+	public Location get_Location(){ 
+		synchronized(this.location) {
+			return this.location;
+		}
 	}
 	
 	public User getAdmin() {

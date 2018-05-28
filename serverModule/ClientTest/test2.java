@@ -2,10 +2,10 @@ package ClientTest;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
-import serverModule.Command;
-import serverModule.CommandType;
-import serverModule.jsonKey;
-import serverModule.ReadWriteAux;
+import serverObjects.Command;
+import serverObjects.CommandType;
+import serverObjects.ReadWriteAux;
+import serverObjects.jsonKey;
 
 public class test2 implements Runnable {
 	SocketChannel socket;

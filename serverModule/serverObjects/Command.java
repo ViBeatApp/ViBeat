@@ -1,4 +1,4 @@
-package serverModule;
+package serverObjects;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +49,10 @@ public class Command {
 	public void setAttribute(jsonKey key, int num) throws JSONException {
 		this.cmd_info.put(key.name(),num);
 	}
+
+	public void setAttribute(jsonKey key, double num) throws JSONException {
+		this.cmd_info.put(key.name(),num);
+	}
 	
 	public void setAttribute(jsonKey key, boolean bool) throws JSONException {
 		this.cmd_info.put(key.name(),bool);
@@ -70,6 +74,10 @@ public class Command {
 		return this.cmd_info.getBoolean(key.name());
 	}
 	
+	public double getDoubleAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getDouble(key.name());
+	}
+	
 	public JSONArray getSyncPartyAttribute(jsonKey key) throws JSONException {
 		return cmd_info.getJSONArray(key.name());
 	}
@@ -81,9 +89,11 @@ public class Command {
 		cmd.setAttribute(jsonKey.IMAGE, new String(image));
 		return cmd;
 	}
-	public static Command create_nearbyParties_Command(int Location) throws JSONException {
+	public static Command create_nearbyParties_Command(double longitude,double latitude,double altitude) throws JSONException {
 		Command cmd = new Command(CommandType.NEARBY_PARTIES);
-		cmd.setAttribute(jsonKey.LOCATION, Location);
+		cmd.setAttribute(jsonKey.LONGTITUDE, longitude);
+		cmd.setAttribute(jsonKey.LATITUDE, latitude);
+		cmd.setAttribute(jsonKey.ALTITUDE, altitude);
 		return cmd;
 	}
 	public static Command create_searchParty_Command(String name) throws JSONException {
@@ -160,9 +170,11 @@ public class Command {
 		cmd.setAttribute(jsonKey.USER_ID, userId);
 		return cmd;
 	}
-	public static Command create_updateLocation_Command(int Location) throws JSONException {
+	public static Command create_updateLocation_Command(double longtitude,double latitude,double altitude) throws JSONException {
 		Command cmd = new Command(CommandType.UPDATE_LOCATION);
-		cmd.setAttribute(jsonKey.LOCATION, Location);
+		cmd.setAttribute(jsonKey.LONGTITUDE,longtitude);
+		cmd.setAttribute(jsonKey.LATITUDE,latitude);
+		cmd.setAttribute(jsonKey.ALTITUDE,altitude);
 		return cmd;
 	}
 	public static Command create_closeParty_Command() throws JSONException {

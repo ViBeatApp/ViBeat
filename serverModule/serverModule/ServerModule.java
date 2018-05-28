@@ -10,15 +10,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import serverObjects.Command;
+import serverObjects.Location;
 import serverObjects.Party;
+import serverObjects.ReadWriteAux;
 import serverObjects.User;
+import serverObjects.jsonKey;
 
 public class ServerModule {
-	static List<Party> current_parties = Collections.synchronizedList(new ArrayList<>());
+	static List<Party> current_parties = Collections.synchronizedList(new ArrayList<Party>());
 	static List<User>  disconnected_users = Collections.synchronizedList(new ArrayList<User>());
 	static int partyID = 0;
 	static Selector selector;
@@ -144,13 +147,41 @@ public class ServerModule {
 
 	//TODO
 	public static void send_nearby_parties(User client,Command cmd) throws JSONException {
+		Location location = new Location(cmd);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
-			partyArray.put(party.getPublicJson());
+			if(distance(party.get_Location(), location) < 100) {
+				partyArray.put(party.getPublicJson());
+			}
 		}
 		ReadWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
 	}
 
+	public static double distance(Location loc1, Location loc2) {
+		double lat1 = loc1.latitude; 
+		double lat2 = loc2.latitude;
+		double lon1 = loc1.longitude;
+        double lon2 = loc2.longitude;
+        double el1 = loc1.altitude;
+        double el2 = loc2.altitude;
+	    final int R = 6371; // Radius of the earth
+
+	    double latDistance = Math.toRadians(lat2 - lat1);
+	    double lonDistance = Math.toRadians(lon2 - lon1);
+	    double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+	            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+	            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	    double distance = R * c * 1000; // convert to meters
+
+	    double height = el1 - el2;
+
+	    distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+	    return Math.sqrt(distance);
+	}
+	
+	
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(SelectionKey key,User party_creator, Command cmd, Selector selector) throws JSONException, IOException {

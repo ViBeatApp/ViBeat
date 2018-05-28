@@ -1,4 +1,4 @@
-package serverModule;
+package serverObjects;
 
 public enum jsonKey {
 	NAME,
@@ -27,7 +27,11 @@ public enum jsonKey {
 	
 	TRACK_ID_1,
 	TRACK_ID_2,
-	
+
+	LONGTITUDE,
+	LATITUDE,
+	ALTITUDE,
+
 	TRACK_ID,
 	PARTY_ID,
 	USER_ID,

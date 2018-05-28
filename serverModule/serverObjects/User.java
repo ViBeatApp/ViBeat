@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import serverModule.jsonKey;
-
 public class User {
 	public String name;
 	public int id;

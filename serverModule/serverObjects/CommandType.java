@@ -1,4 +1,4 @@
-package serverModule;
+package serverObjects;
 public enum CommandType {
 	AUTHENTICATION,
 	NEARBY_PARTIES,

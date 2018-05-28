@@ -15,11 +15,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sun.prism.paint.Stop;
-
+import serverObjects.Command;
+import serverObjects.CommandType;
+import serverObjects.Location;
 import serverObjects.Party;
+import serverObjects.ReadWriteAux;
 import serverObjects.Track;
 import serverObjects.User;
+import serverObjects.jsonKey;
 
 public class Party_thread implements Runnable {
 
@@ -287,8 +290,9 @@ public class Party_thread implements Runnable {
 		}
 	}
 
-	private void updateLocation(Command cmd) {
-		// TODO Auto-generated method stub
+	private void updateLocation(Command cmd) throws JSONException {
+		Location location = new Location(cmd);		
+		party.UpdateLocation(location);						//TODO should be sync?
 
 	}
 
