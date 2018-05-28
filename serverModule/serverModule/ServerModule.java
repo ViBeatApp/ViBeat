@@ -18,9 +18,8 @@ import serverObjects.Party;
 import serverObjects.User;
 
 public class ServerModule {
-	static List<Party> current_parties = new ArrayList<>();
+	static List<Party> current_parties = Collections.synchronizedList(new ArrayList<>());
 	static List<User>  disconnected_users = Collections.synchronizedList(new ArrayList<User>());
-	static List<User>  comeback_users = Collections.synchronizedList(new ArrayList<User>());
 	static int partyID = 0;
 	static Selector selector;
 
@@ -39,7 +38,6 @@ public class ServerModule {
 			System.out.println("Waiting for select...");
 			int readyChannels = selector.select();
 			if(readyChannels == 0) continue;
-			handle_comeback_users();
 			System.out.println("Number of selected keys: " + readyChannels);
 
 			Set<SelectionKey> selectedKeys = selector.selectedKeys();
@@ -67,15 +65,6 @@ public class ServerModule {
 		}
 	}
 
-	private static void handle_comeback_users() throws IOException {
-		Iterator<User> iter = comeback_users.iterator();
-		while (iter.hasNext()){
-			User user = iter.next();
-			user.getChannel().register(selector, SelectionKey.OP_READ);
-			iter.remove();
-		}
-	}
-
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
 		Command cmd = ReadWriteAux.readSocket(client);
@@ -87,15 +76,10 @@ public class ServerModule {
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.setChannel(client);
-				int partyID = disconnectedUser.currentPartyId;
-				Party party = FindPartyByID(partyID);
-				if (party != null) {
-					key.cancel();
-					join_party(disconnectedUser,partyID);
+				if(join_party(key,disconnectedUser,disconnectedUser.currentPartyId)) 
 					break;
-				}
 			}
-			
+
 			String name = cmd.getStringAttribute(jsonKey.NAME);
 			String image = cmd.getStringAttribute(jsonKey.IMAGE);
 			User newUser = new User(name,userId,image, client);
@@ -108,16 +92,11 @@ public class ServerModule {
 
 		case JOIN:
 			int partyID = cmd.getIntAttribute(jsonKey.PARTY_ID);
-			Party party = FindPartyByID(partyID);
-			if (party == null)
-				break;
-			key.cancel();	
-			join_party((User)key.attachment(),partyID);
+			join_party(key,(User)key.attachment(),partyID);
 			break;
 
 		case CREATE:
-			key.cancel();
-			create_party((User)key.attachment(),cmd,selector);
+			create_party(key,(User)key.attachment(),cmd,selector);
 			break;
 
 		case DISCONNECTED:	
@@ -134,12 +113,14 @@ public class ServerModule {
 	}
 
 	private static User isDisconnectedUser(int id) {
-		Iterator<User> iter = disconnected_users.iterator();
-		while (iter.hasNext()){
-			User user = iter.next();
-			if(user.id == id) {	
-				iter.remove();
-				return user;
+		synchronized (disconnected_users) {
+			Iterator<User> iter = disconnected_users.iterator();
+			while (iter.hasNext()){
+				User user = iter.next();
+				if(user.id == id) {	
+					iter.remove();
+					return user;
+				}
 			}
 		}
 		return null;
@@ -147,10 +128,16 @@ public class ServerModule {
 
 	private static Command getPartiesByName(String name) throws JSONException {
 		JSONArray resultArray = new JSONArray();
-		for(Party party : current_parties) {
-			if (party.party_name.contains(name)) {
-				resultArray.put(party.getPublicJson());
-			}
+		
+		synchronized (current_parties) {
+
+			Iterator<Party> iter = current_parties.iterator();
+			while (iter.hasNext()){
+				Party party = iter.next();
+				if (party.party_name.contains(name)) {
+					resultArray.put(party.getPublicJson());
+				}
+			}		
 		}
 		return Command.create_searchResult_command(resultArray);
 	}
@@ -166,9 +153,11 @@ public class ServerModule {
 
 	/* creating a new party
 	 * making admin the client who created the party */
-	public static void create_party(User party_creator, Command cmd, Selector selector) throws JSONException, IOException {
+	public static void create_party(SelectionKey key,User party_creator, Command cmd, Selector selector) throws JSONException, IOException {
 		String name = cmd.getStringAttribute(jsonKey.NAME);
 		boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE);
+
+		key.cancel();
 
 		Party party = new Party(name,partyID++,party_creator,is_private);
 		System.out.println("serverModule - party.party_id = " + party.party_id);
@@ -177,41 +166,35 @@ public class ServerModule {
 
 	}
 
-	private static boolean join_party(User client, int partyId) throws JSONException {
+	private static boolean join_party(SelectionKey key,User client, int partyId) throws JSONException {
 		Party party = FindPartyByID(partyId);
 		if (party == null)
 			return false;
-		System.out.println("serverModule - looked for partyID: " + "Tomer - I've changed this. serverModule.join_party()");
-		party.addNewClient(client);
-		party.selector.wakeup();
-		return true;
+
+		System.out.println("serverModule - looked for partyID: " + partyId);
+		synchronized (party.waitingClients) {
+			if (party.keep_on) {
+				key.cancel();
+				party.addWaitingClient(client);
+				party.selector.wakeup();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Party FindPartyByID(int id) {
-		for(Party party : current_parties){
-			if(party.party_id == id){
-				return party;
-			}
+		synchronized (current_parties) {
+
+			Iterator<Party> iter = current_parties.iterator();
+			while (iter.hasNext()){
+				Party party = iter.next();
+				if(party.party_id == id){
+					return party;
+				}
+			}		
 		}
 		return null;
-	}
-
-	//mini thread and locks.
-	//TODO
-	static void addComebackUser(User user) throws IOException {
-		try {
-			user.getChannel().register(selector, SelectionKey.OP_READ);
-			comeback_users.add(user);
-			System.out.println("server-module user " + user.name + " has left the party");
-		} catch (Exception e){ //TODO
-			// the user has disconnected in the meantime
-			user.closeChannel();
-			System.out.println("server-module user " + user.name + " has disconnected while coming-back");
-			addDisconenctedUser(user);
-			
-		}
-		
-		
 	}
 
 	//mini thread and locks.
@@ -219,6 +202,10 @@ public class ServerModule {
 	static void addDisconenctedUser(User user) {
 		System.out.println("server-module user " + user.name + " has disconnected");
 		disconnected_users.add(user);
+	}
+
+	static void deleteParty(Party party) {
+		current_parties.remove(party);
 	}
 
 }

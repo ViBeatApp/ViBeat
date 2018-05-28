@@ -24,22 +24,24 @@ public class Party {
 	public Playlist playlist;
 	public int numOfAdmins = 0;
 	public List<User> connected;
-	public List<User> new_clients;
+	public List<User> waitingClients;
 	public List<User> request; //only if private
 	public Selector selector; //for wakeUp
 	public boolean is_private;
-
+	public boolean keep_on;
+	
 	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException {
 		super();
 		this.party_name = party_name;
 		this.party_id = party_id;
 		this.status = Party_Status.not_started;
 		this.playlist = new Playlist();
-		connected = new ArrayList<>();
-		request = new ArrayList<>();
-		new_clients = Collections.synchronizedList(new ArrayList<User>());
+		this.connected = new ArrayList<>();
+		this.request = new ArrayList<>();
+		this.waitingClients = Collections.synchronizedList(new ArrayList<User>());
 		this.is_private = is_private;
 		this.selector = Selector.open();
+		this.keep_on = true;
 		addClient(admin);
 		makeAdmin(admin);
 	}
@@ -102,8 +104,8 @@ public class Party {
 	}
 	
 	// new_clients is a synchronized object
-	public void addNewClient(User user) {
-		new_clients.add(user);
+	public void addWaitingClient(User user) {
+		waitingClients.add(user);
 	}
 	
 	public int numOfClients() {

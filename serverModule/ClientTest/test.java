@@ -3,13 +3,12 @@ import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import serverModule.Command;
 import serverModule.CommandType;
-import serverModule.jsonKey;
 import serverModule.ReadWriteAux;
+import serverModule.jsonKey;
 
 public class test implements Runnable {
 	

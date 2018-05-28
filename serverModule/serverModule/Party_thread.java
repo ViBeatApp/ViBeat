@@ -15,6 +15,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sun.prism.paint.Stop;
+
 import serverObjects.Party;
 import serverObjects.Track;
 import serverObjects.User;
@@ -29,10 +31,8 @@ public class Party_thread implements Runnable {
 	public Command pause_command;
 	public Command update_party;
 
-	public boolean keep_on;
-
 	public List<User> ready_for_play;
-	public List<User> newClients;
+	public List<User> unHandledClients;
 
 	public Instant last_play_time;
 	public int total_offset;
@@ -44,10 +44,9 @@ public class Party_thread implements Runnable {
 		pause_command = new Command(CommandType.PAUSE);
 		play_command = new Command(CommandType.PLAY_SONG);
 		get_ready_command = new Command(CommandType.GET_READY);
-		keep_on = true;
 		total_offset = 0;
 		ready_for_play = new ArrayList<>();
-		newClients = new ArrayList<>();
+		unHandledClients = new ArrayList<>();
 		last_play_time = null;
 	}
 
@@ -62,9 +61,9 @@ public class Party_thread implements Runnable {
 	}
 	/* the main function   */
 	public void listen() throws IOException, Exception {
-		while (keep_on) {
+		while (party.keep_on) {
 			int readyChannels = party.selector.select();
-			if(readyChannels == 0) {
+			if(readyChannels == 0 ) {
 				System.out.println("lost wake up");
 			}
 			update_party = new Command(CommandType.UPDATE_PARTY);
@@ -76,7 +75,8 @@ public class Party_thread implements Runnable {
 	private void handle_current_clients() throws IOException, JSONException, Exception {
 		Set<SelectionKey> selectedKeys = party.selector.selectedKeys();
 		Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
-		while(keyIterator.hasNext()) {
+
+		while(keyIterator.hasNext() && party.keep_on) {
 			SelectionKey key = keyIterator.next();
 			if (key.isReadable()) {
 				SocketChannel channel  = (SocketChannel) key.channel();
@@ -87,6 +87,7 @@ public class Party_thread implements Runnable {
 			}
 			keyIterator.remove();
 		}
+
 		if (play_condition()) { /* we start playing the song */
 			party.status = Party.Party_Status.playing;
 			last_play_time = Instant.now();
@@ -98,21 +99,18 @@ public class Party_thread implements Runnable {
 
 	/* to handle */
 	public void handler_new_clients() throws Exception {
-		System.out.println("1");
-		get_newClients();
+		getNewClients();
 		jsonKey updateMsg;
-		Iterator<User> iter = newClients.iterator();
+		Iterator<User> iter = unHandledClients.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
 			if (party.is_private) { 
-				System.out.println("2");
 				party.addRequest(user);				
 				updateMsg = jsonKey.REQUESTS;
 			} 
 			/* the party is public, tell the user to get ready */
 			else { 
-				System.out.println("3");
 				addClientToParty(user);
 				updateMsg = jsonKey.USERS;
 			}
@@ -126,7 +124,6 @@ public class Party_thread implements Runnable {
 		party.addClient(user);
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = Command.create_syncParty_Command(party_info);
-		System.out.println("send to idan");
 		SendCommandToUser(user, sync_command);
 		if (party.get_current_track_id() != -1) {
 			if (party.status == Party.Party_Status.playing) {
@@ -176,14 +173,15 @@ public class Party_thread implements Runnable {
 			party.party_name = cmd.getStringAttribute(jsonKey.NAME);
 			break;
 		case MAKE_PRIVATE:
-			//TODO
+			party.is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE);
+			if(party.is_private == false) 
+				makePublicHandle();
 			break;
-			//Public to private - what to do with request.
 		case DISCONNECTED:	
-			returnToServerModule(key,user,true);
+			returnToServerModule(user,true);
 			break;
 		case LEAVE_PARTY:	
-			returnToServerModule(key,user,false);
+			returnToServerModule(user,false);
 			break;
 		case CLOSE_PARTY:	
 			destroyParty();
@@ -191,6 +189,16 @@ public class Party_thread implements Runnable {
 		default:
 			break;
 		}
+	}
+
+	private void makePublicHandle() throws JSONException, IOException {		
+		Iterator<User> iter = party.request.iterator();
+
+		while (iter.hasNext()){
+			User userReq = iter.next();
+			addClientToParty(userReq);
+			iter.remove();
+		}		
 	}
 
 
@@ -209,7 +217,7 @@ public class Party_thread implements Runnable {
 		}
 		else {
 			SendCommandToUser(confirmed_user, Command.create_rejected_Command());
-			returnToServerModule(key,confirmed_user,false);
+			returnToServerModule(confirmed_user,false);
 		}
 
 	}
@@ -224,12 +232,12 @@ public class Party_thread implements Runnable {
 	}
 
 	/*TODO handling the locks */
-	public void get_newClients() {
-		newClients = new ArrayList<>();
-		clone_User_list(party.new_clients, newClients);
+	public void getNewClients() {
+		unHandledClients = new ArrayList<>();
+		clone_User_list(party.waitingClients, unHandledClients);
 	}
-	
-    // importing the new users from the the party syncronized list to local list
+
+	// importing the new users from the the party syncronized list to local list
 	public void clone_User_list(List<User> oldList, List<User> newList) {
 		synchronized(oldList) {
 			Iterator<User> iter = oldList.iterator();
@@ -318,51 +326,44 @@ public class Party_thread implements Runnable {
 		update_party.cmd_info.getJSONArray(classifier.name()).put(JsonObject);
 	}
 
-	public void returnToServerModule(final SelectionKey key, final User user, boolean disconnected) throws IOException {
-		boolean removed_participent = party.removeClient(user, disconnected);
+	public void returnToServerModule(final User user, boolean disconnected) throws IOException, JSONException {
+		party.removeClient(user, disconnected);
 		party.removeRequest(user);
-		if (removed_participent) {
-			if(party.numOfClients() == 0) {
-				destroyParty();
-				return;
-			}
-			ready_for_play.remove(user);		
+		ready_for_play.remove(user);		
+		unHandledClients.remove(user);
+
+		if(party.numOfClients() == 0) {
+			destroyParty();
+			return;
 		}
-		newClients.remove(user);
+
+		user.closeChannel();
 
 		if(disconnected) {
 			CompletableFuture.runAsync(new Runnable() {
-			    @Override
-			    public void run() {
-			    	System.out.println("party-thread - user " + user.name + " has disconnected");
-			    	ServerModule.addDisconenctedUser(user);
-			    	try {
-						user.closeChannel();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			    }
-			});
-		} else {
-			CompletableFuture.runAsync(new Runnable() {
-			    @Override
-			    public void run() {
-					try {
-						key.cancel();
-						ServerModule.addComebackUser(user);
-						System.out.println("party-thread - user " + user.name + " has left the party");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			    }
+				@Override
+				public void run() {
+					System.out.println("party-thread - user " + user.name + " has disconnected");
+					ServerModule.addDisconenctedUser(user);
+				}
 			});
 		}
 	}
 
-	private void destroyParty() {
-		keep_on = false;		
+	private void destroyParty() throws IOException, JSONException {
+		synchronized (party.waitingClients) {
+			if(!party.keep_on)
+				return;
+			Command close = new Command(CommandType.CLOSE_PARTY);
+			ServerModule.deleteParty(party);
+			SendCommandToList(close, party.connected, true);
+			SendCommandToList(close, party.waitingClients, true);
+			SendCommandToList(close, party.request, true);
+			SendCommandToList(close, unHandledClients, true);
+			party.keep_on = false;
+
+		}
+
 	}
 
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
@@ -370,7 +371,11 @@ public class Party_thread implements Runnable {
 	}
 
 	public void SendCommandToList(Command cmd, List<User> recievers, boolean remove_from_list) throws IOException, JSONException {
+		if(!party.keep_on)
+			return;
+
 		List<User> disconnectedUsers = new ArrayList<>();
+
 		Iterator<User> iter = recievers.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
@@ -383,9 +388,8 @@ public class Party_thread implements Runnable {
 		}
 
 		iter = disconnectedUsers.iterator();
-		SelectionKey key = null;
 		while (iter.hasNext()){
-			returnToServerModule(key, iter.next(), true);
+			returnToServerModule(iter.next(), true);
 		}
 	}
 
@@ -403,7 +407,7 @@ public class Party_thread implements Runnable {
 			return;
 		}
 		JSONObject party_info = party.getFullJson();
-		
+
 		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToAll(sync_command);
 	}

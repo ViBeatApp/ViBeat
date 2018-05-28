@@ -15,7 +15,7 @@ public class User {
 	public String image;
 	public boolean is_admin;
 	public SocketChannel channel;
-	public int currentPartyId = -1;				//if isn't part of some party so value = -1
+	public int currentPartyId;				//if isn't part of some party so value = -1
 	
 	public User(String name, int id, String image,SocketChannel channel) {
 		super();
@@ -24,6 +24,7 @@ public class User {
 		this.id = id;
 		this.channel = channel;
 		this.is_admin = false;
+		currentPartyId = -1;
 	}
 	
 	
