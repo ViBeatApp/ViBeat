@@ -3,7 +3,6 @@ package com.vibeat.vibeatapp.Managers;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -171,18 +170,28 @@ public class GUIManager{
     }
 
 
+    public void initToolBar(){
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                User user = app.client_manager.user;
+                ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
+                TextView user_name = (TextView) act.findViewById(R.id.hello_user);
+                List<String> img_paths = new ArrayList<String>();
+                List<ImageView> views = new ArrayList<ImageView>();
+                img_paths.add(user.img_path);
+                views.add(user_img);
+
+                imageLoader.loadImage(act,img_paths,views);
+
+                user_name.setText("Hi, "+user.name);
+            }
+        });
+    }
+
     public void initEnterPartyActivity() {
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
-        List<String> img_paths = new ArrayList<String>();
-        List<ImageView> views = new ArrayList<ImageView>();
-        img_paths .add(user.img_path);
-        views.add(user_img);
 
-        imageLoader.loadImage(act,img_paths,views);
-
-        user_name.setText("Hi, "+user.name);
+        initToolBar();
 
         Button create = (Button) act.findViewById(R.id.create);
         create.setOnClickListener(new View.OnClickListener() {
@@ -213,21 +222,7 @@ public class GUIManager{
     }
 
     public void initLoadingActivity(){
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
-
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
+        initToolBar();
 
         ImageButton back = (ImageButton) act.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -240,24 +235,7 @@ public class GUIManager{
     }
 
     public void initCreatePartyActivity(){
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
-
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
+        initToolBar();
 
         EditText partyName = (EditText) act.findViewById(R.id.editText);
         partyName.setText(app.client_manager.party.party_name);
@@ -305,24 +283,8 @@ public class GUIManager{
         });    }
 
     public void initConnectedActivity() {
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
+        initToolBar();
 
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
         final TextView req_title = (TextView) act.findViewById(R.id.connected2);
 
         if (!app.client_manager.party.is_private){
@@ -400,24 +362,7 @@ public class GUIManager{
     }
 
     public void initAddMusicActivity(){
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
-
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
+        initToolBar();
 
         final SearchView search_bar = (SearchView) act.findViewById(R.id.search);
 
@@ -447,24 +392,7 @@ public class GUIManager{
     }
 
     public void initPlaylistActivity(){
-        User user = app.client_manager.user;
-        ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-        TextView user_name = (TextView) act.findViewById(R.id.hello_user);
-
-        try{
-            //URL newurl = new URL(user.img_path);
-            //Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
-            //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-            //bm = pictureChange.getCroppedBitmap(bm);
-            //user_img.setImageBitmap(bm);.
-            user_img.setImageURI(Uri.parse(user.img_path));
-        }
-        //catch (IOException e){
-
-        //}
-        catch (Exception e){}
-
-        user_name.setText("Hi, "+user.name);
+        initToolBar();
 
         final ImageButton mute = (ImageButton) act.findViewById(R.id.mute);
 
