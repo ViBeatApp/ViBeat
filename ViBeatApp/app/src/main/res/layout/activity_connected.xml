@@ -9,8 +9,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.ConnectedActivity"
-    android:background="@drawable/rose_colored_lenses"
+    android:background="@color/background"
     android:weightSum="100">
+
     <include layout="@layout/toolbar"></include>
 
     <Space
@@ -42,9 +43,9 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/text"
             android:textSize="24sp"
-            app:fontFamily="@font/caveat_brush" />
+            app:fontFamily="@font/dancing_script" />
 
         <ImageView
             android:id="@+id/isPrivate"
@@ -52,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_weight="30"
-            app:srcCompat="@drawable/ic_lock" />
+            app:srcCompat="@drawable/ic_lock_blue" />
 
     </LinearLayout>
 
@@ -60,12 +61,13 @@
         android:id="@+id/connected"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
-        android:text="  Connected to your party"
-        android:textColor="@color/colorPrimaryDark"
         android:layout_marginBottom="10dp"
-        android:textSize="30sp"
-        app:fontFamily="@font/caveat_brush" />
+        android:layout_weight="10"
+        android:text="Connected to your party"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="25sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <ListView
         android:id="@+id/connected_list"
@@ -86,12 +88,13 @@
         android:id="@+id/connected2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
-        android:text="  Pending requests"
         android:layout_marginBottom="10dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="30sp"
-        app:fontFamily="@font/caveat_brush" />
+        android:layout_weight="10"
+        android:text="Pending requests"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="25sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <ListView
         android:id="@+id/waiting_list"

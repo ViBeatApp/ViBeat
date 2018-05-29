@@ -60,19 +60,18 @@
                 android:layout_width="0dp"
                 android:layout_weight="50"
                 android:gravity="right"
-                android:foregroundGravity="right"
-                app:srcCompat="@drawable/izzy" />
+                android:foregroundGravity="right" />
 
             <TextView
                 android:id="@+id/hello_user"
-                android:layout_height="match_parent"
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="50"
                 android:gravity="center_vertical"
                 android:text="Hi, Izzy"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                app:fontFamily="@font/caveat_brush" />
+                app:fontFamily="@font/open_sans" />
 
         </LinearLayout>
 

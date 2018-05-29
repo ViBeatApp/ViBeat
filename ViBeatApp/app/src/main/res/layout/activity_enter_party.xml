@@ -7,7 +7,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context=".Activities.EnterPartyActivity"
-    android:background="@drawable/rose_colored_lenses"
+    android:background="@color/background"
     android:weightSum="100">
 
     <include layout="@layout/toolbar"></include>
@@ -25,11 +25,10 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/round_button"
         android:text="   Create Your Party!   "
-        android:textColorHighlight="@color/colorPrimaryDark"
+        android:textColor="@color/colorPrimary"
         android:textSize="24sp"
-        android:textColor="@color/colorAccent"
         android:visibility="visible"
-        app:fontFamily="@font/caveat_brush"
+        app:fontFamily="@font/open_sans_semibold"
         tools:layout_editor_absoluteX="150dp"
         tools:layout_editor_absoluteY="65dp" />
 
@@ -39,15 +38,16 @@
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_marginBottom="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:gravity="left"
-        android:text="   Parties around you   "
+        android:text="Parties around you"
+        android:layout_marginLeft="20dp"
         android:textAllCaps="false"
-        android:textSize="30sp"
-        app:fontFamily="@font/caveat_brush"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="25sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <ListView
         android:id="@+id/parties_list"

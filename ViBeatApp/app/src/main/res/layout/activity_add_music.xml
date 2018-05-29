@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Activities.AddMusicActivity"
     android:orientation="vertical"
-    android:background="@drawable/rose_colored_lenses"
+    android:background="@color/background"
     android:layout_weight="100">
 
     <include layout="@layout/toolbar"></include>
@@ -20,13 +20,12 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginLeft="20dp"
         android:layout_weight="10"
         android:text="Search for your beat!"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:fontFamily="@font/caveat_brush"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="25sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <SearchView
         android:id="@+id/search"
@@ -34,7 +33,7 @@
         android:layout_height="0dp"
         android:layout_weight="10"
         android:text=""
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/text"
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_marginBottom="10dp"

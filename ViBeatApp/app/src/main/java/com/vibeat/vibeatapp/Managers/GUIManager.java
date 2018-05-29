@@ -149,7 +149,7 @@ public class GUIManager{
                 @Override
                 public void run() {
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
-                    play_pause.setImageResource(R.drawable.ic_play);
+                    play_pause.setImageResource(R.drawable.ic_play_blue);
                 }
             });
 
@@ -163,7 +163,7 @@ public class GUIManager{
                 @Override
                 public void run() {
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
-                    play_pause.setImageResource(R.drawable.ic_pause);
+                    play_pause.setImageResource(R.drawable.ic_pause_blue);
                 }
             });
         }
@@ -257,17 +257,17 @@ public class GUIManager{
 
         final ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
         if (!app.client_manager.party.is_private)
-            isPrivate.setImageResource(R.drawable.ic_unlock);
+            isPrivate.setImageResource(R.drawable.ic_unlock_blue);
 
         isPrivate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!app.client_manager.party.is_private) {
-                    isPrivate.setImageResource(R.drawable.ic_lock);
+                    isPrivate.setImageResource(R.drawable.ic_lock_blue);
                     app.client_manager.party.is_private = true;
                 }
                 else {
-                    isPrivate.setImageResource(R.drawable.ic_unlock);
+                    isPrivate.setImageResource(R.drawable.ic_unlock_blue);
                     app.client_manager.party.is_private = false;
                 }
             }
@@ -325,13 +325,13 @@ public class GUIManager{
 
         final ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
         if (!app.client_manager.party.is_private)
-            isPrivate.setImageResource(R.drawable.ic_unlock);
+            isPrivate.setImageResource(R.drawable.ic_unlock_blue);
 
         isPrivate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!app.client_manager.party.is_private) {
-                    isPrivate.setImageResource(R.drawable.ic_lock);
+                    isPrivate.setImageResource(R.drawable.ic_lock_blue);
                     app.client_manager.turnToPrivate();
                     req_title.setVisibility(View.VISIBLE);
                     ((ConnectedActivity)act).request_list.setVisibility(View.VISIBLE);
@@ -340,7 +340,7 @@ public class GUIManager{
                     ((BaseAdapter)adapters.get(1)).notifyDataSetChanged();
                 }
                 else {
-                    isPrivate.setImageResource(R.drawable.ic_unlock);
+                    isPrivate.setImageResource(R.drawable.ic_unlock_blue);
                     app.client_manager.turnToPublic();
                     req_title.setVisibility(View.GONE);
                     ((ConnectedActivity)act).request_list.setVisibility(View.GONE);
@@ -424,9 +424,9 @@ public class GUIManager{
                 public void onClick(View v) {
                     app.client_manager.commandPlayPause();
                     if(app.client_manager.party.playlist.is_playing)
-                        play_pause.setImageResource(R.drawable.ic_pause);
+                        play_pause.setImageResource(R.drawable.ic_pause_blue);
                     else
-                        play_pause.setImageResource(R.drawable.ic_play);
+                        play_pause.setImageResource(R.drawable.ic_play_blue);
                 }
             });
 
@@ -451,11 +451,11 @@ public class GUIManager{
             public void onClick(View v) {
                 if(app.media_manager.isMute()) {
                     app.media_manager.unmute();
-                    mute.setImageResource(R.drawable.ic_mute);
+                    mute.setImageResource(R.drawable.ic_mute_blue);
                 }
                 else {
                     app.media_manager.mute();
-                    mute.setImageResource(R.drawable.ic_unmute);
+                    mute.setImageResource(R.drawable.ic_unmute_blue);
                 }
             }
         });

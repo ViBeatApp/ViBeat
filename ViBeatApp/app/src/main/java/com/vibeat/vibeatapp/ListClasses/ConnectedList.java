@@ -12,6 +12,10 @@ import android.widget.TextView;
 import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.imageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectedList implements ListAdapterable {
     Party party;
@@ -33,22 +37,22 @@ public class ConnectedList implements ListAdapterable {
         final View row_send = v;
         final Activity context = activity;
 
-        //Bitmap bm;
-
+        List<String> img_paths = new ArrayList<String>();
+        List<ImageView> views = new ArrayList<ImageView>();
 
         if (position < party.admin.size()) {
-            //bm = BitmapFactory.decodeFile(party.admin.get(position).img_path);
+            img_paths.add(party.admin.get(position).img_path);
             name.setText(party.admin.get(position).name);
-            admin.setTextColor(R.color.colorPrimary);
+            admin.setTextColor(R.color.text);
             crown.setImageResource(R.drawable.chess);
         } else {
-            //bm = BitmapFactory.decodeFile(party.connected.get(position - party.admin.size()).img_path);
+            img_paths.add(party.connected.get(position - party.admin.size()).img_path);
             name.setText(party.connected.get(position - party.admin.size()).name);
             admin.setTextColor(Color.TRANSPARENT);
             crown.setImageResource(R.drawable.chess_not);
         }
-        //bm = pictureChange.getCroppedBitmap(bm);
-        //img.setImageBitmap(bm);
+        views.add(img);
+        imageLoader.loadImage(activity, img_paths, views);
 
         crown.setOnClickListener(new View.OnClickListener() {
             @Override

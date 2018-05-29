@@ -29,10 +29,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Title"
+                android:textColor="@color/text"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/colorPrimaryDark"/>
+                app:fontFamily="@font/open_sans_semibold" />
 
             <TextView
                 android:id="@+id/admin"
@@ -40,10 +39,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="admin"
+                android:textColor="@color/text"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/colorPrimaryDark"/>
+                app:fontFamily="@font/open_sans" />
 
         </LinearLayout>
 

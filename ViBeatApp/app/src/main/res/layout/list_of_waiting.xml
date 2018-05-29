@@ -30,10 +30,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Title"
+                android:textColor="@color/text"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:fontFamily="@font/caveat_brush"
-                android:textColor="@color/colorPrimaryDark"/>
+                app:fontFamily="@font/open_sans_semibold" />
 
         </LinearLayout>
 

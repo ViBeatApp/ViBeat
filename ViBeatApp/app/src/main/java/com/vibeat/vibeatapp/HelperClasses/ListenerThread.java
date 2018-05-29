@@ -52,7 +52,9 @@ public class ListenerThread extends Thread {
             } catch (JSONException e){
                 break;
             }
-            try{Thread.sleep(500);}catch (Exception e){}
+            try{
+                Thread.sleep(500);
+            }catch (Exception e){}
         }
     }
 

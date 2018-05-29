@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Activities.PlaylistActivity"
-    android:background="@drawable/rose_colored_lenses"
+    android:background="@color/background"
     android:weightSum="100">
 
     <include layout="@layout/toolbar"></include>
@@ -18,7 +18,6 @@
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="15"
-        android:background="#75a19ab1"
         android:orientation="horizontal"
         android:weightSum="100"
         tools:background="@color/colorAccentlight">
@@ -31,7 +30,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="20"
             android:background="#00000000"
-            app:srcCompat="@drawable/ic_add" />
+            app:srcCompat="@drawable/ic_add_blue" />
 
         <ImageButton
             android:id="@+id/mute"
@@ -41,7 +40,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_mute" />
+            app:srcCompat="@drawable/ic_mute_blue" />
 
         <ImageButton
             android:id="@+id/play_pause"
@@ -51,7 +50,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_play" />
+            app:srcCompat="@drawable/ic_play_blue" />
 
         <ImageButton
             android:id="@+id/next"
@@ -61,7 +60,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_next" />
+            app:srcCompat="@drawable/ic_next_blue" />
 
 
         <ImageButton
@@ -72,7 +71,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="20"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_connected" />
+            app:srcCompat="@drawable/ic_connect_blue" />
 
     </LinearLayout>
 
@@ -85,20 +84,20 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_weight="10"
         android:text="Now Vibing"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:fontFamily="@font/caveat_brush"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="25sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <android.support.v7.widget.RecyclerView
         android:scrollbars="vertical"
         android:id="@+id/playlist"
         android:layout_weight="65"
         android:layout_width="match_parent"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:outlineProvider="paddedBounds"/>
 
 </LinearLayout>

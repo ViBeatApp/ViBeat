@@ -1,18 +1,19 @@
 package com.vibeat.vibeatapp.ListClasses;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.imageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestList implements ListAdapterable {
     Party party;
@@ -34,6 +35,9 @@ public class RequestList implements ListAdapterable {
         ImageView no = (ImageView) v.findViewById(R.id.no);
         ImageView ok = (ImageView) v.findViewById(R.id.ok);
 
+        List<String> img_paths = new ArrayList<String>();
+        List<ImageView> views = new ArrayList<ImageView>();
+
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,13 +55,12 @@ public class RequestList implements ListAdapterable {
             }
         });
 
-
         ok.setImageResource(R.drawable.ic_ok);
         no.setImageResource(R.drawable.ic_no);
 
-        Bitmap bm = BitmapFactory.decodeFile(party.request.get(position).img_path);
-        bm = pictureChange.getCroppedBitmap(bm);
-        img.setImageBitmap(bm);
+        img_paths.add(party.request.get(position).img_path);
+        views.add(img);
+        imageLoader.loadImage(activity, img_paths, views);
 
         name.setText(party.request.get(position).name);
 

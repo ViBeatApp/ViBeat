@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".Activities.CreatePartyActivity"
     android:orientation="vertical"
-    android:background="@drawable/rose_colored_lenses"
+    android:background="@color/background"
     android:weightSum="100">
 
     <include layout="@layout/toolbar"></include>
@@ -40,9 +40,9 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/text"
             android:textSize="24sp"
-            app:fontFamily="@font/caveat_brush" />
+            app:fontFamily="@font/dancing_script" />
 
         <ImageView
             android:id="@+id/isPrivate"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_weight="30"
-            app:srcCompat="@drawable/ic_lock" />
+            app:srcCompat="@drawable/ic_lock_blue" />
 
     </LinearLayout>
 
@@ -63,14 +63,13 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_weight="10"
         android:text="Choose a party starter!"
-        android:layout_marginBottom="10dp"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        app:fontFamily="@font/caveat_brush"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/colorPrimaryDark"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="25dp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <ListView
         android:id = "@+id/list"

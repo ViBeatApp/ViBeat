@@ -7,7 +7,7 @@
     android:weightSum="100"
     android:orientation="vertical"
     tools:context=".Activities.LoadingActivity"
-    android:background="@drawable/rose_colored_lenses">
+    android:background="@color/background">
 
     <include layout="@layout/toolbar"></include>
 
@@ -20,8 +20,9 @@
         android:fontFamily="@font/caveat_brush"
         android:gravity="center"
         android:text="Connecting to party"
-        android:textColor="@color/purple"
-        android:textSize="32sp" />
+        android:textColor="@color/colorPrimary"
+        android:textSize="32sp"
+        app:fontFamily="@font/open_sans_semibold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:src="@drawable/dance" />
+            android:src="@drawable/dancer" />
 
     </LinearLayout>
 
