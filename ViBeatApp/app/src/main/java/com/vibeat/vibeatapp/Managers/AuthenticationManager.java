@@ -11,8 +11,7 @@ public class AuthenticationManager {
     public static User getGoogleUserFromAccount(GoogleSignInAccount account){
         Uri personPhoto = account.getPhotoUrl();
         String personName = account.getDisplayName();
-        //String imgPath = personPhoto.toString();
-        return new User(personName, personPhoto.toString(), 0,false);
+        return new User(personName, personPhoto.toString(), account.getId().hashCode(),false);
     }
     
 }

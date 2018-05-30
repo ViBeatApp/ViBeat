@@ -31,7 +31,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.22",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -70,7 +70,9 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
+		System.out.println("before read");
 		Command cmd = ReadWriteAux.readSocket(client);
+		System.out.println("after read");
 		cmd.printCommand();
 		switch(cmd.cmd_type){
 
@@ -154,6 +156,7 @@ public class ServerModule {
 		for (Party party : current_parties){
 			if(distance(party.get_Location(), location) < 100) {
 				partyArray.put(party.getPublicJson());
+				System.out.println(party.getPublicJson());
 			}
 		}
 		ReadWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));

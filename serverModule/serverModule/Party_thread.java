@@ -204,12 +204,13 @@ public class Party_thread implements Runnable {
 
 	private void makeAdmin(Command cmd) throws JSONException {
 		int userId = cmd.getIntAttribute(jsonKey.USER_ID);
-		User user = find_user(userId);
+		User user = find_user(userId,party.connected);
+		System.out.println("user: " + user.name);
 		party.makeAdmin(user);	
 	}
 
 	private void confirmRequest(SelectionKey key, Command cmd) throws JSONException, IOException {
-		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID));
+		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID),party.request);
 		if(confirmed_user == null) return;				//no such user / other admin confirmed.
 		party.removeRequest(confirmed_user);
 		if(cmd.getBoolAttribute(jsonKey.CONFIRMED)) {
@@ -222,12 +223,13 @@ public class Party_thread implements Runnable {
 
 	}
 
-	private User find_user(int USER_ID) {
-		for (User user: party.request) {
+	private User find_user(int USER_ID, List<User> userList) {
+		for (User user: userList) {
 			if (user.id == USER_ID) {
 				return user;
 			}
 		}
+		
 		return null; /* no such user */
 	}
 
@@ -395,6 +397,8 @@ public class Party_thread implements Runnable {
 	}
 
 	public int SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
+		System.out.print("send to " +user.name + " command: ");
+		cmd.printCommand();
 		return ReadWriteAux.writeSocket(user.get_channel(), cmd);
 	}
 

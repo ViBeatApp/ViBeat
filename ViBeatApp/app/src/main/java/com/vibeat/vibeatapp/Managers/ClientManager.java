@@ -213,7 +213,7 @@ public class ClientManager {
     public void leaveParty(){
         try {
             senderThread.addCmd(Command.create_leaveParty_Command());
-            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
+            //senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -246,5 +246,9 @@ public class ClientManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isAdmin() {
+        return (party.admin.indexOf(user) >= 0 );
     }
 }

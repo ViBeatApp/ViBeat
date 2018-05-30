@@ -37,8 +37,6 @@ public class ListenerThread extends Thread {
     @Override
     public void run() {
 
-        try{ /*connection test*/ } catch(Exception e){}
-
         while (true) {
             Command cmd = null;
             try {
@@ -48,13 +46,12 @@ public class ListenerThread extends Thread {
                 handlerCommand(cmd);
             }
             catch (InterruptedException e){
+                e.printStackTrace();
                 break;
             } catch (JSONException e){
+                e.printStackTrace();
                 break;
             }
-            try{
-                Thread.sleep(500);
-            }catch (Exception e){}
         }
     }
 
@@ -79,49 +76,42 @@ public class ListenerThread extends Thread {
         switch (cmd.cmd_type){
 
             case SYNC_PARTY:
-                Log.e("Listener","0");
                 JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.USERS);
-                Log.e("Listener","0.1");
                 // no party image at the moment.
                 //JSONArray image = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IMAGE);
                 JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.REQUESTS);
-                Log.e("Listener","0.2");
                 JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.SONGS);
-                Log.e("Listener","0.3");
                 JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.NAME);
-                Log.e("Listener","0.4");
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IS_PRIVATE);
-                Log.e("Listener","1");
                 boolean move = false;
                 if (app.client_manager.party == null) {
                     app.client_manager.party = new Party();
                     move = true;
                 }
-                Log.e("Listener","2");
                 app.client_manager.party.is_private = is_private.getBoolean(0);
                 app.client_manager.party.party_name = name.getString(0);
-                Log.e("Listener","3");
                 updateUserList(getUserListFromJSON(users),app.client_manager.party);
                 app.client_manager.party.request = getUserListFromJSON(requests);
-                Log.e("Listener","4");
                 if(app.client_manager.party.playlist != null)
                     app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
                 else
                     app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
-                Log.e("Listener","5");
                 if(move)
                     app.gui_manager.completeJoin();
                 else
                     app.gui_manager.syncParty();
-                Log.e("Listener","6");
 
                 break;
 
             case SEARCH_RESULT:
+                Log.d("get search", "handlerCommand: ");
                 JSONArray parties = CommandClientAux.getPartyArray(cmd);
+                Log.e("Listener","before search result");
                 List<partyInfo> party_list = getPartyListFromJSON(parties);
+                Log.e("Listener","after search result");
                 app.gui_manager.putPartyResults(party_list);
-
+                Log.e("Listener","after search result2");
+                break;
             case GET_READY:
                 Log.e("Listener","getReady");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);

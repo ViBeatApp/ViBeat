@@ -3,7 +3,6 @@ package com.vibeat.vibeatapp.ListClasses;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.View;
 import android.widget.Adapter;
@@ -11,12 +10,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
+import com.vibeat.vibeatapp.imageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PartiesList implements ListAdapterable {
@@ -31,6 +31,10 @@ public class PartiesList implements ListAdapterable {
     public View initRow(Adapter adapter, Activity context, View v, final int position) {
 
         final Activity activity = context;
+        List<String> img_paths1 = new ArrayList<String>();
+        List<ImageView> views1 = new ArrayList<ImageView>();
+        List<String> img_paths2 = new ArrayList<String>();
+        List<ImageView> views2 = new ArrayList<ImageView>();
 
         if(nearby_parties.size() > 2*position) {
             LinearLayout party1 = (LinearLayout) v.findViewById(R.id.party1);
@@ -40,11 +44,9 @@ public class PartiesList implements ListAdapterable {
             String path1 = nearby_parties.get(2 * position).image;
             name1.setText(nearby_parties.get(2 * position).party_name);
 
-            Bitmap bm1 = BitmapFactory.decodeFile(path1);
-            bm1 = pictureChange.getCroppedBitmap(bm1);
-            bm1 = addWhiteBorder(bm1, 10);
-            bm1 = pictureChange.getCroppedBitmap(bm1);
-            img1.setImageBitmap(bm1);
+            img_paths1.add(path1);
+            views1.add(img1);
+            imageLoader.loadImage(context, img_paths1, views1);
 
             party1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,11 +66,9 @@ public class PartiesList implements ListAdapterable {
             name2.setText(nearby_parties.get(2 * position + 1).party_name);
 
 
-            Bitmap bm2 = BitmapFactory.decodeFile(path2);
-            bm2 = pictureChange.getCroppedBitmap(bm2);
-            bm2 = addWhiteBorder(bm2, 10);
-            bm2 = pictureChange.getCroppedBitmap(bm2);
-            img2.setImageBitmap(bm2);
+            img_paths2.add(path2);
+            views2.add(img2);
+            imageLoader.loadImage(context, img_paths2, views2);
 
             party2.setOnClickListener(new View.OnClickListener() {
                 @Override

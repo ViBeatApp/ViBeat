@@ -31,7 +31,7 @@ public class ConnectedActivity extends AppCompatActivity {
         app = (MyApplication) this.getApplication();
 
         final CostumeListAdapter connected_adapter = new CostumeListAdapter(ConnectedActivity.this,
-                new ConnectedList(app.client_manager.party));
+                new ConnectedList(app.client_manager.party,app));
         final CostumeListAdapter request_adapter = new CostumeListAdapter(ConnectedActivity.this,
                 new RequestList(app.client_manager.party, connected_adapter));
 

@@ -25,7 +25,7 @@ public class RequestList implements ListAdapterable {
     }
 
     @Override
-    public View initRow(final Adapter adapter, Activity activity, View v, final int position) {
+    public View initRow(final Adapter adapter, final Activity activity, View v, final int position) {
 
         final int ind = position;
         final MyApplication app = (MyApplication) activity.getApplication();
@@ -39,19 +39,29 @@ public class RequestList implements ListAdapterable {
         List<ImageView> views = new ArrayList<ImageView>();
 
         ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                app.client_manager.answerRequest(party.request.get(ind), true);
-                ((BaseAdapter)adapter).notifyDataSetChanged();
-                ((BaseAdapter)connected_adapter).notifyDataSetChanged();
-            }
+          @Override
+          public void onClick(View v) {
+              activity.runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                      app.client_manager.answerRequest(party.request.get(ind), true);
+                      ((BaseAdapter) adapter).notifyDataSetChanged();
+                      ((BaseAdapter) connected_adapter).notifyDataSetChanged();
+                  }
+              });
+          }
         });
 
         no.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.client_manager.answerRequest(party.request.get(ind), false);
-                ((BaseAdapter)adapter).notifyDataSetChanged();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        app.client_manager.answerRequest(party.request.get(ind), false);
+                        ((BaseAdapter) adapter).notifyDataSetChanged();
+                    }
+                });
             }
         });
 

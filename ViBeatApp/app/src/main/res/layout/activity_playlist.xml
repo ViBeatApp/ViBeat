@@ -64,7 +64,7 @@
 
 
         <ImageButton
-            android:id="@+id/connected"
+            android:id="@+id/connecting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"

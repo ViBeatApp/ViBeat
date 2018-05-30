@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/holo2_blue" />
+        app:srcCompat="@drawable/logo_holo_blue" />
 
     <com.google.android.gms.common.SignInButton
         android:layout_width="match_parent"

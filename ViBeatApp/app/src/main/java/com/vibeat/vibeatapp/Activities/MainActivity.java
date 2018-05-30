@@ -21,7 +21,6 @@ import com.vibeat.vibeatapp.Managers.ClientManager;
 import com.vibeat.vibeatapp.Managers.DBManager;
 import com.vibeat.vibeatapp.Managers.GUIManager;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
@@ -47,14 +46,12 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_FINE_LOCATION},
                 0);
-        try {
-            app.client_manager = new ClientManager(new User("ido", "http://www.pngmart.com/files/5/Hamburger-Transparent-PNG.png", 0, false), app);
+        /*try {
+            app.client_manager = new ClientManager(new User("dana", "http://www.pngmart.com/files/5/Hamburger-Transparent-PNG.png", 1, false), app);
             app.gui_manager.login();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-
+        }*/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -62,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if a user has already signed in with google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        Log.d("after auth", "onCreate:11111 ");
 
-        if( account != null ){
-            app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
-            app.gui_manager.login();
-        }
-
+        /*app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
+        Log.d("after auth", "onCreate: ");
+        app.gui_manager.login();
+        Log.d("if authentication null", "3333333");*/
         SignInButton signInButton = findViewById(R.id.googleLogin);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
         );
+
     }
 
     @Override

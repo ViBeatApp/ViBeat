@@ -30,7 +30,7 @@ public class SenderThread extends Thread {
     public void run() {
         try {
             Log.d("remark", "choose your own IpAddress ");
-            conn = new ReadWriteAux("10.0.0.22");
+            conn = new ReadWriteAux("172.17.172.27");
 
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
@@ -53,6 +53,7 @@ public class SenderThread extends Thread {
                             }
                         }
                     } catch (InterruptedException e) {
+                        e.printStackTrace();
                         Log.e("SENDER","got interrupted");
                         while (connected && !task_queue.isEmpty()) {
                             try {

@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
+import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.imageLoader;
@@ -19,9 +19,11 @@ import java.util.List;
 
 public class ConnectedList implements ListAdapterable {
     Party party;
+    MyApplication app;
 
-    public ConnectedList(Party party){
+    public ConnectedList(Party party, MyApplication app){
         this.party = party;
+        this.app = app;
     }
 
     @SuppressLint("ResourceAsColor")
@@ -58,8 +60,7 @@ public class ConnectedList implements ListAdapterable {
             @Override
             public void onClick(View v) {
                 if (ind >= party.admin.size()) {
-                    party.makeAdmin(party.connected.get(ind - party.admin.size()));
-                    ((BaseAdapter) adapter).notifyDataSetChanged();
+                    app.client_manager.makeAdmin(party.connected.get(ind - party.admin.size()));
                 }
             }
         });

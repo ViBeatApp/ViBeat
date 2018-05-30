@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -116,9 +117,15 @@ public class GUIManager{
 
     public void putPartyResults(List<partyInfo> party_list) {
         if(act instanceof EnterPartyActivity) {
-            CostumeListAdapter adap =(CostumeListAdapter) adapters.get(0);
+            final CostumeListAdapter adap =(CostumeListAdapter) adapters.get(0);
             ((PartiesList) adap.list_obj).nearby_parties = party_list;
-            adap.notifyDataSetChanged();
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adap.notifyDataSetChanged();
+                }
+            });
+
         }
     }
 
@@ -399,10 +406,15 @@ public class GUIManager{
         // admin only
         final ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
         ImageButton next = (ImageButton) act.findViewById(R.id.next);
-        ImageButton connected = (ImageButton) act.findViewById(R.id.connected);
+        ImageButton connected = (ImageButton) act.findViewById(R.id.connecting);
         ImageButton add = (ImageButton) act.findViewById(R.id.add);
 
-        if (app.client_manager.is_admin){
+        connected.setVisibility(View.VISIBLE);
+        add.setVisibility(View.VISIBLE);
+        play_pause.setVisibility(View.VISIBLE);
+        next.setVisibility(View.VISIBLE);
+
+        if (app.client_manager.isAdmin()){
             connected.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -474,14 +486,20 @@ public class GUIManager{
 
     public void syncParty() {
         if (act instanceof ConnectedActivity) {
+            Log.d("syncPart", "before start activity");
+            act.finish();
+            act.startActivity(act.getIntent());
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    initPlaylistActivity();
+                    initConnectedActivity();
                 }
             });
         }
         if (act instanceof PlaylistActivity) {
+            Log.d("syncPart", "before start activity");
+            act.finish();
+            act.startActivity(act.getIntent());
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
