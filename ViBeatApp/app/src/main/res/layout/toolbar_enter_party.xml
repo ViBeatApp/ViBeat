@@ -17,14 +17,17 @@
             android:layout_height="match_parent"
             android:layout_weight="30">
 
-            <ImageButton
-                android:id="@+id/back"
-                android:background="#00000000"
+            <TextView
+                android:id="@+id/logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:gravity="center_vertical"
-                android:src="@drawable/ic_back"/>
+                android:foregroundGravity="left"
+                android:layout_gravity="center_vertical"
+                android:text="Log Out"
+                android:gravity="left"
+                android:textColor="@color/text"
+                android:textSize="17dp"
+                android:fontFamily="@font/josefin_sans"/>
 
         </LinearLayout>
 

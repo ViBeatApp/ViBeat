@@ -72,6 +72,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public void onItemDismiss(int position) {
+        app.client_manager.removeTrack(position);
         playlist.tracks.remove(position);
         notifyItemRemoved(position);
     }

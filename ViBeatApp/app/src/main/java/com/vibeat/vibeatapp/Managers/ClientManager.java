@@ -80,6 +80,7 @@ public class ClientManager {
 
     public void nextSong(){
         try {
+            app.media_manager.pause();
             int id = party.playlist.tracks.get(party.playlist.cur_track+1).track_id;
             senderThread.addCmd(Command.create_playSong_Command(id, 0));
         } catch (JSONException e) {
@@ -89,7 +90,18 @@ public class ClientManager {
 
     public void swapTrack(int pos1, int pos2){
         try {
-            senderThread.addCmd(Command.create_swapSongs_Command(pos1,pos2));
+            int track1_id = party.playlist.tracks.get(pos1).track_id;
+            int track2_id = party.playlist.tracks.get(pos2).track_id;
+            senderThread.addCmd(Command.create_swapSongs_Command(track1_id,track2_id));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeTrack(int pos){
+        try {
+            int track_id = party.playlist.tracks.get(pos).track_id;
+            senderThread.addCmd(Command.create_deleteSong_Command(track_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -172,11 +184,14 @@ public class ClientManager {
     }
 
     public void commandPlayPause(){
-        this.party.playlist.is_playing = !this.party.playlist.is_playing;
-
         try {
-            senderThread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
-                    0));//app.media_manager.getOffset()));
+            if (this.party.playlist.is_playing)
+                senderThread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
+                    app.media_manager.getOffset()));
+            else{
+                int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
+                senderThread.addCmd(Command.create_pause_Command(track_id));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -212,6 +227,8 @@ public class ClientManager {
 
     public void leaveParty(){
         try {
+            if(party.playlist.is_playing)
+                app.media_manager.pause();
             senderThread.addCmd(Command.create_leaveParty_Command());
             //senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
@@ -250,5 +267,15 @@ public class ClientManager {
 
     public boolean isAdmin() {
         return (party.admin.indexOf(user) >= 0 );
+    }
+
+    public void closeParty() {
+        party = null;
+        is_admin = false;
+        try {
+            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -14,8 +14,7 @@
             android:layout_marginLeft="10dp"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:src="@android:drawable/ic_input_add" />
+            android:layout_gravity="center_vertical" />
 
         <LinearLayout
             android:layout_width="187dp"
@@ -32,8 +31,7 @@
                 android:text="Title"
                 android:textColor="@color/text"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                app:fontFamily="@font/open_sans_semibold" />
+                app:fontFamily="@font/josefin_sans" />
 
         </LinearLayout>
 
@@ -44,7 +42,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="11dp"
         android:layout_weight="1"
-        app:srcCompat="@drawable/ic_no" />
+        app:srcCompat="@drawable/ic_no_blue" />
 
         <ImageView
             android:id="@+id/ok"
@@ -53,7 +51,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="11dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_ok" />
+            app:srcCompat="@drawable/ic_ok_blue" />
 
     </LinearLayout>
 

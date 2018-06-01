@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +28,6 @@ import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
-import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.MyApplication;
@@ -149,18 +147,19 @@ public class GUIManager{
     }
 
     public void play(int play_track_id) {
-        app.client_manager.party.playlist.is_playing = true;
+
         app.client_manager.party.playlist.cur_track = app.client_manager.party.playlist.searchTrack(play_track_id);
         if (act instanceof PlaylistActivity){
+            app.client_manager.party.playlist.is_playing = true;
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
-                    play_pause.setImageResource(R.drawable.ic_play_blue);
+                    play_pause.setImageResource(R.drawable.ic_pause_blue);
                 }
             });
-
         }
+
     }
 
     public void pause(){
@@ -170,10 +169,17 @@ public class GUIManager{
                 @Override
                 public void run() {
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
-                    play_pause.setImageResource(R.drawable.ic_pause_blue);
+                    play_pause.setImageResource(R.drawable.ic_play_blue);
                 }
             });
         }
+    }
+
+    public void closeParty() {
+        if(app.client_manager.party != null)
+            app.client_manager.closeParty();
+        Intent intent = new Intent(act, EnterPartyActivity.class);
+        act.startActivity(intent);
     }
 
 
@@ -183,15 +189,14 @@ public class GUIManager{
             public void run() {
                 User user = app.client_manager.user;
                 ImageView user_img = (ImageView) act.findViewById(R.id.this_user);
-                TextView user_name = (TextView) act.findViewById(R.id.hello_user);
+
                 List<String> img_paths = new ArrayList<String>();
                 List<ImageView> views = new ArrayList<ImageView>();
+
                 img_paths.add(user.img_path);
                 views.add(user_img);
 
                 imageLoader.loadImage(act,img_paths,views);
-
-                user_name.setText("Hi, "+user.name);
             }
         });
     }
@@ -210,7 +215,7 @@ public class GUIManager{
             }
         });
 
-        ImageButton logout = (ImageButton) act.findViewById(R.id.back);
+        TextView logout = (TextView) act.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,7 +376,7 @@ public class GUIManager{
     public void initAddMusicActivity(){
         initToolBar();
 
-        final SearchView search_bar = (SearchView) act.findViewById(R.id.search);
+        /*final SearchView search_bar = (SearchView) act.findViewById(R.id.search_bar);
 
         search_bar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -386,7 +391,7 @@ public class GUIManager{
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
+        });*/
 
         ImageButton back = (ImageButton) act.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -402,60 +407,49 @@ public class GUIManager{
         initToolBar();
 
         final ImageButton mute = (ImageButton) act.findViewById(R.id.mute);
-
-        // admin only
         final ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
         ImageButton next = (ImageButton) act.findViewById(R.id.next);
         ImageButton connected = (ImageButton) act.findViewById(R.id.connecting);
         ImageButton add = (ImageButton) act.findViewById(R.id.add);
+        TextView party_name = (TextView) act.findViewById(R.id.party_name);
 
-        connected.setVisibility(View.VISIBLE);
-        add.setVisibility(View.VISIBLE);
-        play_pause.setVisibility(View.VISIBLE);
-        next.setVisibility(View.VISIBLE);
+        party_name.setText(app.client_manager.party.party_name);
 
-        if (app.client_manager.isAdmin()){
-            connected.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(act, ConnectedActivity.class);
-                    act.startActivity(intent);
-                }
-            });
+        connected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(act, ConnectedActivity.class);
+                act.startActivity(intent);
+            }
+        });
 
-            add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(act, AddMusicActivity.class);
-                    act.startActivity(intent);
-                }
-            });
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(act, AddMusicActivity.class);
+                act.startActivity(intent);
+            }
+        });
 
-            play_pause.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    app.client_manager.commandPlayPause();
-                    if(app.client_manager.party.playlist.is_playing)
-                        play_pause.setImageResource(R.drawable.ic_pause_blue);
-                    else
-                        play_pause.setImageResource(R.drawable.ic_play_blue);
-                }
-            });
+        play_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                app.client_manager.party.playlist.is_playing = !app.client_manager.party.playlist.is_playing;
+                app.client_manager.commandPlayPause();
+                if(app.client_manager.party.playlist.is_playing)
+                    play_pause.setImageResource(R.drawable.ic_pause_blue);
+                else
+                    play_pause.setImageResource(R.drawable.ic_play_blue);
+            }
+        });
 
-            next.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    app.client_manager.nextSong();
-                    recycler_adapter.notifyDataSetChanged();
-                }
-            });
-        }
-        else {
-            connected.setVisibility(View.GONE);
-            add.setVisibility(View.GONE);
-            play_pause.setVisibility(View.GONE);
-            next.setVisibility(View.GONE);
-        }
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                app.client_manager.nextSong();
+                recycler_adapter.notifyDataSetChanged();
+            }
+        });
 
         mute.setOnClickListener(new View.OnClickListener(){
 
@@ -472,8 +466,19 @@ public class GUIManager{
             }
         });
 
-        ImageButton back = (ImageButton) act.findViewById(R.id.back);
-        back.setOnClickListener(new View.OnClickListener() {
+        if (app.client_manager.isAdmin()){
+            act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
+            act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
+
+
+        }
+        else {
+            act.findViewById(R.id.admin_toolbar).setVisibility(View.GONE);
+            act.findViewById(R.id.connected_toolbar).setVisibility(View.VISIBLE);
+        }
+
+        TextView leave_party = (TextView) act.findViewById(R.id.leave);
+        leave_party.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 app.client_manager.leaveParty();
@@ -483,30 +488,38 @@ public class GUIManager{
         });
     }
 
-
     public void syncParty() {
         if (act instanceof ConnectedActivity) {
             Log.d("syncPart", "before start activity");
-            act.finish();
-            act.startActivity(act.getIntent());
+            /*act.finish();
+            act.startActivity(act.getIntent());*/
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     initConnectedActivity();
+                    ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
+                    ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
+                    act.findViewById(R.id.connected_xml).refreshDrawableState();
                 }
             });
         }
         if (act instanceof PlaylistActivity) {
             Log.d("syncPart", "before start activity");
-            act.finish();
-            act.startActivity(act.getIntent());
+            /*act.finish();
+            act.startActivity(act.getIntent());*/
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    initPlaylistActivity();
+                    if(app.client_manager.user.is_admin){
+                        act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
+                        act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
+                    }
+                    recycler_adapter.notifyDataSetChanged();
+                    act.findViewById(R.id.playlist_xml).refreshDrawableState();
                 }
             });
 
         }
     }
+
 }

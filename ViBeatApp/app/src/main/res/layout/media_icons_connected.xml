@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="80">
+
+        <TextView
+            android:id="@+id/party_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:text="Party name"
+            android:fontFamily="@font/josefin_sans"
+            android:gravity="left"
+            android:layout_marginLeft="10dp"
+            android:textSize="30dp"
+            android:textColor="@color/colorPrimary"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="20"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/mute"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="2dp"
+            android:background="#00000000"
+            app:srcCompat="@drawable/ic_mute_blue" />
+
+    </LinearLayout>
+
+</LinearLayout>
