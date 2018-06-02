@@ -1,6 +1,6 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
-import android.app.Application;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.Log;
 
@@ -17,6 +17,7 @@ public class MyMediaPlayer extends MediaPlayer {
     public boolean request_ready = false;
 
     public MyMediaPlayer(final MyApplication app){
+        super();
         this.app = app;
 
         this.setOnPreparedListener(new OnPreparedListener() {
@@ -33,6 +34,7 @@ public class MyMediaPlayer extends MediaPlayer {
     public void setCurrentTrack(int track_id)throws IOException{
         this.track_id = track_id;
         this.reset();
+        this.setAudioStreamType(AudioManager.STREAM_MUSIC);
         this.setDataSource(app.client_manager.getURLByTrackId(track_id));
     }
 

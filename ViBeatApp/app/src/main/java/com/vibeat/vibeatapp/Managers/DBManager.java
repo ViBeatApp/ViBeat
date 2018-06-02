@@ -17,32 +17,53 @@ public class DBManager {
     public static void startDBManager(){
 
         Track song0 = new Track(0, "Haverot Shelach", "Omer Adam",
-                "/storage/emulated/0/ViBeat/omeradam.jpg",
-                //"https://dl.dropboxusercontent.com/s/dy01wssr2nde32w/Omer%20Adam%20-%20Haverot%20Shelach.mp3?dl=0");
-                "http://docs.google.com/uc?/export=download&id=12zPd5TK2k7gDRA2UN0qdPJe1YpPApO1R");
+                "http://docs.google.com/uc?/export=download&id=1mNSs3XbUU0cEbJyVFkZ086YKWaSwUex6",
+                "http://docs.google.com/uc?/export=download&id=1u4oDSRXhZ5oXc8XWCI92mrbqheHQtzJL");
         Track song1 = new Track(1, "Toy", "Neta Barzilai",
-                "/storage/emulated/0/ViBeat/netabrazilai.jpg",
-                //"https://dl.dropboxusercontent.com/s/u8vi8erzyaism40/Netta%20-%20TOY.mp3?dl=0");
+                "https://drive.google.com/open?id=11kWxFcP3X2KKg6daT27E1dcpugXx5tTc",
                 "http://docs.google.com/uc?/export=download&id=1Ri_gXnYHt1pdBw1b22uVzEnqzNs0pmxr");
-        //"http://docs.google.com/uc?/export=download&id=1E5H8Omn7FR1SeCsVRlQjJpGHKBl_2E-r");
-        //"/storage/emulated/0/Music/run/The Weeknd - I Feel It Coming ft. Daft Punk.mp3");
         Track song2 = new Track(2, "Ratzity", "Eden Ben Zaken",
-                "/storage/emulated/0/ViBeat/edenbenzaken.jpg",
-                //"https://dl.dropboxusercontent.com/s/usk3pksu8q6ergo/Eden%20Ben%20Zaken%20-%20Raziti.mp3?dl=0");
-                "http://docs.google.com/uc?/export=download&id=1ExMWlL3JzOQXIJu3LIuqs5xdb4M8aUfA");
+                "https://drive.google.com/open?id=1qRP5htDW7kN9o6QvWV0OAWgZjP62z5X4",
+                "http://docs.google.com/uc?/export=download&id=1Q7_Re3eyYNM4D77PlP4OggZn-Q2Vfx1x");
         Track song3 = new Track(3, "Up&Up", "Coldplay",
-                "/storage/emulated/0/ViBeat/coldplay.jpg",
-                //"https://dl.dropboxusercontent.com/s/xwgtk1z63ekywyw/Coldplay%20-%20Up%26Up.mp3?dl=0");
-                "http://docs.google.com/uc?/export=download&id=1lrsUe4_E5Qo9k1FHaEwSdR9n1KguftAY");
+                "https://drive.google.com/open?id=17uvBcz3tFgHssTQfME7PQlO-8LPoX8kZ",
+                "http://docs.google.com/uc?/export=download&id=1dbleMyl_Gy7B3CMIdO370KoNIpf_tRC6");
         Track song4 = new Track(4, "Olay Nedaber", "Nadav Guedj",
-                "/storage/emulated/0/ViBeat/nadavguedj.jpg",
-                //"https://dl.dropboxusercontent.com/s/46jr104iseveztk/Nadav%20Guedj%20-%20Ulay%20Nedaber.mp3?dl=0");
-                "http://docs.google.com/uc?/export=download&id=1o58CR7s4h36qBwWhkoXi9OSQRuyZaYR7");
+                "https://drive.google.com/open?id=167Stn2HGFx6U4VM3IDPeM4U8uQW8Bjwn",
+                "http://docs.google.com/uc?/export=download&id=1veHdZqYlIrpwcBaWrByxS8Xp4Vg39m_N");
+        Track song5 = new Track(5, "My Princess", "Ivri Lider",
+                "https://drive.google.com/open?id=1t8NFH2VNbheLTv8aeHLezrVxWSWfNNlU",
+                "http://docs.google.com/uc?/export=download&id=1C6XWHYQSrO1sk0mrvzXkMb91OO9eKISx");
+        Track song6 = new Track(6, "Lets Dance", "Chen Aharoni",
+                "https://drive.google.com/open?id=19n-D8ndRJh60wBif79GgDl_cm7GTwY9t",
+                "http://docs.google.com/uc?/export=download&id=1cIc58IqIat5RrafDAqJagaHADkRRvJ_p");
+        Track song7 = new Track(7, "Kawaii", "Static and Ben-El",
+                "https://drive.google.com/open?id=1ZYuWkYAzxVoL_XBvFwqlqe_JabGGO9YC",
+                "http://docs.google.com/uc?/export=download&id=1T7DZuOOKA6sFzjxSUR8bIFeyg-0C2Ybd");
+        Track song8 = new Track(8, "These Days", "Rudimental",
+                "https://drive.google.com/open?id=1KXhaAfoyVUj1u3erSLCKbFcQNi1fKEDl",
+                "http://docs.google.com/uc?/export=download&id=1hZcxMIZbxWjqWE7dnerTWUmo1fFAoTVo");
+        Track song9 = new Track(9, "Shnei Meshugaim", "Omer Adam",
+                "https://drive.google.com/open?id=1mNSs3XbUU0cEbJyVFkZ086YKWaSwUex6",
+                "http://docs.google.com/uc?/export=download&id=1x2XVUtlyBxPRbi4FIPEKio1wN3X0jOzR");
+        Track song10 = new Track(10, "I Like It", "Cardi B",
+                "https://drive.google.com/open?id=1t-NVn1dQlErVmfAmYyjtDHbG_1riuD93",
+                "http://docs.google.com/uc?/export=download&id=1ZYGVAD3a9VAcf8QziMydx6V3kNdShI6H");
+        Track song11 = new Track(11, "FRIENDS", "Marshmello and Anne Marie",
+                "https://drive.google.com/open?id=13D-T26TjXb9Vfz59U1hw8yohc7C763MB",
+                "http://docs.google.com/uc?/export=download&id=18An6iRrChsRmY5d0bcjHp5fmKRQOOhEU");
         tracks.add(song0);
         tracks.add(song1);
         tracks.add(song2);
         tracks.add(song3);
         tracks.add(song4);
+        tracks.add(song5);
+        tracks.add(song6);
+        tracks.add(song7);
+        tracks.add(song8);
+        tracks.add(song9);
+        tracks.add(song10);
+        tracks.add(song11);
 
         User user1 = new User("Dana Oshri",
                 "/storage/emulated/0/ViBeat/dana.jpg", 1, false);

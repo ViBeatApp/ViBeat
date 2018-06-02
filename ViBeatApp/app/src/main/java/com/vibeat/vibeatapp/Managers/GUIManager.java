@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GUIManager{
-    Activity act;
+    public Activity act;
     List<Adapter> adapters;
     MyApplication app;
     RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> recycler_adapter;

@@ -2,8 +2,6 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
@@ -14,6 +12,10 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.imageLoader;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlaylistList implements ListAdapterable {
 
@@ -44,8 +46,11 @@ public class PlaylistList implements ListAdapterable {
         TextView title = (TextView) v.findViewById(R.id.title);
         TextView artist = (TextView) v.findViewById(R.id.artist);
 
-        Bitmap bm1 = BitmapFactory.decodeFile(track.img_path);
-        img.setImageBitmap(bm1);
+        List<String> img_paths = new ArrayList<String>();
+        List<ImageView> views = new ArrayList<ImageView>();
+        img_paths.add(track.img_path);
+        views.add(img);
+        imageLoader.loadImageSquare(activity, img_paths, views);
 
         title.setText(track.title);
         artist.setText(track.artist);
