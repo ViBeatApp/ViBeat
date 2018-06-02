@@ -1,7 +1,13 @@
-4.adding boolean variable for sync (not always).
-3.Location.
-
-
 debugging:
-1.kill the party,disconnected
-2.private to public 
+1. kill the party, disconnected (from wifi)
+2. DB
+3. server on Amazon
+4. if the server has fallen the client should comeback to main activity
+
+
+
+
+
+
+
+100. facebook auth (in the end)

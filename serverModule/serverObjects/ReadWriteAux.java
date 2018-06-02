@@ -2,6 +2,7 @@ package serverObjects;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SocketChannel;
 
 import org.json.JSONException;
@@ -76,6 +77,9 @@ public class ReadWriteAux {
 				writeRead += channel.write(message);
 			} 
 			catch (IOException e) {
+				return -1;
+			}
+			catch (NotYetConnectedException e) {
 				return -1;
 			}
 		}

@@ -70,9 +70,7 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
-		System.out.println("server-module: before read");
 		Command cmd = ReadWriteAux.readSocket(client);
-		System.out.println("server-module: after read-aux");
 		cmd.printCommand();
 		switch(cmd.cmd_type){
 
@@ -117,7 +115,6 @@ public class ServerModule {
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
-		System.out.println("server-module: after read");
 	}
 
 	private static User isDisconnectedUser(int id) {

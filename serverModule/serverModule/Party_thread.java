@@ -120,15 +120,20 @@ public class Party_thread implements Runnable {
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
-			if (party.is_private) { 
-				party.addRequest(user);	
-				updateMsg = jsonKey.REQUESTS;
-			} 
 			/* the party is public, tell the user to get ready */
-			else { 
+			if(user.currentPartyId != party.party_id && user.currentPartyId != -1)
+				System.out.println("error !!! handler_new_clients");
+			
+			if(!party.is_private || user.currentPartyId == party.party_id) { 
 				addClientToParty(user);
 				updateMsg = jsonKey.USERS;
 			}
+			
+			else { 
+				party.addRequest(user);	
+				updateMsg = jsonKey.REQUESTS;
+			} 
+			
 			syncChange = true;
 			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
@@ -219,7 +224,6 @@ public class Party_thread implements Runnable {
 	private void makeAdmin(Command cmd) throws JSONException {
 		int userId = cmd.getIntAttribute(jsonKey.USER_ID);
 		User user = find_user(userId,party.connected);
-		System.out.println("user: " + user.name);
 		party.makeAdmin(user);	
 	}
 
