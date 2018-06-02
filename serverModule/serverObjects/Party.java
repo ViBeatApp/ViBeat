@@ -40,7 +40,7 @@ public class Party {
 		this.is_private = is_private;
 		this.selector = Selector.open();
 		this.keep_on = true;
-		this.location = new Location(0,0,0);
+		this.location = admin.location;
 		addClient(admin);
 		makeAdmin(admin);
 	}
@@ -82,24 +82,27 @@ public class Party {
 		}	
 	}
 	
+	public boolean nonEmptyPlaylist(){
+		return this.get_current_track_id() != -1;
+	}
+	
 	public void addClient(User user){
 		user.currentPartyId = this.party_id;
 		connected.add(user);
 		user.is_admin = false;
 	}
 	
-	public boolean removeClient(User user, boolean disconnected){
+	public void removeClient(User user, boolean disconnected){
 		if(!disconnected) {
 			user.currentPartyId = -1;
 		}
 		
 		disableAdmin(user);
-		boolean response =  connected.remove(user);
+		connected.remove(user);
 		
 		if(numOfAdmins == 0 && numOfClients() != 0) {
 			makeAdmin(connected.get(0));
 		}
-		return response;
 	}
 
 	public void addRequest(User user){
@@ -139,8 +142,8 @@ public class Party {
 		return playlist.get_current_track_id();
 	}
 
-	public void next_song() {
-		playlist.deleteSong(playlist.get_current_track_id());
+	public void setCurrentTrack(int trackId) {
+		playlist.setCurrentTrack(trackId);
 		
 	}
 
@@ -156,11 +159,11 @@ public class Party {
 		JSONObject fullJson = new JSONObject();
 		fullJson.put(jsonKey.NAME.name(), new JSONArray().put(party_name));
 		fullJson.put(jsonKey.IMAGE.name(), new JSONArray().put(this.getPartyImage()));
-		fullJson.put(jsonKey.LOCATION.name(), new JSONArray().put(0));
 		fullJson.put(jsonKey.SONGS.name(), playlist.getTrackArray());
 		fullJson.put(jsonKey.IS_PRIVATE.name(), new JSONArray().put(is_private));
 		fullJson.put(jsonKey.USERS.name(), User.getUserArray(connected));
 		fullJson.put(jsonKey.REQUESTS.name(), User.getUserArray(request));
+		fullJson.put(jsonKey.CURRENT_TRACK_ID.name(), new JSONArray().put(this.get_current_track_id()));
 		return fullJson;
 	}
 

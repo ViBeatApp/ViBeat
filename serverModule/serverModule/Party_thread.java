@@ -40,6 +40,8 @@ public class Party_thread implements Runnable {
 	public Instant last_play_time;
 	public int total_offset;
 	public int current_song_duration;
+	public boolean syncChange;
+	public boolean touchCurrentSong;
 
 	public Party_thread(Party party, Selector server_selector) throws JSONException {
 		this.party = party;
@@ -51,6 +53,7 @@ public class Party_thread implements Runnable {
 		ready_for_play = new ArrayList<>();
 		unHandledClients = new ArrayList<>();
 		last_play_time = null;
+		syncChange = false;
 	}
 
 	@Override
@@ -69,10 +72,13 @@ public class Party_thread implements Runnable {
 			if(readyChannels == 0 ) {
 				System.out.println("lost wake up");
 			}
+			syncChange = false;
+			touchCurrentSong = false;
 			update_party = new Command(CommandType.UPDATE_PARTY);
 			handler_new_clients();
 			handle_current_clients();
 		}
+		System.out.println("party has stopped");
 	}
 
 	private void handle_current_clients() throws IOException, JSONException, Exception {
@@ -96,7 +102,13 @@ public class Party_thread implements Runnable {
 			last_play_time = Instant.now();
 			sendPlayToList();
 		}
-		syncPartyToAll();
+		if(syncChange)
+			syncPartyToAll();
+		if ((party.status == Party.Party_Status.not_started) && party.nonEmptyPlaylist() 
+				&& touchCurrentSong) {
+			update_get_ready_command();
+			SendCommandToAll(get_ready_command);
+		}
 		//SendCommandToAll(update_party);
 	}
 
@@ -109,7 +121,7 @@ public class Party_thread implements Runnable {
 			User user = iter.next();
 			register_for_selection(user);
 			if (party.is_private) { 
-				party.addRequest(user);				
+				party.addRequest(user);	
 				updateMsg = jsonKey.REQUESTS;
 			} 
 			/* the party is public, tell the user to get ready */
@@ -117,6 +129,7 @@ public class Party_thread implements Runnable {
 				addClientToParty(user);
 				updateMsg = jsonKey.USERS;
 			}
+			syncChange = true;
 			addToJSONArray(updateMsg,user.get_JSON());
 			iter.remove();
 		}
@@ -128,7 +141,7 @@ public class Party_thread implements Runnable {
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToUser(user, sync_command);
-		if (party.get_current_track_id() != -1) {
+		if (party.nonEmptyPlaylist()) {
 			update_get_ready_command();
 			SendCommandToUser(user, get_ready_command);
 		}
@@ -143,13 +156,13 @@ public class Party_thread implements Runnable {
 		switch (cmd.cmd_type) {
 		case PLAY_SONG:
 			startPlayProtocol(cmd);
-			break;
+			return;
 		case PAUSE:
 			pause_song();
-			break;
+			return;
 		case IM_READY:
-			GetReady(cmd, user);
-			break;
+			handleReady(cmd, user);
+			return;
 		case CONFIRM_REQUEST:
 			confirmRequest(key,cmd);							
 			break;												//adding_and_removing_from_updateParty_json();
@@ -168,7 +181,7 @@ public class Party_thread implements Runnable {
 			break;
 		case UPDATE_LOCATION:	
 			updateLocation(cmd);
-			break;
+			return;
 		case RENAME_PARTY:
 			party.party_name = cmd.getStringAttribute(jsonKey.NAME);
 			break;
@@ -189,6 +202,7 @@ public class Party_thread implements Runnable {
 		default:
 			break;
 		}
+		syncChange = true;
 	}
 
 	private void makePublicHandle() throws JSONException, IOException {		
@@ -229,24 +243,25 @@ public class Party_thread implements Runnable {
 				return user;
 			}
 		}
-		
+
 		return null; /* no such user */
 	}
 
 	/*TODO handling the locks */
 	public void getNewClients() {
 		unHandledClients = new ArrayList<>();
-		clone_User_list(party.waitingClients, unHandledClients);
+		clone_User_list(party.waitingClients, unHandledClients,true);
 	}
 
 	// importing the new users from the the party syncronized list to local list
-	public void clone_User_list(List<User> oldList, List<User> newList) {
+	public void clone_User_list(List<User> oldList, List<User> newList,boolean remove) {
 		synchronized(oldList) {
 			Iterator<User> iter = oldList.iterator();
 			while (iter.hasNext()){
 				User user = iter.next();
 				newList.add(user);
-				iter.remove();
+				if(remove)
+					iter.remove();
 			}	
 		}
 	}
@@ -265,16 +280,14 @@ public class Party_thread implements Runnable {
 		}
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		if (cmd.getIntAttribute(jsonKey.TRACK_ID) != party.get_current_track_id()) {
-			party.next_song();
-		}
+		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		update_get_ready_command(); // not updating the offset
 		SendCommandToAll(get_ready_command);
 	}
 
-	public void GetReady(Command cmd, User user) throws IOException, JSONException {
+	public void handleReady(Command cmd, User user) throws IOException, JSONException {
 		switch(party.status) {
 		case playing:
 			System.out.println("party-thread: GetReady: update total offset = " + total_offset);
@@ -307,19 +320,30 @@ public class Party_thread implements Runnable {
 	}
 
 	public void DeleteSong(Command cmd) throws JSONException {
-		party.deleteSong(cmd.getIntAttribute(jsonKey.TRACK_ID));
-		addToJSONArray(jsonKey.DELETE_SONGS,cmd.cmd_info);
+		int trackID = cmd.getIntAttribute(jsonKey.TRACK_ID);
+		if(trackID == party.get_current_track_id())
+			touchCurrentSong = true;
+		party.deleteSong(trackID);
+		
+		//addToJSONArray(jsonKey.DELETE_SONGS,cmd.cmd_info);
 	}
 
 	public void SwapSongs(Command cmd) throws JSONException {
-		party.changeSongsOrder(cmd.getIntAttribute(jsonKey.TRACK_ID_1),cmd.getIntAttribute(jsonKey.TRACK_ID_2));
-		addToJSONArray(jsonKey.SWAP_SONGS,cmd.cmd_info);
+		int trackID_1 = cmd.getIntAttribute(jsonKey.TRACK_ID_1);
+		int trackID_2 = cmd.getIntAttribute(jsonKey.TRACK_ID_2);
+		if(trackID_1 == party.get_current_track_id() || trackID_2 == party.get_current_track_id())
+			touchCurrentSong = true;
+		party.changeSongsOrder(trackID_1,trackID_2);
+		//addToJSONArray(jsonKey.SWAP_SONGS,cmd.cmd_info);
 	}
 
 	public void AddSong(Command cmd) throws JSONException {
+		if(!party.nonEmptyPlaylist())
+			touchCurrentSong = true;
 		Track newTrack = party.addSong(cmd.getStringAttribute(jsonKey.URL));
-		JSONObject trackJSON = newTrack.get_JSON();
-		addToJSONArray(jsonKey.NEW_SONGS,trackJSON);
+		
+		//JSONObject trackJSON = newTrack.get_JSON();
+		//addToJSONArray(jsonKey.NEW_SONGS,trackJSON);
 	}
 
 	private void addToJSONArray(jsonKey classifier, JSONObject JsonObject) throws JSONException {
@@ -335,7 +359,9 @@ public class Party_thread implements Runnable {
 		ready_for_play.remove(user);		
 		unHandledClients.remove(user);
 
-		if(party.numOfClients() == 0) {
+		if(party.numOfClients() == 0 && party.keep_on) {
+			System.out.println("party should be destroied");
+			SendCommandToUser(user, new Command(CommandType.CLOSE_PARTY));
 			destroyParty();
 			return;
 		}
@@ -355,16 +381,18 @@ public class Party_thread implements Runnable {
 
 	private void destroyParty() throws IOException, JSONException {
 		synchronized (party.waitingClients) {
-			if(!party.keep_on)
+			if(!party.keep_on){
+				System.out.println("destroy party");
 				return;
+			}
+			party.keep_on = false;
 			Command close = new Command(CommandType.CLOSE_PARTY);
 			ServerModule.deleteParty(party);
 			SendCommandToList(close, party.connected, true);
 			SendCommandToList(close, party.waitingClients, true);
 			SendCommandToList(close, party.request, true);
 			SendCommandToList(close, unHandledClients, true);
-			party.keep_on = false;
-
+			
 		}
 
 	}
@@ -374,32 +402,27 @@ public class Party_thread implements Runnable {
 	}
 
 	public void SendCommandToList(Command cmd, List<User> recievers, boolean remove_from_list) throws IOException, JSONException {
+		
 		if(!party.keep_on)
 			return;
-
-		List<User> disconnectedUsers = new ArrayList<>();
-
-		Iterator<User> iter = recievers.iterator();
-		while (iter.hasNext()){
-			User user = iter.next();
-			if(SendCommandToUser(user, cmd) == -1) {
-				disconnectedUsers.add(user);
-			}
-			if (remove_from_list) {
-				iter.remove();
-			}
-		}
-
-		iter = disconnectedUsers.iterator();
-		while (iter.hasNext()){
-			returnToServerModule(iter.next(), true);
+		
+		List<User> new_recievers = new ArrayList<>();
+		clone_User_list(recievers, new_recievers,remove_from_list);
+		
+		for (User user : new_recievers){
+			SendCommandToUser(user, cmd);
 		}
 	}
 
-	public int SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
+	public void SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
 		System.out.print("send to " +user.name + " command: ");
 		cmd.printCommand();
-		return ReadWriteAux.writeSocket(user.get_channel(), cmd);
+		if(ReadWriteAux.writeSocket(user.get_channel(), cmd) == -1){
+			returnToServerModule(user, true);
+			return;
+		}
+		if(cmd.cmd_type == CommandType.CLOSE_PARTY) 
+			user.closeChannel();
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {

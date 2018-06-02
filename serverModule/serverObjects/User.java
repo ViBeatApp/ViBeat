@@ -13,6 +13,7 @@ public class User {
 	public String image;
 	public boolean is_admin;
 	public SocketChannel channel;
+	public Location location = new Location(0,0,0);
 	public int currentPartyId;				//if isn't part of some party so value = -1
 	
 	public User(String name, int id, String image,SocketChannel channel) {
@@ -41,6 +42,10 @@ public class User {
 		userJson.put(jsonKey.IMAGE.name(), this.image);
 		userJson.put(jsonKey.IS_ADMIN.name(), this.is_admin);
 		return userJson;
+	}
+	
+	public void setLocation(Location location){
+		this.location = location;
 	}
 	
 	public static JSONArray getUserArray(List<User> connected) throws JSONException {
