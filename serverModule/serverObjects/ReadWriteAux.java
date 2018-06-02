@@ -43,7 +43,6 @@ public class ReadWriteAux {
 			System.out.println("error readSize");
 		}
 		buf.rewind();
-		System.out.println("2");
 		return buf.getInt();
 	}
 
