@@ -36,8 +36,7 @@
                     android:text="Title"
                     android:textColor="@color/text"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:fontFamily="@font/open_sans_semibold" />
+                    app:fontFamily="@font/josefin_sans" />
 
                 <TextView
                     android:id="@+id/artist"
@@ -46,7 +45,8 @@
                     android:text="artist name"
                     android:textColor="@color/text"
                     android:textSize="14sp"
-                    app:fontFamily="@font/open_sans" />
+                    android:textStyle="italic"
+                    app:fontFamily="@font/josefin_sans" />
             </LinearLayout>
         </LinearLayout>
 

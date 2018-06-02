@@ -1,12 +1,12 @@
 package com.vibeat.vibeatapp.ListHelpers;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -15,6 +15,7 @@ import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.R;
 
 import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
+import static com.vibeat.vibeatapp.R.color.colorAccentlight;
 
 public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
@@ -51,12 +52,14 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source,
                           RecyclerView.ViewHolder target) {
         if (source.getItemViewType() != target.getItemViewType()) {
             return false;
         }
+        source.itemView.setBackgroundColor(colorAccentlight);
         adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }

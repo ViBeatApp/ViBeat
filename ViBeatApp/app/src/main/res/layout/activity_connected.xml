@@ -1,107 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/connected_xml"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
      android:layout_height="match_parent"
     android:layout_width="match_parent">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Activities.ConnectedActivity"
-    android:background="@color/background"
-    android:weightSum="100">
-
-    <include layout="@layout/toolbar"></include>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_weight="10"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".Activities.ConnectedActivity"
+        android:background="@color/background"
         android:weightSum="100">
 
+        <include layout="@layout/toolbar"></include>
+
         <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="5"/>
 
-        <EditText
-            android:id="@+id/editText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="65"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:textColor="@color/text"
-            android:textSize="24sp"
-            app:fontFamily="@font/dancing_script" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_weight="10"
+            android:weightSum="100">
 
-        <ImageView
-            android:id="@+id/isPrivate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_weight="30"
-            app:srcCompat="@drawable/ic_lock_blue" />
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
 
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="65"
+                android:backgroundTint="@android:color/white"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Name"
+                android:textColor="@color/text"
+                android:textSize="24sp"
+                app:fontFamily="@font/dancing_script" />
+
+            <ImageView
+                android:id="@+id/isPrivate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_weight="30"
+                app:srcCompat="@drawable/ic_lock_blue" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/connected"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="10"
+            android:text="Connected to your party"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25sp"
+            app:fontFamily="@font/josefin_sans" />
+
+        <ListView
+            android:id="@+id/connected_list"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:divider="#00ff0000"
+            android:dividerHeight="1dp">
+
+        </ListView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"/>
+
+        <TextView
+            android:id="@+id/connected2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="10"
+            android:text="Pending requests"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="25sp"
+            app:fontFamily="@font/josefin_sans" />
+
+        <ListView
+            android:id="@+id/waiting_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="17"
+            android:divider="#00ff0000"
+            android:dividerHeight="1dp"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/connected"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="10"
-        android:text="Connected to your party"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/colorPrimary"
-        android:textSize="25sp"
-        app:fontFamily="@font/open_sans_semibold" />
-
-    <ListView
-        android:id="@+id/connected_list"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="40"
-        android:divider="#00ff0000"
-        android:dividerHeight="1dp">
-
-    </ListView>
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"/>
-
-    <TextView
-        android:id="@+id/connected2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="10"
-        android:text="Pending requests"
-        android:layout_marginLeft="20dp"
-        android:textColor="@color/colorPrimary"
-        android:textSize="25sp"
-        app:fontFamily="@font/open_sans_semibold" />
-
-    <ListView
-        android:id="@+id/waiting_list"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="17"
-        android:divider="#00ff0000"
-        android:dividerHeight="1dp"/>
-</LinearLayout>
 </RelativeLayout>

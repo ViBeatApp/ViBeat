@@ -2,7 +2,6 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
@@ -33,8 +32,8 @@ public class ConnectedList implements ListAdapterable {
 
         ImageView img = (ImageView) v.findViewById(R.id.imageUser);
         TextView name = (TextView) v.findViewById(R.id.name);
-        TextView admin = (TextView) v.findViewById(R.id.admin);
-        ImageView crown = (ImageView) v.findViewById(R.id.adminImage);
+        //TextView admin = (TextView) v.findViewById(R.id.admin);
+        final ImageView crown = (ImageView) v.findViewById(R.id.adminImage);
 
         final View row_send = v;
         final Activity context = activity;
@@ -45,12 +44,12 @@ public class ConnectedList implements ListAdapterable {
         if (position < party.admin.size()) {
             img_paths.add(party.admin.get(position).img_path);
             name.setText(party.admin.get(position).name);
-            admin.setTextColor(R.color.text);
+            //admin.setTextColor(R.color.text);
             crown.setImageResource(R.drawable.chess);
         } else {
             img_paths.add(party.connected.get(position - party.admin.size()).img_path);
             name.setText(party.connected.get(position - party.admin.size()).name);
-            admin.setTextColor(Color.TRANSPARENT);
+            //admin.setTextColor(Color.TRANSPARENT);
             crown.setImageResource(R.drawable.chess_not);
         }
         views.add(img);
@@ -61,6 +60,7 @@ public class ConnectedList implements ListAdapterable {
             public void onClick(View v) {
                 if (ind >= party.admin.size()) {
                     app.client_manager.makeAdmin(party.connected.get(ind - party.admin.size()));
+                    crown.setImageResource(R.drawable.chess);
                 }
             }
         });

@@ -17,8 +17,7 @@
             android:id="@+id/imgParty1"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/sym_def_app_icon" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/userParty1"
@@ -30,7 +29,7 @@
             android:text="TextView"
             android:textColor="@color/text"
             android:textSize="20sp"
-            app:fontFamily="@font/open_sans_semibold" />
+            app:fontFamily="@font/josefin_sans" />
 
     </LinearLayout>
 
@@ -65,12 +64,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="@font/caveat_brush"
             android:gravity="center"
             android:text=""
             android:textColor="@color/text"
             android:textSize="20sp"
-            app:fontFamily="@font/open_sans_semibold" />
+            app:fontFamily="@font/josefin_sans" />
     </LinearLayout>
 
 </LinearLayout>

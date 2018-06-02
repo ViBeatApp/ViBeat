@@ -37,6 +37,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:layout_weight="65"
+            android:backgroundTint="@android:color/white"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="Name"
@@ -69,7 +70,7 @@
         android:text="Choose a party starter!"
         android:textColor="@color/colorPrimary"
         android:textSize="25dp"
-        app:fontFamily="@font/open_sans_semibold" />
+        app:fontFamily="@font/josefin_sans" />
 
     <ListView
         android:id = "@+id/list"

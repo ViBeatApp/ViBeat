@@ -31,17 +31,7 @@
                 android:text="Title"
                 android:textColor="@color/text"
                 android:textSize="20sp"
-                app:fontFamily="@font/open_sans_semibold" />
-
-            <TextView
-                android:id="@+id/admin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="admin"
-                android:textColor="@color/text"
-                android:textSize="16sp"
-                app:fontFamily="@font/open_sans" />
+                app:fontFamily="@font/josefin_sans" />
 
         </LinearLayout>
 

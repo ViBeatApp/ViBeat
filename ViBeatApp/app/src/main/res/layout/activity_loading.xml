@@ -17,12 +17,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:layout_weight="30"
-        android:fontFamily="@font/caveat_brush"
         android:gravity="center"
         android:text="Connecting to party"
         android:textColor="@color/colorPrimary"
         android:textSize="32sp"
-        app:fontFamily="@font/open_sans_semibold" />
+        app:fontFamily="@font/josefin_sans" />
 
     <LinearLayout
         android:layout_width="match_parent"

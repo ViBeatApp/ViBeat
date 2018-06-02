@@ -75,6 +75,14 @@ public class ListenerThread extends Thread {
 
         switch (cmd.cmd_type){
 
+            /*
+            * Get from the server the entire party.
+            * things that can updated:
+            * 1. the current user is now an admin.
+            * 2. the playlist is different.
+            * 3. not playing or yes playing.
+            * 4.
+            * */
             case SYNC_PARTY:
                 JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.USERS);
                 // no party image at the moment.
@@ -133,6 +141,7 @@ public class ListenerThread extends Thread {
                 app.gui_manager.rejected();
                 break;
             case CLOSE_PARTY:
+                app.gui_manager.closeParty();
                 break;
             case DISCONNECTED:
                 break;
@@ -168,11 +177,16 @@ public class ListenerThread extends Thread {
         }
         return parties;
     }
-
+    //also update if the current user is now admin or not.
     private void updateUserList(List<User> users, Party party){
         for (User user : users){
-            if (user.is_admin)
+            if (user.is_admin) {
                 party.admin.add(user);
+                if (app.client_manager.user.id == user.id) {
+                    app.client_manager.is_admin = true;
+                    app.client_manager.user.is_admin = true;
+                }
+            }
             else
                 party.connected.add(user);
         }

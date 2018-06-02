@@ -10,7 +10,7 @@
     android:background="@color/background"
     android:weightSum="100">
 
-    <include layout="@layout/toolbar"></include>
+    <include layout="@layout/toolbar_enter_party"></include>
 
     <Space
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="24sp"
         android:visibility="visible"
-        app:fontFamily="@font/open_sans_semibold"
+        app:fontFamily="@font/josefin_sans"
         tools:layout_editor_absoluteX="150dp"
         tools:layout_editor_absoluteY="65dp" />
 
@@ -47,7 +47,7 @@
         android:textAllCaps="false"
         android:textColor="@color/colorPrimary"
         android:textSize="25sp"
-        app:fontFamily="@font/open_sans_semibold" />
+        app:fontFamily="@font/josefin_sans" />
 
     <ListView
         android:id="@+id/parties_list"
