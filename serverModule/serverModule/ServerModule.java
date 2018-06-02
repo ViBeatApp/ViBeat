@@ -31,7 +31,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.26",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.11",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -235,7 +235,6 @@ public class ServerModule {
 
 	//mini thread and locks.
 	static void addDisconenctedUser(User user) {
-		System.out.println("server-module user " + user.name + " has disconnected");
 		disconnected_users.add(user);
 	}
 

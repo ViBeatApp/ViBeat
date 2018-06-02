@@ -82,6 +82,10 @@ public class Party {
 		}	
 	}
 	
+	public boolean nonEmptyPlaylist(){
+		return this.get_current_track_id() != -1;
+	}
+	
 	public void addClient(User user){
 		user.currentPartyId = this.party_id;
 		connected.add(user);
