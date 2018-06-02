@@ -97,6 +97,11 @@ public class Party_thread implements Runnable {
 			sendPlayToList();
 		}
 		syncPartyToAll();
+		if ((party.status == Party.Party_Status.not_started)
+				&& (party.get_current_track_id() != -1)) {
+			update_get_ready_command();
+			SendCommandToAll(get_ready_command);
+		}
 		//SendCommandToAll(update_party);
 	}
 
@@ -229,7 +234,7 @@ public class Party_thread implements Runnable {
 				return user;
 			}
 		}
-		
+
 		return null; /* no such user */
 	}
 
@@ -265,9 +270,7 @@ public class Party_thread implements Runnable {
 		}
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		if (cmd.getIntAttribute(jsonKey.TRACK_ID) != party.get_current_track_id()) {
-			party.next_song();
-		}
+		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		update_get_ready_command(); // not updating the offset
@@ -335,7 +338,8 @@ public class Party_thread implements Runnable {
 		ready_for_play.remove(user);		
 		unHandledClients.remove(user);
 
-		if(party.numOfClients() == 0) {
+		if(party.numOfClients() == 0 && party.keep_on) {
+			System.out.println("party should be destroied");
 			destroyParty();
 			return;
 		}
@@ -355,16 +359,18 @@ public class Party_thread implements Runnable {
 
 	private void destroyParty() throws IOException, JSONException {
 		synchronized (party.waitingClients) {
-			if(!party.keep_on)
+			if(!party.keep_on){
+				System.out.println("destroy party");
 				return;
+			}
+			party.keep_on = false;
 			Command close = new Command(CommandType.CLOSE_PARTY);
 			ServerModule.deleteParty(party);
 			SendCommandToList(close, party.connected, true);
 			SendCommandToList(close, party.waitingClients, true);
 			SendCommandToList(close, party.request, true);
 			SendCommandToList(close, unHandledClients, true);
-			party.keep_on = false;
-
+			
 		}
 
 	}
@@ -374,11 +380,12 @@ public class Party_thread implements Runnable {
 	}
 
 	public void SendCommandToList(Command cmd, List<User> recievers, boolean remove_from_list) throws IOException, JSONException {
+		
 		if(!party.keep_on)
 			return;
-
+		
 		List<User> disconnectedUsers = new ArrayList<>();
-
+		
 		Iterator<User> iter = recievers.iterator();
 		while (iter.hasNext()){
 			User user = iter.next();
@@ -399,7 +406,10 @@ public class Party_thread implements Runnable {
 	public int SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
 		System.out.print("send to " +user.name + " command: ");
 		cmd.printCommand();
-		return ReadWriteAux.writeSocket(user.get_channel(), cmd);
+		int result =  ReadWriteAux.writeSocket(user.get_channel(), cmd);
+		if(cmd.cmd_type == CommandType.CLOSE_PARTY) 
+			user.closeChannel();
+		return result;
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {

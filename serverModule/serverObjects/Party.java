@@ -88,18 +88,17 @@ public class Party {
 		user.is_admin = false;
 	}
 	
-	public boolean removeClient(User user, boolean disconnected){
+	public void removeClient(User user, boolean disconnected){
 		if(!disconnected) {
 			user.currentPartyId = -1;
 		}
 		
 		disableAdmin(user);
-		boolean response =  connected.remove(user);
+		connected.remove(user);
 		
 		if(numOfAdmins == 0 && numOfClients() != 0) {
 			makeAdmin(connected.get(0));
 		}
-		return response;
 	}
 
 	public void addRequest(User user){
@@ -139,8 +138,8 @@ public class Party {
 		return playlist.get_current_track_id();
 	}
 
-	public void next_song() {
-		playlist.deleteSong(playlist.get_current_track_id());
+	public void setCurrentTrack(int trackId) {
+		playlist.setCurrentTrack(trackId);
 		
 	}
 

@@ -240,7 +240,8 @@ public class ServerModule {
 	}
 
 	static void deleteParty(Party party) {
-		current_parties.remove(party);
+		boolean remove = current_parties.remove(party);
+		System.out.println("removing party: " + party.party_name + " result: " + remove);
 	}
 
 }

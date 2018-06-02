@@ -9,42 +9,63 @@ import org.json.JSONException;
 public class Playlist {
 	public List<Track> songs;
 	public int nextTrackID = 50;
-	public int songCounter; //played so far - for sync when song ends.
-	
+	public int currentTrack = -1;
+
 	public Playlist() {
 		super();
 		songs = new ArrayList<>();
-		songCounter = 0;
 	}
 	//TODO
 	public Track addSong(String url){
 		Track track = new Track(url,nextTrackID++);
 		songs.add(track);
+		if(currentTrack == -1)
+			setCurrentTrack(track.trackId);
 		return track;
 	}
-	
-	public int get_current_track_id() {
-		if(songs.size() == 0) 
-			return -1;
-		return songs.get(0).trackId;
+
+	public void setCurrentTrack(int trackID) {
+		int currentIndex = -1;
+		for(int i = 0;i < get_list_size(); ++i){
+			Track track = songs.get(i);
+			if(track.trackId == trackID) {
+				currentTrack = trackID;
+				return;
+			}
+			if(track.trackId == currentTrack){
+				currentIndex = i;
+			}
+		}
+		currentTrack = (currentIndex + 1) % get_list_size();
 	}
-	
+
+	public int get_current_track_id() {
+		return currentTrack;
+	}
+
 	public int get_list_size() {
 		return songs.size();
 	}
-	
+
 	public int deleteSong(int trackID){
 		Iterator<Track> iter = songs.iterator();
 		while (iter.hasNext()){
 			Track track = iter.next();
 			if(track.trackId == trackID) {
+				//int index = songs.indexOf(track);
+				if(trackID == currentTrack){
+					System.out.println("big error in deleteSong playlist!!!!!!!!!!!!!!!");
+					return -1;
+					//int nextIndex = (index+1) % get_list_size();
+					//currentTrack = songs.get(nextIndex).trackId;
+				}
 				iter.remove();
 				return 1;
 			}
 		}
 		return -1;
 	}
-	
+
 	public int changeSongsOrder(int trackID_1, int trackID_2){
 		int firstIndex = -1;
 		int secondIndex = -1;
@@ -62,7 +83,7 @@ public class Playlist {
 		songs.set(secondIndex, tmpTrack);
 		return 0;
 	}
-	
+
 	public JSONArray getTrackArray() throws JSONException {
 		JSONArray jsonArray = new JSONArray();
 		for(Track track : songs) {
@@ -70,5 +91,5 @@ public class Playlist {
 		}
 		return jsonArray;
 	}
-	
+
 }
