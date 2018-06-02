@@ -29,6 +29,13 @@ public class MyMediaPlayer extends MediaPlayer {
                 app.client_manager.sendReady(track_id);
             }
         });
+
+        this.setOnCompletionListener(new OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                app.client_manager.nextSong();
+            }
+        });
     }
 
     public void setCurrentTrack(int track_id)throws IOException{
@@ -65,4 +72,5 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setVolume(1, 1 );
         is_mute = false;
     }
+
 }

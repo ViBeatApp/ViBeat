@@ -49,9 +49,9 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         holder.img.setImageBitmap(bm);
 
         if(this.playlist.cur_track == position)
-            holder.background.setBackgroundColor(R.color.colorLightStroke);
+            holder.itemView.setBackgroundColor(R.color.colorPrimary);
         else
-            holder.background.setBackgroundColor(Color.TRANSPARENT);
+            holder.itemView.setBackgroundColor(R.color.colorPrimary);
 
     }
 
@@ -61,23 +61,23 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {
-        if (toPosition != playlist.cur_track){
-            Collections.swap(playlist.tracks, fromPosition, toPosition);
-            app.client_manager.swapTrack(fromPosition,toPosition);
-            notifyItemMoved(fromPosition, toPosition);
-            return true;
-        }
-        else
-            return false;
+        Collections.swap(playlist.tracks, fromPosition, toPosition);
+        app.client_manager.swapTrack(fromPosition,toPosition);
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+
     }
 
     public void onItemDismiss(int position) {
+        int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
+        if(app.media_manager.getPlayingTrackId() == track_id)
+            app.client_manager.nextSong();
         app.client_manager.removeTrack(position);
         playlist.tracks.remove(position);
         notifyItemRemoved(position);
     }
 
-    public class playlistViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener{
+    public class playlistViewHolder extends RecyclerView.ViewHolder{
 
         public TextView title, artist;
         public ImageView img;
@@ -96,13 +96,5 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
             itemView.setBackgroundColor(Color.TRANSPARENT);
         }
 
-
-        @SuppressLint("ResourceAsColor")
-        @Override
-        public boolean onLongClick(View v) {
-            this.background.setBackgroundColor(R.color.colorPrimary);
-            notifyDataSetChanged();
-            return true;
-        }
     }
 }

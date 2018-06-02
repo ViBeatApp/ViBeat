@@ -16,7 +16,9 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.MainActivity"
-                  android:noHistory="true">
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,12 +26,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.EnterPartyActivity"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.EnterPartyActivity"/>
         <activity android:name=".Activities.CreatePartyActivity"
             android:windowSoftInputMode="adjustNothing"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.CreatePartyActivity"/>
         <activity android:name=".Activities.PlaylistActivity"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.PlaylistActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -40,27 +48,17 @@
 
         <activity android:name=".Activities.ConnectedActivity"
             android:windowSoftInputMode="adjustNothing"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.ConnectedActivity"/>
         <activity android:name=".Activities.AddMusicActivity"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.AddMusicActivity"/>
         <activity android:name=".Activities.LoadingActivity"
-            android:noHistory="true"></activity>
-        <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:parentActivityName=".Activities.LoadingActivity"/>
     </application>
 
 </manifest>

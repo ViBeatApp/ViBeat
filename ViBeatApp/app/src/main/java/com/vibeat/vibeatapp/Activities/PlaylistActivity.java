@@ -36,7 +36,7 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        ItemTouchHelper.Callback callback = new RecyclerTouchHelper(adapter, PlaylistActivity.this);
+        ItemTouchHelper.Callback callback = new RecyclerTouchHelper(adapter, PlaylistActivity.this, app);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 

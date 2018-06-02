@@ -99,6 +99,7 @@ public class GUIManager{
     public void login() {
         app.client_manager.initLocationTracking(act);
         Intent intent = new Intent(act, EnterPartyActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         act.startActivity(intent);
     }
 
@@ -368,6 +369,7 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(act, PlaylistActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 act.startActivity(intent);
             }
         });
@@ -414,6 +416,21 @@ public class GUIManager{
         TextView party_name = (TextView) act.findViewById(R.id.party_name);
 
         party_name.setText(app.client_manager.party.party_name);
+
+        if(app.client_manager.party.playlist.is_playing)
+            play_pause.setImageResource(R.drawable.ic_pause_blue);
+        else
+            play_pause.setImageResource(R.drawable.ic_play_blue);
+
+        if(app.media_manager.isMute()) {
+            app.media_manager.unmute();
+            mute.setImageResource(R.drawable.ic_mute_blue);
+        }
+        else {
+            app.media_manager.mute();
+            mute.setImageResource(R.drawable.ic_unmute_blue);
+        }
+
 
         connected.setOnClickListener(new View.OnClickListener() {
             @Override

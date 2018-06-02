@@ -81,7 +81,8 @@ public class ClientManager {
     public void nextSong(){
         try {
             app.media_manager.pause();
-            int id = party.playlist.tracks.get(party.playlist.cur_track+1).track_id;
+            int pos = (party.playlist.cur_track+1)%party.playlist.tracks.size();
+            int id = party.playlist.tracks.get(pos).track_id;
             senderThread.addCmd(Command.create_playSong_Command(id, 0));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -89,6 +90,8 @@ public class ClientManager {
     }
 
     public void swapTrack(int pos1, int pos2){
+        if (party.playlist.cur_track == pos1 || party.playlist.cur_track == pos2)
+            party.playlist.cur_track = pos1 + pos2 - party.playlist.cur_track;
         try {
             int track1_id = party.playlist.tracks.get(pos1).track_id;
             int track2_id = party.playlist.tracks.get(pos2).track_id;
@@ -228,13 +231,11 @@ public class ClientManager {
     public void leaveParty(){
         try {
             if(party.playlist.is_playing)
-                app.media_manager.pause();
+                app.media_manager.stop();
             senderThread.addCmd(Command.create_leaveParty_Command());
-            //senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        this.party = null;
     }
 
     public void logout(){
@@ -272,6 +273,16 @@ public class ClientManager {
     public void closeParty() {
         party = null;
         is_admin = false;
+        try {
+            this.senderThread.connected = false;
+            this.senderThread.join();
+            this.senderThread = null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        this.senderThread = new SenderThread(app);
+        senderThread.start();
         try {
             senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {

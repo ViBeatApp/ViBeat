@@ -12,6 +12,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
+import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
 import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
@@ -21,11 +22,13 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
     private PlaylistRecyclerView adapter;
     private Context context;
+    private MyApplication app;
 
-    public RecyclerTouchHelper(PlaylistRecyclerView adapter, Context context) {
+    public RecyclerTouchHelper(PlaylistRecyclerView adapter, Context context, MyApplication app) {
 
         this.adapter = adapter;
         this.context = context;
+        this.app = app;
     }
 
     @Override
@@ -41,7 +44,8 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder)
-            adapter.onItemDismiss(viewHolder.getAdapterPosition());
+            if(!(app.client_manager.party.playlist.tracks.size() == 1))
+                adapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
     @Override
