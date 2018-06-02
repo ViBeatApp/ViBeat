@@ -31,7 +31,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.10",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.11",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -70,9 +70,9 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
-		System.out.println("before read");
+		System.out.println("server-module: before read");
 		Command cmd = ReadWriteAux.readSocket(client);
-		System.out.println("after read");
+		System.out.println("server-module: after read-aux");
 		cmd.printCommand();
 		switch(cmd.cmd_type){
 
@@ -117,6 +117,7 @@ public class ServerModule {
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
+		System.out.println("server-module: after read");
 	}
 
 	private static User isDisconnectedUser(int id) {
@@ -137,10 +138,7 @@ public class ServerModule {
 		JSONArray resultArray = new JSONArray();
 		
 		synchronized (current_parties) {
-
-			Iterator<Party> iter = current_parties.iterator();
-			while (iter.hasNext()){
-				Party party = iter.next();
+			for (Party party : current_parties){
 				if (party.party_name.contains(name)) {
 					resultArray.put(party.getPublicJson());
 				}
@@ -150,8 +148,9 @@ public class ServerModule {
 	}
 
 
-	public static void send_nearby_parties(User client,Command cmd) throws JSONException {
+	public static void send_nearby_parties(User user,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
+		user.setLocation(location);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
 			if(distance(party.get_Location(), location) < 100) {
@@ -159,7 +158,7 @@ public class ServerModule {
 				System.out.println(party.getPublicJson());
 			}
 		}
-		ReadWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
+		ReadWriteAux.writeSocket(user.get_channel(), Command.create_searchResult_command(partyArray));
 	}
 
 	public static double distance(Location loc1, Location loc2) {
@@ -222,9 +221,7 @@ public class ServerModule {
 	private static Party FindPartyByID(int id) {
 		synchronized (current_parties) {
 
-			Iterator<Party> iter = current_parties.iterator();
-			while (iter.hasNext()){
-				Party party = iter.next();
+			for(Party party : current_parties){
 				if(party.party_id == id){
 					return party;
 				}
@@ -235,12 +232,12 @@ public class ServerModule {
 
 	//mini thread and locks.
 	static void addDisconenctedUser(User user) {
-		System.out.println("server-module user " + user.name + " has disconnected");
 		disconnected_users.add(user);
 	}
 
 	static void deleteParty(Party party) {
-		current_parties.remove(party);
+		boolean remove = current_parties.remove(party);
+		System.out.println("removing party: " + party.party_name + " result: " + remove);
 	}
 
 }

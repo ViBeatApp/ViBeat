@@ -18,14 +18,12 @@ public class ReadWriteAux {
 		return readSocket(socket);
 	}
 	
-	public void send(Command cmd) throws IOException, JSONException {
-		writeSocket(socket,cmd);
+	public int send(Command cmd) throws JSONException {
+		return writeSocket(socket,cmd);
 	}
 	
 	public static Command readSocket(SocketChannel channel) throws IOException, JSONException{
-		int size = readSize(channel);
-		if (size == -1) return new Command(CommandType.DISCONNECTED);
-		return readCommand(channel,size);
+		return readCommand(channel,readSize(channel));
 	}
 	
 	public static int readSize(SocketChannel channel) {
@@ -34,6 +32,8 @@ public class ReadWriteAux {
 		while (buf.hasRemaining()) { 
 			try {
 				bytesRead += channel.read(buf);
+				if(bytesRead < 0)
+					return -1;
 			} 
 			catch (IOException e) {
 				return -1;
@@ -43,14 +43,19 @@ public class ReadWriteAux {
 			System.out.println("error readSize");
 		}
 		buf.rewind();
+		System.out.println("2");
 		return buf.getInt();
 	}
 
 	public static Command readCommand(SocketChannel channel,int length) throws JSONException, IOException {
+		if(length == -1)
+			return new Command(CommandType.DISCONNECTED);
 		int bytesRead = 0;
 		ByteBuffer buf = ByteBuffer.allocate(length);	
 		while (buf.hasRemaining()) { 
 			bytesRead += channel.read(buf);
+			if(bytesRead < 0)
+				return new Command(CommandType.DISCONNECTED);
 		}
 		if(bytesRead != length) {
 			System.out.println("error - bytesRead != length");

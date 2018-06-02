@@ -158,7 +158,7 @@ public class Party_thread implements Runnable {
 			startPlayProtocol(cmd);
 			return;
 		case PAUSE:
-			pause_song();
+			pause_song(cmd);
 			return;
 		case IM_READY:
 			handleReady(cmd, user);
@@ -278,6 +278,9 @@ public class Party_thread implements Runnable {
 				&& cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id()) {
 			return;
 		}
+		if (cmd.getIntAttribute(jsonKey.TRACK_ID) != party.get_current_track_id()) {
+			syncChange = true;
+		}
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
 		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
@@ -308,9 +311,9 @@ public class Party_thread implements Runnable {
 
 	}
 
-	public void pause_song() throws IOException, JSONException {
+	public void pause_song(Command cmd) throws IOException, JSONException {
 		if (party.status == Party.Party_Status.playing) {
-			total_offset += Duration.between(last_play_time, Instant.now()).toMillis();
+			total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 			System.out.println("party-thread: pause_song: update total offset = " + total_offset);
 		} else if ((party.status == Party.Party_Status.pause) ||  (party.status == Party.Party_Status.not_started)) {
 			return;
