@@ -14,7 +14,7 @@
         android:layout_weight="80">
 
         <TextView
-            android:id="@+id/party_name"
+            android:id="@+id/party_name_conn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -35,7 +35,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/mute"
+            android:id="@+id/mute_conn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

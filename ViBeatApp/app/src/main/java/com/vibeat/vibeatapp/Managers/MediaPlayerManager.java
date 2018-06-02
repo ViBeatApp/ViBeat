@@ -22,19 +22,28 @@ public class MediaPlayerManager {
     }
 
     public void getReady(int track_id, int offset) {
+        int next_track = app.client_manager.party.playlist.tracks.get((
+                app.client_manager.getTrackPosFromId(track_id) + 1 )%
+                app.client_manager.party.playlist.tracks.size()).track_id;
         try {
             Log.e("MediaManager","before m.getReady");
             if (active_mp == 1) {
-                if(track_id == m1.track_id)
-                    return;
-                else
+                if (track_id == m1.track_id) {
+                    m1.getReady(track_id, offset);
+                    m2.getReadyOffline(next_track, 0);
+                } else {
                     m2.getReady(track_id, offset);
+                    m2.getReadyOffline(next_track, 0);
+                }
             }
             else {
-                if(track_id == m2.track_id)
-                    return;
-                else
+                if (track_id == m2.track_id) {
+                    m2.getReady(track_id, offset);
+                    m1.getReadyOffline(next_track, 0);
+                } else {
                     m1.getReady(track_id, offset);
+                    m2.getReadyOffline(next_track, 0);
+                }
             }
         }
         catch (IOException e){

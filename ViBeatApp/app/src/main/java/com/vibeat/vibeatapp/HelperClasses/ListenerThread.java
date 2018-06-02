@@ -2,17 +2,17 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import android.util.Log;
 
-import com.vibeat.vibeatapp.ServerSide.Command;
-import com.vibeat.vibeatapp.ServerSide.CommandClientAux;
 import com.vibeat.vibeatapp.Managers.DBManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
+import com.vibeat.vibeatapp.ServerSide.Command;
+import com.vibeat.vibeatapp.ServerSide.CommandClientAux;
+import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
 import com.vibeat.vibeatapp.ServerSide.jsonKey;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
-import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
 import com.vibeat.vibeatapp.ServerSide.trackInfo;
 
 import org.json.JSONArray;
@@ -27,17 +27,19 @@ public class ListenerThread extends Thread {
 
     public ReadWriteAux readWriteAux;
     public  MyApplication app;
+    public boolean connected;
 
     public ListenerThread(MyApplication app, ReadWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
         this.app = app;
+        this.connected = true;
     }
 
 
     @Override
     public void run() {
 
-        while (true) {
+        while (connected) {
             Command cmd = null;
             try {
                 Log.e("Listener","before listen");
@@ -91,6 +93,7 @@ public class ListenerThread extends Thread {
                 JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.SONGS);
                 JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.NAME);
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IS_PRIVATE);
+                JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.CURRENT_TRACK_ID);
                 boolean move = false;
                 if (app.client_manager.party == null) {
                     app.client_manager.party = new Party();
@@ -100,10 +103,13 @@ public class ListenerThread extends Thread {
                 app.client_manager.party.party_name = name.getString(0);
                 updateUserList(getUserListFromJSON(users),app.client_manager.party);
                 app.client_manager.party.request = getUserListFromJSON(requests);
+
                 if(app.client_manager.party.playlist != null)
                     app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
                 else
                     app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
+                app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
+
                 if(move)
                     app.gui_manager.completeJoin();
                 else
@@ -144,6 +150,7 @@ public class ListenerThread extends Thread {
                 app.gui_manager.closeParty();
                 break;
             case DISCONNECTED:
+                connected = false;
                 break;
 
         }
@@ -190,5 +197,15 @@ public class ListenerThread extends Thread {
             else
                 party.connected.add(user);
         }
+    }
+
+    public int posFromTrackId(JSONArray track_id) {
+        try {
+            int id = track_id.getInt(0);
+            return app.client_manager.getTrackPosFromId(id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

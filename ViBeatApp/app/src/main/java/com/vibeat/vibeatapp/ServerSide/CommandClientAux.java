@@ -50,6 +50,9 @@ public class CommandClientAux {
 			case IS_PRIVATE:
 				result = cmd.getSyncPartyAttribute(jsonKey.IS_PRIVATE);
 				break;
+			case CURRENT_TRACK_ID:
+				result = cmd.getSyncPartyAttribute(jsonKey.CURRENT_TRACK_ID);
+				break;
 			default:
 				break;
 		}

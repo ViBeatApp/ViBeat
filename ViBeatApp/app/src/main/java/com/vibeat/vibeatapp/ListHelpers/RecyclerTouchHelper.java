@@ -70,34 +70,36 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        View itemView = viewHolder.itemView;
+        if(app.client_manager.party.playlist.tracks.size()>1) {
+            View itemView = viewHolder.itemView;
 
-        if(actionState == ACTION_STATE_SWIPE){
-            int xMarkMargin = 30;
-            Drawable deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete);
+            if (actionState == ACTION_STATE_SWIPE) {
+                int xMarkMargin = 30;
+                Drawable deleteIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete);
 
-            int itemHeight = itemView.getBottom() - itemView.getTop();
+                int itemHeight = itemView.getBottom() - itemView.getTop();
 
-            //Setting Swipe Background
-            ColorDrawable background = new ColorDrawable();
-            ((ColorDrawable) background).setColor(Color.RED);
-            background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-            background.draw(c);
+                //Setting Swipe Background
+                ColorDrawable background = new ColorDrawable();
+                ((ColorDrawable) background).setColor(Color.RED);
+                background.setBounds(itemView.getRight() + (int) dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
+                background.draw(c);
 
-            int intrinsicWidth = deleteIcon.getIntrinsicWidth();
-            int intrinsicHeight = deleteIcon.getIntrinsicWidth();
+                int intrinsicWidth = deleteIcon.getIntrinsicWidth();
+                int intrinsicHeight = deleteIcon.getIntrinsicWidth();
 
-            int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
-            int xMarkRight = itemView.getRight() - xMarkMargin;
-            int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
-            int xMarkBottom = xMarkTop + intrinsicHeight;
+                int xMarkLeft = itemView.getRight() - xMarkMargin - intrinsicWidth;
+                int xMarkRight = itemView.getRight() - xMarkMargin;
+                int xMarkTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+                int xMarkBottom = xMarkTop + intrinsicHeight;
 
 
-            //Setting Swipe Icon
-            deleteIcon.setBounds(xMarkLeft, xMarkTop + 16, xMarkRight, xMarkBottom);
-            deleteIcon.draw(c);
+                //Setting Swipe Icon
+                deleteIcon.setBounds(xMarkLeft, xMarkTop + 16, xMarkRight, xMarkBottom);
+                deleteIcon.draw(c);
 
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
         }
     }
 

@@ -17,40 +17,41 @@ public class DBManager {
     public static void startDBManager(){
 
         Track song0 = new Track(0, "Haverot Shelach", "Omer Adam",
-                "http://docs.google.com/uc?/export=download&id=1mNSs3XbUU0cEbJyVFkZ086YKWaSwUex6",
+                "https://dl.dropboxusercontent.com/s/5isfotrabj50osk/omeradam.jpg?dl=0"
+                /*"https://dl.dropboxusercontent.com/home/music_files/music_images?preview=omeradam.jpg"*/,
                 "http://docs.google.com/uc?/export=download&id=1u4oDSRXhZ5oXc8XWCI92mrbqheHQtzJL");
         Track song1 = new Track(1, "Toy", "Neta Barzilai",
-                "https://drive.google.com/open?id=11kWxFcP3X2KKg6daT27E1dcpugXx5tTc",
+                "https://dl.dropboxusercontent.com/s/l05zkicj3pbnvav/netabrazilai.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1Ri_gXnYHt1pdBw1b22uVzEnqzNs0pmxr");
         Track song2 = new Track(2, "Ratzity", "Eden Ben Zaken",
-                "https://drive.google.com/open?id=1qRP5htDW7kN9o6QvWV0OAWgZjP62z5X4",
+                "https://dl.dropboxusercontent.com/s/vfm22xz740qtd07/edenbenzaken.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1Q7_Re3eyYNM4D77PlP4OggZn-Q2Vfx1x");
         Track song3 = new Track(3, "Up&Up", "Coldplay",
-                "https://drive.google.com/open?id=17uvBcz3tFgHssTQfME7PQlO-8LPoX8kZ",
+                "https://dl.dropboxusercontent.com/s/xvhxrx8pt2t6nqe/coldplay1.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1dbleMyl_Gy7B3CMIdO370KoNIpf_tRC6");
         Track song4 = new Track(4, "Olay Nedaber", "Nadav Guedj",
-                "https://drive.google.com/open?id=167Stn2HGFx6U4VM3IDPeM4U8uQW8Bjwn",
+                "https://dl.dropboxusercontent.com/s/s42ecqyert04ybl/nadavguedj.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1veHdZqYlIrpwcBaWrByxS8Xp4Vg39m_N");
         Track song5 = new Track(5, "My Princess", "Ivri Lider",
-                "https://drive.google.com/open?id=1t8NFH2VNbheLTv8aeHLezrVxWSWfNNlU",
+                "https://dl.dropboxusercontent.com/s/lvmfga6grymwcj5/ivri_lider.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1C6XWHYQSrO1sk0mrvzXkMb91OO9eKISx");
         Track song6 = new Track(6, "Lets Dance", "Chen Aharoni",
-                "https://drive.google.com/open?id=19n-D8ndRJh60wBif79GgDl_cm7GTwY9t",
+                "https://dl.dropboxusercontent.com/s/lnx62j7fi5tcor4/chenaharoni.png?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1cIc58IqIat5RrafDAqJagaHADkRRvJ_p");
         Track song7 = new Track(7, "Kawaii", "Static and Ben-El",
-                "https://drive.google.com/open?id=1ZYuWkYAzxVoL_XBvFwqlqe_JabGGO9YC",
+                "https://dl.dropboxusercontent.com/s/jrzj4b7c2hwgx6d/static%26benel.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1T7DZuOOKA6sFzjxSUR8bIFeyg-0C2Ybd");
         Track song8 = new Track(8, "These Days", "Rudimental",
-                "https://drive.google.com/open?id=1KXhaAfoyVUj1u3erSLCKbFcQNi1fKEDl",
+                "https://dl.dropboxusercontent.com/s/l28ro1vr81s0r9i/rudimental.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1hZcxMIZbxWjqWE7dnerTWUmo1fFAoTVo");
         Track song9 = new Track(9, "Shnei Meshugaim", "Omer Adam",
-                "https://drive.google.com/open?id=1mNSs3XbUU0cEbJyVFkZ086YKWaSwUex6",
+                "https://dl.dropboxusercontent.com/open?id=1mNSs3XbUU0cEbJyVFkZ086YKWaSwUex6",
                 "http://docs.google.com/uc?/export=download&id=1x2XVUtlyBxPRbi4FIPEKio1wN3X0jOzR");
         Track song10 = new Track(10, "I Like It", "Cardi B",
-                "https://drive.google.com/open?id=1t-NVn1dQlErVmfAmYyjtDHbG_1riuD93",
+                "https://dl.dropboxusercontent.com/s/l4vhxz41oukxmen/cardib.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1ZYGVAD3a9VAcf8QziMydx6V3kNdShI6H");
         Track song11 = new Track(11, "FRIENDS", "Marshmello and Anne Marie",
-                "https://drive.google.com/open?id=13D-T26TjXb9Vfz59U1hw8yohc7C763MB",
+                "https://dl.dropboxusercontent.com/s/ctvagcxtm8ejheq/marshmelloannemarie.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=18An6iRrChsRmY5d0bcjHp5fmKRQOOhEU");
         tracks.add(song0);
         tracks.add(song1);

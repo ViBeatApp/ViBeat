@@ -99,7 +99,6 @@ public class GUIManager{
     public void login() {
         app.client_manager.initLocationTracking(act);
         Intent intent = new Intent(act, EnterPartyActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         act.startActivity(intent);
     }
 
@@ -241,6 +240,7 @@ public class GUIManager{
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                app.client_manager.leaveParty();
                 Intent intent = new Intent(act, EnterPartyActivity.class);
                 act.startActivity(intent);
             }
@@ -369,7 +369,6 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(act, PlaylistActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 act.startActivity(intent);
             }
         });
@@ -414,8 +413,11 @@ public class GUIManager{
         ImageButton connected = (ImageButton) act.findViewById(R.id.connecting);
         ImageButton add = (ImageButton) act.findViewById(R.id.add);
         TextView party_name = (TextView) act.findViewById(R.id.party_name);
+        TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
+        final ImageButton mute_conn = (ImageButton) act.findViewById(R.id.mute_conn);
 
         party_name.setText(app.client_manager.party.party_name);
+        party_name_conn.setText(app.client_manager.party.party_name);
 
         if(app.client_manager.party.playlist.is_playing)
             play_pause.setImageResource(R.drawable.ic_pause_blue);
@@ -423,12 +425,12 @@ public class GUIManager{
             play_pause.setImageResource(R.drawable.ic_play_blue);
 
         if(app.media_manager.isMute()) {
-            app.media_manager.unmute();
             mute.setImageResource(R.drawable.ic_mute_blue);
+            mute_conn.setImageResource(R.drawable.ic_mute_blue);
         }
         else {
-            app.media_manager.mute();
             mute.setImageResource(R.drawable.ic_unmute_blue);
+            mute_conn.setImageResource(R.drawable.ic_unmute_blue);
         }
 
 
@@ -479,6 +481,21 @@ public class GUIManager{
                 else {
                     app.media_manager.mute();
                     mute.setImageResource(R.drawable.ic_unmute_blue);
+                }
+            }
+        });
+
+        mute_conn.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                if(app.media_manager.isMute()) {
+                    app.media_manager.unmute();
+                    mute_conn.setImageResource(R.drawable.ic_mute_blue);
+                }
+                else {
+                    app.media_manager.mute();
+                    mute_conn.setImageResource(R.drawable.ic_unmute_blue);
                 }
             }
         });

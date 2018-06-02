@@ -46,6 +46,9 @@ public class SenderThread extends Thread {
                         while (connected && !task_queue.isEmpty()) {
                             try {
                                 Log.e("SENDER","doing pop to send queue");
+                                /*if (conn.send(task_queue.pop()) < 0){
+                                    app.client_manager.closeParty();
+                                }*/
                                 conn.send(task_queue.pop());
                             } catch (JSONException e1) {
                                 Log.e("SENDER","send failed");

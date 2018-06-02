@@ -15,29 +15,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.MainActivity"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.EnterPartyActivity"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.EnterPartyActivity"/>
+        <activity android:name=".Activities.EnterPartyActivity" />
         <activity android:name=".Activities.CreatePartyActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.CreatePartyActivity"/>
-        <activity android:name=".Activities.PlaylistActivity"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.PlaylistActivity"/>
+            android:windowSoftInputMode="adjustNothing" />
+        <activity android:name=".Activities.PlaylistActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -47,18 +35,9 @@
             android:value="1300552146744496" />
 
         <activity android:name=".Activities.ConnectedActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.ConnectedActivity"/>
-        <activity android:name=".Activities.AddMusicActivity"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.AddMusicActivity"/>
-        <activity android:name=".Activities.LoadingActivity"
-            android:noHistory="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".Activities.LoadingActivity"/>
+            android:windowSoftInputMode="adjustNothing" />
+        <activity android:name=".Activities.AddMusicActivity" />
+        <activity android:name=".Activities.LoadingActivity" />
     </application>
 
 </manifest>

@@ -193,7 +193,7 @@ public class ClientManager {
                     app.media_manager.getOffset()));
             else{
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
-                senderThread.addCmd(Command.create_pause_Command(track_id));
+                senderThread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -288,5 +288,13 @@ public class ClientManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getTrackPosFromId(int track_id){
+        for (int i = 0; i < app.client_manager.party.playlist.tracks.size(); i++){
+            if (app.client_manager.party.playlist.tracks.get(i).track_id == track_id)
+                return i;
+        }
+        return -1;
     }
 }

@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp.ListClasses;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ImageView;
@@ -50,7 +51,9 @@ public class PlaylistList implements ListAdapterable {
         List<ImageView> views = new ArrayList<ImageView>();
         img_paths.add(track.img_path);
         views.add(img);
+        Log.d("ImagePath","berore");
         imageLoader.loadImageSquare(activity, img_paths, views);
+        Log.d("ImagePath","after");
 
         title.setText(track.title);
         artist.setText(track.artist);

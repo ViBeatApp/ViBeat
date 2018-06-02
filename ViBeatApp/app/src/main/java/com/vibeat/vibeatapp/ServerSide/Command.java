@@ -142,9 +142,10 @@ public class Command {
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
-	public static Command create_pause_Command(int trackId) throws JSONException {
+	public static Command create_pause_Command(int trackId, int offset) throws JSONException {
 		Command cmd = new Command(CommandType.PAUSE);
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
 		return cmd;
 	}
 	

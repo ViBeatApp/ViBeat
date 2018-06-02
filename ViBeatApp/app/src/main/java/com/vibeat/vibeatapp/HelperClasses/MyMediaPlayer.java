@@ -13,6 +13,7 @@ public class MyMediaPlayer extends MediaPlayer {
     MyApplication app;
     public int track_id = -1;
     public boolean is_mute = false;
+    public boolean preparing = false;
     public boolean is_prepared = false;
     public boolean request_ready = false;
 
@@ -24,9 +25,11 @@ public class MyMediaPlayer extends MediaPlayer {
             @Override
             public void onPrepared(MediaPlayer mp) {
                 is_prepared = true;
-                request_ready = false;
+                preparing = false;
                 Log.e("MediaManager","send ready");
-                app.client_manager.sendReady(track_id);
+                if (request_ready)
+                    app.client_manager.sendReady(track_id);
+                request_ready = false;
             }
         });
 
@@ -46,10 +49,29 @@ public class MyMediaPlayer extends MediaPlayer {
     }
 
     public void getReady(int track_id, int offset)throws IOException{
-        setCurrentTrack(track_id);
-        this.request_ready = true;
         Log.e("MediaManager","before prepare async");
-        this.prepareAsync();
+        if (!preparing || this.track_id != track_id) {
+            setCurrentTrack(track_id);
+            request_ready = true;
+            preparing = true;
+            is_prepared = false;
+            this.prepareAsync();
+        }
+        else if (is_prepared && this.track_id == track_id){
+            app.client_manager.sendReady(track_id);
+        }
+        Log.e("MediaManager","afer prepare async");
+    }
+
+    public void getReadyOffline(int track_id, int offset)throws IOException{
+        Log.e("MediaManager","before prepare async");
+        if (!(preparing || is_prepared) || this.track_id != track_id) {
+            setCurrentTrack(track_id);
+            request_ready = false;
+            preparing = true;
+            is_prepared = false;
+            this.prepareAsync();
+        }
         Log.e("MediaManager","afer prepare async");
     }
 
