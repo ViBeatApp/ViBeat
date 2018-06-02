@@ -3,10 +3,9 @@ package com.vibeat.vibeatapp.ListClasses;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +17,11 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
+import com.vibeat.vibeatapp.imageLoader;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> {
 
@@ -45,8 +47,14 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         Track track = this.playlist.tracks.get(position);
         holder.title.setText(track.title);
         holder.artist.setText(track.artist);
-        Bitmap bm = BitmapFactory.decodeFile(track.img_path);
-        holder.img.setImageBitmap(bm);
+
+        List<String> img_paths = new ArrayList<String>();
+        List<ImageView> views = new ArrayList<ImageView>();
+        img_paths.add(track.img_path);
+        views.add(holder.img);
+        Log.d("ImagePath","berore");
+        imageLoader.loadImageSquare((Activity)context, img_paths, views);
+        Log.d("ImagePath","after");
 
         if(this.playlist.cur_track == position)
             holder.itemView.setBackgroundColor(R.color.colorPrimary);

@@ -1,9 +1,10 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
 import android.util.Log;
+import android.widget.Toast;
 
-import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
 
 import org.json.JSONException;
@@ -46,10 +47,11 @@ public class SenderThread extends Thread {
                         while (connected && !task_queue.isEmpty()) {
                             try {
                                 Log.e("SENDER","doing pop to send queue");
-                                /*if (conn.send(task_queue.pop()) < 0){
+                                if (conn.send(task_queue.pop()) < 0){
                                     app.client_manager.closeParty();
-                                }*/
-                                conn.send(task_queue.pop());
+                                    Toast.makeText(app.gui_manager.act, "problem in socket", Toast.LENGTH_LONG);
+                                }
+
                             } catch (JSONException e1) {
                                 Log.e("SENDER","send failed");
                                 e1.printStackTrace();
@@ -58,14 +60,6 @@ public class SenderThread extends Thread {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         Log.e("SENDER","got interrupted");
-                        while (connected && !task_queue.isEmpty()) {
-                            try {
-                                Log.e("SENDER","doing pop to send queue");
-                                conn.send(task_queue.pop());
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
-                        }
                     }
                 }
             }

@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         Log.d("after auth", "onCreate:11111 ");
 
-        if(account != null) {
+        if(account != null && app.client_manager == null) {
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
             Log.d("after auth", "onCreate: ");
             app.gui_manager.login();
