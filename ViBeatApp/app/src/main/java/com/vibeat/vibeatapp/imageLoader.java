@@ -38,4 +38,30 @@ public class imageLoader {
         }.start();
 
     }
+
+    public static void loadImageSquare(final Activity act, final List<String> img_paths,final List<ImageView> views){
+        new Thread() {
+            public void run() {
+                for (int i = 0; i < img_paths.size(); ++i){
+                    try {
+                        URL newurl = new URL(img_paths.get(i));
+                        final Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+                        final int index = i;
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("Hey jude", "test");
+                                views.get(index).setImageBitmap(bm);
+                            }
+                            //user_img.setImageURI(Uri.parse(user.img_path));
+                        });
+                    }
+                    catch (Exception e) {
+                        Log.d("image", "failed: " + i);
+                        e.printStackTrace(); }
+                }
+            }
+        }.start();
+
+    }
 }

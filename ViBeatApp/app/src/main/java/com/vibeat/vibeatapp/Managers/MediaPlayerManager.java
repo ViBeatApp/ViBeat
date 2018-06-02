@@ -1,13 +1,9 @@
 package com.vibeat.vibeatapp.Managers;
 
-import android.app.Application;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.HelperClasses.MyMediaPlayer;
 import com.vibeat.vibeatapp.MyApplication;
-import com.vibeat.vibeatapp.Objects.Playlist;
 
 import java.io.IOException;
 
@@ -86,10 +82,30 @@ public class MediaPlayerManager {
     }
 
     public void pause() {
-        if(active_mp == 2)
+        Log.d("pause", "before pause");
+        if(m1.isPlaying()) {
+            try {
+                m1.pause();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(m2.isPlaying()) {
+            try {
+                m2.pause();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        //m1.pause();
+        //m2.pause();
+        Log.d("pause", "after pause");
+        /*if(active_mp == 2)
             m2.pause();
         else
-            m1.pause();
+            m1.pause();*/
     }
 
     public boolean isMute() {

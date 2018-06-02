@@ -61,20 +61,24 @@ public class MainActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         Log.d("after auth", "onCreate:11111 ");
 
-        /*app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
-        Log.d("after auth", "onCreate: ");
-        app.gui_manager.login();
-        Log.d("if authentication null", "3333333");*/
-        SignInButton signInButton = findViewById(R.id.googleLogin);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                                                startActivityForResult(signInIntent, 123);
+        if(account != null) {
+            app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
+            Log.d("after auth", "onCreate: ");
+            app.gui_manager.login();
+            Log.d("if authentication null", "3333333");
+        }
+        else{
+            SignInButton signInButton = findViewById(R.id.googleLogin);
+            signInButton.setSize(SignInButton.SIZE_STANDARD);
+            signInButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                                                    startActivityForResult(signInIntent, 123);
+                                                }
                                             }
-                                        }
-        );
+            );
+        }
 
     }
 
