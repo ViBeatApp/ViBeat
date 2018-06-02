@@ -70,9 +70,7 @@ public class ServerModule {
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
 		SocketChannel client = (SocketChannel) key.channel();
-		System.out.println("before read");
 		Command cmd = ReadWriteAux.readSocket(client);
-		System.out.println("after read");
 		cmd.printCommand();
 		switch(cmd.cmd_type){
 
@@ -137,10 +135,7 @@ public class ServerModule {
 		JSONArray resultArray = new JSONArray();
 		
 		synchronized (current_parties) {
-
-			Iterator<Party> iter = current_parties.iterator();
-			while (iter.hasNext()){
-				Party party = iter.next();
+			for (Party party : current_parties){
 				if (party.party_name.contains(name)) {
 					resultArray.put(party.getPublicJson());
 				}
@@ -150,8 +145,9 @@ public class ServerModule {
 	}
 
 
-	public static void send_nearby_parties(User client,Command cmd) throws JSONException {
+	public static void send_nearby_parties(User user,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
+		user.setLocation(location);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
 			if(distance(party.get_Location(), location) < 100) {
@@ -159,7 +155,7 @@ public class ServerModule {
 				System.out.println(party.getPublicJson());
 			}
 		}
-		ReadWriteAux.writeSocket(client.get_channel(), Command.create_searchResult_command(partyArray));
+		ReadWriteAux.writeSocket(user.get_channel(), Command.create_searchResult_command(partyArray));
 	}
 
 	public static double distance(Location loc1, Location loc2) {
@@ -222,9 +218,7 @@ public class ServerModule {
 	private static Party FindPartyByID(int id) {
 		synchronized (current_parties) {
 
-			Iterator<Party> iter = current_parties.iterator();
-			while (iter.hasNext()){
-				Party party = iter.next();
+			for(Party party : current_parties){
 				if(party.party_id == id){
 					return party;
 				}

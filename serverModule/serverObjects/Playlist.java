@@ -54,10 +54,10 @@ public class Playlist {
 			if(track.trackId == trackID) {
 				//int index = songs.indexOf(track);
 				if(trackID == currentTrack){
-					System.out.println("big error in deleteSong playlist!!!!!!!!!!!!!!!");
-					return -1;
+					System.out.println("You need to send playNextSong before deleting the current song!!!!!!!!!!!!!!!");
 					//int nextIndex = (index+1) % get_list_size();
 					//currentTrack = songs.get(nextIndex).trackId;
+					return -1;
 				}
 				iter.remove();
 				return 1;

@@ -25,6 +25,7 @@ public enum jsonKey {
 	IS_PRIVATE,
 	IS_ADMIN,
 	
+	CURRENT_TRACK_ID,
 	TRACK_ID_1,
 	TRACK_ID_2,
 

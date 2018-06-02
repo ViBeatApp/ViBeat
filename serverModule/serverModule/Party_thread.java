@@ -78,6 +78,7 @@ public class Party_thread implements Runnable {
 			handler_new_clients();
 			handle_current_clients();
 		}
+		System.out.println("party has stopped");
 	}
 
 	private void handle_current_clients() throws IOException, JSONException, Exception {
