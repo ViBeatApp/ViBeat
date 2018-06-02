@@ -55,6 +55,7 @@ public class ListenerThread extends Thread {
                 break;
             }
         }
+        app.client_manager.closeParty();
     }
 
     public Command getServerCommand() throws InterruptedException{
@@ -104,8 +105,15 @@ public class ListenerThread extends Thread {
                 updateUserList(getUserListFromJSON(users),app.client_manager.party);
                 app.client_manager.party.request = getUserListFromJSON(requests);
 
-                if(app.client_manager.party.playlist != null)
+                if(app.client_manager.party.playlist != null) {
+                    int prev_size = app.client_manager.party.playlist.tracks.size();
                     app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
+                    if(prev_size == 1 && app.client_manager.party.playlist.tracks.size() > 1){
+                        app.media_manager.getReady(
+                                app.client_manager.party.playlist.tracks.get(
+                                        app.client_manager.party.playlist.cur_track).track_id,0);
+                    }
+                }
                 else
                     app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
                 app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
@@ -186,12 +194,14 @@ public class ListenerThread extends Thread {
     }
     //also update if the current user is now admin or not.
     private void updateUserList(List<User> users, Party party){
+        party.admin.clear();
+        party.connected.clear();
         for (User user : users){
             if (user.is_admin) {
                 party.admin.add(user);
                 if (app.client_manager.user.id == user.id) {
+                    app.client_manager.user = user;
                     app.client_manager.is_admin = true;
-                    app.client_manager.user.is_admin = true;
                 }
             }
             else

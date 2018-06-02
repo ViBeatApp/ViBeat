@@ -1,9 +1,11 @@
 package com.vibeat.vibeatapp.ServerSide;
+
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.NotYetConnectedException;
 import java.nio.channels.SocketChannel;
 
 
@@ -36,6 +38,11 @@ public class ReadWriteAux {
 					return -1;
 			} 
 			catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+			catch (NotYetConnectedException e) {
+				e.printStackTrace();
 				return -1;
 			}
 		}
@@ -47,8 +54,9 @@ public class ReadWriteAux {
 	}
 
 	public static Command readCommand(SocketChannel channel,int length) throws JSONException, IOException {
-		if(length == -1)
+		if(length == -1) {
 			return new Command(CommandType.DISCONNECTED);
+		}
 		int bytesRead = 0;
 		ByteBuffer buf = ByteBuffer.allocate(length);	
 		while (buf.hasRemaining()) { 
@@ -76,6 +84,11 @@ public class ReadWriteAux {
 				writeRead += channel.write(message);
 			} 
 			catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+			catch (NotYetConnectedException e) {
+				e.printStackTrace();
 				return -1;
 			}
 		}

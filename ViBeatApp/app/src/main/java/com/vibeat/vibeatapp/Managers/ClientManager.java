@@ -230,7 +230,7 @@ public class ClientManager {
 
     public void leaveParty(){
         try {
-            if(party.playlist.is_playing)
+            if(party != null && party.playlist!= null && party.playlist.is_playing)
                 app.media_manager.stop();
             senderThread.addCmd(Command.create_leaveParty_Command());
         } catch (JSONException e) {
@@ -267,7 +267,7 @@ public class ClientManager {
     }
 
     public boolean isAdmin() {
-        return (party.admin.indexOf(user) >= 0 );
+        return (is_admin);
     }
 
     public void closeParty() {
@@ -275,6 +275,7 @@ public class ClientManager {
         is_admin = false;
         try {
             this.senderThread.connected = false;
+            this.senderThread.task_queue.notify();
             this.senderThread.join();
             this.senderThread = null;
         } catch (InterruptedException e) {

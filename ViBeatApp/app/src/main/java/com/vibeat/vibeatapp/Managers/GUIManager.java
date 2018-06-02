@@ -121,6 +121,7 @@ public class GUIManager{
                 @Override
                 public void run() {
                     adap.notifyDataSetChanged();
+                    act.findViewById(R.id.parties_list).refreshDrawableState();
                 }
             });
 
@@ -220,13 +221,15 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 app.client_manager.logout();
-                app.listener_thread.interrupt();
-                try {
-                    app.listener_thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (app.listener_thread != null) {
+                    app.listener_thread.interrupt();
+                    try {
+                        app.listener_thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                app.client_manager = null;
+                //app.client_manager = null;
                 Intent intent = new Intent(act, MainActivity.class);
                 act.startActivity(intent);
             }
@@ -503,8 +506,6 @@ public class GUIManager{
         if (app.client_manager.isAdmin()){
             act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
             act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
-
-
         }
         else {
             act.findViewById(R.id.admin_toolbar).setVisibility(View.GONE);
@@ -530,7 +531,6 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    initConnectedActivity();
                     ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
                     ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
                     act.findViewById(R.id.connected_xml).refreshDrawableState();
@@ -544,7 +544,7 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(app.client_manager.user.is_admin){
+                    if(app.client_manager.isAdmin()){
                         act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
                         act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
                     }
