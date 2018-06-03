@@ -58,9 +58,11 @@ public class MyMediaPlayer extends MediaPlayer {
             is_prepared = false;
             this.prepareAsync();
         }
-        else if (is_prepared && this.track_id == track_id){
+        else if (is_prepared && this.track_id == track_id)
             app.client_manager.sendReady(track_id);
-        }
+        else if (preparing)
+            request_ready = true;
+
         Log.e("MediaManager","after prepare async");
     }
 

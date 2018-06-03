@@ -199,7 +199,7 @@ public class ClientManager {
             else{
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
                 if (app.sender_thread != null)
-                    app.sender_thread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
+                    app.sender_thread.addCmd(Command.create_pause_Command(track_id/*, app.media_manager.getOffset()*/));
             }
         } catch (JSONException e) {
             e.printStackTrace();

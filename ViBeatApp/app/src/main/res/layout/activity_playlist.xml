@@ -31,11 +31,11 @@
         android:layout_weight="5"/>
 
     <android.support.v7.widget.RecyclerView
-        android:scrollbars="vertical"
         android:id="@+id/playlist"
-        android:layout_weight="65"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:outlineProvider="paddedBounds"/>
+        android:layout_height="match_parent"
+        android:layout_weight="65"
+        android:outlineProvider="paddedBounds"
+        android:scrollbars="vertical" />
 
 </LinearLayout>

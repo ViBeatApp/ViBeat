@@ -142,10 +142,9 @@ public class Command {
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
-	public static Command create_pause_Command(int trackId, int offset) throws JSONException {
+	public static Command create_pause_Command(int trackId) throws JSONException {
 		Command cmd = new Command(CommandType.PAUSE);
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
-		cmd.setAttribute(jsonKey.OFFSET, offset);
 		return cmd;
 	}
 	
@@ -176,10 +175,6 @@ public class Command {
 		cmd.setAttribute(jsonKey.LONGTITUDE,longtitude);
 		cmd.setAttribute(jsonKey.LATITUDE,latitude);
 		cmd.setAttribute(jsonKey.ALTITUDE,altitude);
-		return cmd;
-	}
-	public static Command create_closeParty_Command() throws JSONException {
-		Command cmd = new Command(CommandType.CLOSE_PARTY);
 		return cmd;
 	}
 	public static Command create_leaveParty_Command() throws JSONException {
