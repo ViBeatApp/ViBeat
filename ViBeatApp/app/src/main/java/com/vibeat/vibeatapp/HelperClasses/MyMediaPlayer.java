@@ -26,7 +26,7 @@ public class MyMediaPlayer extends MediaPlayer {
             public void onPrepared(MediaPlayer mp) {
                 is_prepared = true;
                 preparing = false;
-                Log.e("MediaManager","send ready");
+                Log.e("MediaManager",request_ready ? "Requested":"Offline");
                 if (request_ready)
                     app.client_manager.sendReady(track_id);
                 request_ready = false;

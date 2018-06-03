@@ -1,8 +1,11 @@
 package com.vibeat.vibeatapp.Managers;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -133,8 +136,10 @@ public class GUIManager{
             Toast.makeText(act,
                     "Sorry, your request was not accepted...",
                     Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(act, EnterPartyActivity.class);
-            act.startActivity(intent);
+            if(!(act instanceof EnterPartyActivity)) {
+                Intent intent = new Intent(act, EnterPartyActivity.class);
+                act.startActivity(intent);
+            }
         }
     }
 
@@ -179,10 +184,11 @@ public class GUIManager{
     public void closeParty() {
         if(app.client_manager.party != null)
             app.client_manager.closeParty();
-        Intent intent = new Intent(act, EnterPartyActivity.class);
-        act.startActivity(intent);
+        if(!(act instanceof EnterPartyActivity)) {
+            Intent intent = new Intent(act, EnterPartyActivity.class);
+            act.startActivity(intent);
+        }
     }
-
 
     public void initToolBar(){
         act.runOnUiThread(new Runnable() {
@@ -221,14 +227,6 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 app.client_manager.logout();
-                if (app.listener_thread != null) {
-                    app.listener_thread.interrupt();
-                    try {
-                        app.listener_thread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
                 //app.client_manager = null;
                 Intent intent = new Intent(act, MainActivity.class);
                 act.startActivity(intent);
@@ -517,8 +515,10 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 app.client_manager.leaveParty();
-                Intent intent = new Intent(act, EnterPartyActivity.class);
-                act.startActivity(intent);
+                if(!(act instanceof EnterPartyActivity)) {
+                    Intent intent = new Intent(act, EnterPartyActivity.class);
+                    act.startActivity(intent);
+                }
             }
         });
     }
@@ -556,4 +556,32 @@ public class GUIManager{
         }
     }
 
+    public void disconnected() {
+        app.client_manager.terminateConnection();
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(act);
+                }
+                builder.setTitle("Connection Error")
+                        .setMessage("Please try to reopen the app :)")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent homeIntene = new Intent(Intent.ACTION_MAIN);
+                                homeIntene.addCategory(Intent.CATEGORY_HOME);
+                                homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                act.startActivity(homeIntene);
+                                //android.os.Process.killProcess(android.os.Process.myPid());
+                                //System.exit(0);
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
+    }
 }

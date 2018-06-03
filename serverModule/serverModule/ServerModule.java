@@ -31,7 +31,7 @@ public class ServerModule {
 		Selector selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.11",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -105,6 +105,7 @@ public class ServerModule {
 		case DISCONNECTED:	
 			if(key.attachment() != null)
 				addDisconenctedUser((User)key.attachment());
+			System.out.println(client);
 			client.close();
 			break;
 

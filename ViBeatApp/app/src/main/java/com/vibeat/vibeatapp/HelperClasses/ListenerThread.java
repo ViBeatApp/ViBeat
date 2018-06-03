@@ -27,19 +27,19 @@ public class ListenerThread extends Thread {
 
     public ReadWriteAux readWriteAux;
     public  MyApplication app;
-    public boolean connected;
+    public  boolean disconnected = false;
+    public boolean openparty = true;
 
     public ListenerThread(MyApplication app, ReadWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
         this.app = app;
-        this.connected = true;
     }
 
 
     @Override
     public void run() {
 
-        while (connected) {
+        while (!disconnected && openparty) {
             Command cmd = null;
             try {
                 Log.e("Listener","before listen");
@@ -48,6 +48,7 @@ public class ListenerThread extends Thread {
                 handlerCommand(cmd);
             }
             catch (InterruptedException e){
+                Log.e("Listener","got Interrupted");
                 e.printStackTrace();
                 break;
             } catch (JSONException e){
@@ -55,7 +56,6 @@ public class ListenerThread extends Thread {
                 break;
             }
         }
-        app.client_manager.closeParty();
     }
 
     public Command getServerCommand() throws InterruptedException{
@@ -126,26 +126,24 @@ public class ListenerThread extends Thread {
                 break;
 
             case SEARCH_RESULT:
-                Log.d("get search", "handlerCommand: ");
                 JSONArray parties = CommandClientAux.getPartyArray(cmd);
-                Log.e("Listener","before search result");
                 List<partyInfo> party_list = getPartyListFromJSON(parties);
-                Log.e("Listener","after search result");
                 app.gui_manager.putPartyResults(party_list);
-                Log.e("Listener","after search result2");
                 break;
+
             case GET_READY:
-                Log.e("Listener","getReady");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.media_manager.getReady(prep_track_id, prep_offset);
                 break;
+
             case PLAY_SONG:
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.gui_manager.play(play_track_id);
                 app.media_manager.play(play_track_id,play_offset);
                 break;
+
             case PAUSE:
                 app.gui_manager.pause();
                 app.media_manager.pause();
@@ -155,10 +153,17 @@ public class ListenerThread extends Thread {
                 app.gui_manager.rejected();
                 break;
             case CLOSE_PARTY:
-                app.gui_manager.closeParty();
+                if(openparty) {
+                    app.gui_manager.closeParty();
+                    openparty = false;
+                }
                 break;
+
             case DISCONNECTED:
-                connected = false;
+                if (!disconnected ) {
+                    app.gui_manager.disconnected();
+                    disconnected = true;
+                }
                 break;
 
         }
@@ -199,10 +204,8 @@ public class ListenerThread extends Thread {
         for (User user : users){
             if (user.is_admin) {
                 party.admin.add(user);
-                if (app.client_manager.user.id == user.id) {
+                if (app.client_manager.user.id == user.id)
                     app.client_manager.user = user;
-                    app.client_manager.is_admin = true;
-                }
             }
             else
                 party.connected.add(user);

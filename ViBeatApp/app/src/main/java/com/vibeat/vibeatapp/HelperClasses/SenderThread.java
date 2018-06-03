@@ -1,7 +1,6 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.ServerSide.Command;
@@ -31,7 +30,7 @@ public class SenderThread extends Thread {
     public void run() {
         try {
             Log.d("remark", "choose your own IpAddress ");
-            conn = new ReadWriteAux("10.0.0.19");
+            conn = new ReadWriteAux("172.17.172.27");
 
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
@@ -39,27 +38,21 @@ public class SenderThread extends Thread {
             while(connected) {
                 synchronized (task_queue) {
                     try {
-                        // Calling wait() will block this thread until another thread
-                        // calls notify() on the object.
-                        Log.e("SENDER","waiting");
-                        task_queue.wait();
-                        Log.e("SENDER","got interrupted");
+                        if (task_queue.isEmpty())
+                            task_queue.wait();
                         while (connected && !task_queue.isEmpty()) {
                             try {
-                                Log.e("SENDER","doing pop to send queue");
-                                if (conn.send(task_queue.pop()) < 0){
-                                    app.client_manager.closeParty();
-                                    Toast.makeText(app.gui_manager.act, "problem in socket", Toast.LENGTH_LONG);
-                                }
+                                Command cmd = task_queue.pop();
+                                Log.d("SENDER", cmd.cmd_type.name());
+                                if (conn.send(cmd) < 0)
+                                    app.gui_manager.disconnected();
 
-                            } catch (JSONException e1) {
-                                Log.e("SENDER","send failed");
-                                e1.printStackTrace();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                        Log.e("SENDER","got interrupted");
                     }
                 }
             }
@@ -67,6 +60,17 @@ public class SenderThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Log.d("SENDER","at the end");
+        /*if (app.listener_thread != null) {
+            app.listener_thread.interrupt();
+            try {
+                app.listener_thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }*/
+
     }
 
     public void addCmd(Command cmd){

@@ -366,15 +366,17 @@ public class Party_thread implements Runnable {
 		ready_for_play.remove(user);		
 		unHandledClients.remove(user);
 
+		if(!disconnected){
+			SendCommandToUser(user, new Command(CommandType.CLOSE_PARTY));
+			//user.closeChannel();
+		}
+		
 		if(party.numOfClients() == 0 && party.keep_on) {
 			System.out.println("party should be destroied");
-			SendCommandToUser(user, new Command(CommandType.CLOSE_PARTY));
 			destroyParty();
 			return;
 		}
-
-		user.closeChannel();
-
+		
 		if(disconnected) {
 			CompletableFuture.runAsync(new Runnable() {
 				@Override
@@ -393,12 +395,12 @@ public class Party_thread implements Runnable {
 				return;
 			}
 			party.keep_on = false;
-			Command close = new Command(CommandType.CLOSE_PARTY);
+//			Command close = new Command(CommandType.CLOSE_PARTY);
 			ServerModule.deleteParty(party);
-			SendCommandToList(close, party.connected, true);
-			SendCommandToList(close, party.waitingClients, true);
-			SendCommandToList(close, party.request, true);
-			SendCommandToList(close, unHandledClients, true);
+//			SendCommandToList(close, party.connected, true);
+//			SendCommandToList(close, party.waitingClients, true);
+//			SendCommandToList(close, party.request, true);
+//			SendCommandToList(close, unHandledClients, true);
 			
 		}
 

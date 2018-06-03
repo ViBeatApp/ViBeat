@@ -28,20 +28,17 @@ public class ClientManager {
 
     public User user;
     public Party party;
-    public boolean is_admin;
     public MyApplication app;
     public Location location;
-    public SenderThread senderThread;
 
     public ClientManager(User user, MyApplication app){
         this.user= user;
         this.party = null;
-        this.is_admin = false;
-        this.senderThread = new SenderThread(app);
+        app.sender_thread = new SenderThread(app);
 
-        senderThread.start();
+        app.sender_thread.start();
         try {
-            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
+            app.sender_thread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -53,9 +50,10 @@ public class ClientManager {
     }
 
     public void createParty(){
-        is_admin = true;
+        user.is_admin = true;
         try {
-            senderThread.addCmd(Command.create_create_Command(party.party_name,party.is_private));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_create_Command(party.party_name,party.is_private));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -63,7 +61,8 @@ public class ClientManager {
 
     public void connectParty(partyInfo party){
         try {
-            senderThread.addCmd(Command.create_join_Command(party.id));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_join_Command(party.id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -72,7 +71,8 @@ public class ClientManager {
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
         try {
-            senderThread.addCmd(Command.create_addSons_Command(track.track_path));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_addSons_Command(track.track_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -83,7 +83,8 @@ public class ClientManager {
             app.media_manager.pause();
             int pos = (party.playlist.cur_track+1)%party.playlist.tracks.size();
             int id = party.playlist.tracks.get(pos).track_id;
-            senderThread.addCmd(Command.create_playSong_Command(id, 0));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -95,7 +96,8 @@ public class ClientManager {
         try {
             int track1_id = party.playlist.tracks.get(pos1).track_id;
             int track2_id = party.playlist.tracks.get(pos2).track_id;
-            senderThread.addCmd(Command.create_swapSongs_Command(track1_id,track2_id));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id,track2_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,7 +106,8 @@ public class ClientManager {
     public void removeTrack(int pos){
         try {
             int track_id = party.playlist.tracks.get(pos).track_id;
-            senderThread.addCmd(Command.create_deleteSong_Command(track_id));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -119,7 +122,8 @@ public class ClientManager {
     public void answerRequest(User requested, boolean answer){
         this.party.changeRequestStatus(requested,answer);
         try {
-            senderThread.addCmd(Command.create_confirmRequest_Command(requested.id,answer));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_confirmRequest_Command(requested.id,answer));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -128,7 +132,8 @@ public class ClientManager {
     public void makeAdmin(User connected){
         this.party.makeAdmin(connected);
         try {
-            senderThread.addCmd(Command.create_makeAdmin_Command(connected.id));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_makeAdmin_Command(connected.id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -152,10 +157,9 @@ public class ClientManager {
                             location = new_location;
                             Toast.makeText(activity, "Location Changed", Toast.LENGTH_SHORT).show();
 
-                            if( is_admin ) {
+                            if( user.is_admin && app.sender_thread != null) {
                                 try {
-
-                                    senderThread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
+                                    app.sender_thread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -180,7 +184,8 @@ public class ClientManager {
 
     public void getPartiesNearby(){
         try {
-            senderThread.addCmd(Command.create_nearbyParties_Command(location.getLongitude() ,location.getLatitude(),location.getAltitude()));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_nearbyParties_Command(location.getLongitude() ,location.getLatitude(),location.getAltitude()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,12 +193,13 @@ public class ClientManager {
 
     public void commandPlayPause(){
         try {
-            if (this.party.playlist.is_playing)
-                senderThread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
+            if (this.party.playlist.is_playing && app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
                     app.media_manager.getOffset()));
             else{
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
-                senderThread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
+                if (app.sender_thread != null)
+                    app.sender_thread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -210,7 +216,8 @@ public class ClientManager {
         //in the server : conn.updateParty(this.party);
 
         try {
-            senderThread.addCmd(Command.create_makePrivate_Command(false));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_makePrivate_Command(false));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -222,7 +229,8 @@ public class ClientManager {
         this.party.request = new ArrayList<User>();
 
         try {
-            senderThread.addCmd(Command.create_makePrivate_Command(true));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_makePrivate_Command(true));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -232,20 +240,23 @@ public class ClientManager {
         try {
             if(party != null && party.playlist!= null && party.playlist.is_playing)
                 app.media_manager.stop();
-            senderThread.addCmd(Command.create_leaveParty_Command());
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_leaveParty_Command());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void logout(){
-        senderThread.logout();
+        if (app.sender_thread != null)
+            app.sender_thread.logout();
     }
 
     public void changePartyName(String party_name) {
         this.party.party_name = party_name;
         try {
-            senderThread.addCmd(Command.create_renameParty_Command(party_name));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_renameParty_Command(party_name));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -260,32 +271,47 @@ public class ClientManager {
 
     public void sendReady(int track_id) {
         try {
-            senderThread.addCmd(Command.create_imReady_Command(track_id));
+            if (app.sender_thread != null)
+                app.sender_thread.addCmd(Command.create_imReady_Command(track_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public boolean isAdmin() {
-        return (is_admin);
+        return (user.is_admin);
     }
 
     public void closeParty() {
         party = null;
-        is_admin = false;
-        try {
-            this.senderThread.connected = false;
-            this.senderThread.task_queue.notify();
-            this.senderThread.join();
-            this.senderThread = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        user.is_admin = false;
+        terminateConnection();
+        startConnection();
+    }
 
-        this.senderThread = new SenderThread(app);
-        senderThread.start();
+    public void terminateConnection(){
+        //try {
+            ///this.senderThread.connected = false;
+
+            if(app.sender_thread != null) {
+                logout();
+                try {
+                    app.sender_thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.app.sender_thread = null;
+        /*} catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    public void startConnection(){
+        app.sender_thread = new SenderThread(app);
+        app.sender_thread.start();
         try {
-            senderThread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
+            app.sender_thread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
         } catch (JSONException e) {
             e.printStackTrace();
         }
