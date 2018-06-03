@@ -2,6 +2,7 @@ package serverObjects;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +15,7 @@ public class Playlist {
 	public Playlist() {
 		super();
 		songs = new ArrayList<>();
+		nextTrackID = new Random().nextInt(123456789);
 	}
 	//TODO
 	public Track addSong(String url){

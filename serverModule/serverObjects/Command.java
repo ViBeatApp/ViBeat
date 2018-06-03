@@ -177,10 +177,6 @@ public class Command {
 		cmd.setAttribute(jsonKey.ALTITUDE,altitude);
 		return cmd;
 	}
-	public static Command create_closeParty_Command() throws JSONException {
-		Command cmd = new Command(CommandType.CLOSE_PARTY);
-		return cmd;
-	}
 	public static Command create_leaveParty_Command() throws JSONException {
 		Command cmd = new Command(CommandType.LEAVE_PARTY);
 		return cmd;

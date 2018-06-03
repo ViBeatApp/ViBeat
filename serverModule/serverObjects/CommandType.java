@@ -21,7 +21,6 @@ public enum CommandType {
 	//both
 	PLAY_SONG, 
 	PAUSE,
-	CLOSE_PARTY, 
 	
 	//from server to client
 	GET_READY, 

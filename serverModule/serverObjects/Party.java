@@ -46,6 +46,8 @@ public class Party {
 	}
 
 	public String getPartyImage(){
+		if(connected.isEmpty())
+			return null;
 		return connected.get(0).get_image();
 	}
 	//TODO
