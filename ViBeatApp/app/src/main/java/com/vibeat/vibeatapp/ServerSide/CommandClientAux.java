@@ -1,4 +1,6 @@
 package com.vibeat.vibeatapp.ServerSide;
+import android.util.Log;
+
 import com.vibeat.vibeatapp.Objects.User;
 
 import org.json.JSONArray;
@@ -61,8 +63,10 @@ public class CommandClientAux {
 
 	private static JSONArray createUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
-		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
+		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.USERS);
+		Log.d("USERS", "in create users array");
 		for(int i = 0; i < objectArray.length(); ++i) {
+			Log.d("USERS", "in create users array "+i);
 			JSONObject userJsonObject = objectArray.getJSONObject(i);
 
 			String name = userJsonObject.getString(jsonKey.NAME.name());
@@ -70,7 +74,7 @@ public class CommandClientAux {
 			int id = userJsonObject.getInt(jsonKey.USER_ID.name());
 			boolean is_admin = userJsonObject.getBoolean(jsonKey.IS_ADMIN.name());
 
-			//userArray.put(new User(name,path,id,is_admin));
+			userArray.put(new User(name,path,id,is_admin));
 		}
 		return userArray;
 	}

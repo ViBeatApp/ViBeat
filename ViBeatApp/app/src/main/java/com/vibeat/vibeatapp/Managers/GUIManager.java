@@ -147,7 +147,13 @@ public class GUIManager{
         if (act instanceof CreatePartyActivity) {
             app.client_manager.createParty();
         }
+        int prev_size = app.client_manager.party.playlist.tracks.size();
+        Log.d("MediaManager", "prev playlist size = "+prev_size);
         app.client_manager.addTrack(track);
+        if(prev_size == 1){
+            Log.d("MediaManager", "prepare 2nd song");
+            app.media_manager.prepare2nd(track.track_id);
+        }
         Intent intent = new Intent(act, PlaylistActivity.class);
         act.startActivity(intent);
     }

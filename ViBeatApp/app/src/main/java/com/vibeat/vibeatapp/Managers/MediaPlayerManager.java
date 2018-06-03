@@ -21,26 +21,28 @@ public class MediaPlayerManager {
         m2 = new MyMediaPlayer(app);
     }
 
-    public void getReady(int track_id, int offset) {
-        int next_track = app.client_manager.party.playlist.tracks.get((
-                app.client_manager.getTrackPosFromId(track_id) + 1 )%
-                app.client_manager.party.playlist.tracks.size()).track_id;
+    public void getReady(int track_id, int offset){
         try {
-            Log.e("MediaManager","before m.getReady");
-            if (active_mp == 1) {
+            int num_tracks = app.client_manager.party.playlist.tracks.size();
+            int next_track = app.client_manager.party.playlist.tracks.get((
+                    app.client_manager.getTrackPosFromId(track_id) + 1) %
+                    app.client_manager.party.playlist.tracks.size()).track_id;
+            if (num_tracks == 0) {
+                return; //ERROR
+            } else if (num_tracks == 1) {
+                m1.getReady(track_id, offset);
+                active_mp = 1;
+            } else {
+                // if there was a pause command, m1.id == track_id or m2.id == track_id because we already played it.
                 if (track_id == m1.track_id) {
                     m1.getReady(track_id, offset);
                     m2.getReadyOffline(next_track, 0);
-                } else {
-                    m2.getReady(track_id, offset);
-                    m2.getReadyOffline(next_track, 0);
-                }
-            }
-            else {
-                if (track_id == m2.track_id) {
+                } else if (track_id == m2.track_id) {
                     m2.getReady(track_id, offset);
                     m1.getReadyOffline(next_track, 0);
-                } else {
+                }
+                // new songs to prepare on.
+                else {
                     m1.getReady(track_id, offset);
                     m2.getReadyOffline(next_track, 0);
                 }
@@ -48,6 +50,18 @@ public class MediaPlayerManager {
         }
         catch (IOException e){
             Log.e("MediaManager","getReady error");
+            e.printStackTrace();
+        }
+    }
+
+    public void prepare2nd(int next_track) {
+        try {
+            if(active_mp == 1)
+                m2.getReadyOffline(next_track, 0);
+            else
+                m1.getReadyOffline(next_track, 0);
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -100,22 +114,10 @@ public class MediaPlayerManager {
 
     public void pause() {
         Log.d("pause", "before pause");
-        if(m1.isPlaying()) {
-            try {
-                m1.pause();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-        if(m2.isPlaying()) {
-            try {
-                m2.pause();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
+        if(m1.isPlaying())
+            m1.pause();
+        if(m2.isPlaying())
+            m2.pause();
         //m1.pause();
         //m2.pause();
         Log.d("pause", "after pause");

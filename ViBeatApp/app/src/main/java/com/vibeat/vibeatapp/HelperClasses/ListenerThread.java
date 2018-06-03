@@ -107,12 +107,15 @@ public class ListenerThread extends Thread {
 
                 if(app.client_manager.party.playlist != null) {
                     int prev_size = app.client_manager.party.playlist.tracks.size();
+                    Log.d("MediaManager", "prev playlist size = "+prev_size);
                     app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
                     if(prev_size == 1 && app.client_manager.party.playlist.tracks.size() > 1){
-                        app.media_manager.getReady(
-                                app.client_manager.party.playlist.tracks.get(
-                                        app.client_manager.party.playlist.cur_track).track_id,0);
+                        Log.d("MediaManager", "prepare 2nd song");
+                        app.media_manager.prepare2nd(app.client_manager.party.playlist.tracks.get(
+                                (app.client_manager.party.playlist.cur_track + 1)%
+                                app.client_manager.party.playlist.tracks.size()).track_id);
                     }
+
                 }
                 else
                     app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
@@ -182,7 +185,9 @@ public class ListenerThread extends Thread {
 
     private List<User> getUserListFromJSON(JSONArray arr) throws JSONException{
         List<User> users = new ArrayList<User>();
+        Log.d("USERS", arr.length()+"");
         for (int i = 0; i < arr.length(); i++ ){
+            Log.d("USERS", "in json");
             User u = (User)arr.get(i);
             users.add(u);
         }
@@ -201,7 +206,9 @@ public class ListenerThread extends Thread {
     private void updateUserList(List<User> users, Party party){
         party.admin.clear();
         party.connected.clear();
+        Log.d("USERS", "before for "+users.toString());
         for (User user : users){
+            Log.d("USERS", user.name);
             if (user.is_admin) {
                 party.admin.add(user);
                 if (app.client_manager.user.id == user.id)

@@ -245,6 +245,8 @@ public class ClientManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        party = null;
+        user.is_admin = false;
     }
 
     public void logout(){

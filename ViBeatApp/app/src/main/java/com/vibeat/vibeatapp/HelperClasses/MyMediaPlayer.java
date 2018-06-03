@@ -51,6 +51,7 @@ public class MyMediaPlayer extends MediaPlayer {
     public void getReady(int track_id, int offset)throws IOException{
         Log.e("MediaManager","before prepare async");
         if (!preparing || this.track_id != track_id) {
+            Log.e("MediaManager","inside prepare async");
             setCurrentTrack(track_id);
             request_ready = true;
             preparing = true;
@@ -60,11 +61,11 @@ public class MyMediaPlayer extends MediaPlayer {
         else if (is_prepared && this.track_id == track_id){
             app.client_manager.sendReady(track_id);
         }
-        Log.e("MediaManager","afer prepare async");
+        Log.e("MediaManager","after prepare async");
     }
 
     public void getReadyOffline(int track_id, int offset)throws IOException{
-        Log.e("MediaManager","before prepare async");
+        Log.e("MediaManager","before prepare async offline");
         if (!(preparing || is_prepared) || this.track_id != track_id) {
             setCurrentTrack(track_id);
             request_ready = false;
@@ -72,7 +73,7 @@ public class MyMediaPlayer extends MediaPlayer {
             is_prepared = false;
             this.prepareAsync();
         }
-        Log.e("MediaManager","afer prepare async");
+        Log.e("MediaManager","after prepare async offline");
     }
 
     public void play(int track_id, int offset) throws IOException {
