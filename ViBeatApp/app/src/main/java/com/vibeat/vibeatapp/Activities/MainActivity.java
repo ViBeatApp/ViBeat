@@ -57,12 +57,14 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_FINE_LOCATION},
                 0);
-        /*try {
-            app.client_manager = new ClientManager(new User("dana", "http://www.pngmart.com/files/5/Hamburger-Transparent-PNG.png", 1, false), app);
-            app.gui_manager.login();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        
+        /*new Thread() {
+            public void run() {
+                FBManager FB = new FBManager();
+                //FB.addSongToDB("todo bom","static and benel","C:/Users/ido16/Downloads/Ido.jpg","C:/Users/ido16/Desktop/todoBom.mp3");
+                FB.SearchSongs("todo static");
+            }
+        }.start();*/
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -77,13 +79,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("after auth", "onCreate: ");
             app.gui_manager.login();
             Log.d("if authentication null", "3333333");
-            /*new Thread() {
-                public void run() {
-                    FBManager FB = new FBManager();
-                    FB.addSongToDB("todo bom","static and benel","C:/Users/ido16/Downloads/Ido.jpg","C:/Users/ido16/Desktop/todoBom.mp3");
-                    FB.SearchSongs("todo");
-                }
-            }.start();*/
         } else {
             SignInButton signInButton = findViewById(R.id.googleLogin);
             signInButton.setSize(SignInButton.SIZE_STANDARD);

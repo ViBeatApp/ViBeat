@@ -22,7 +22,20 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Semaphore;
+
+enum pathNames{
+    DB_tracks,   //Info about the track
+    DB_Title,
+    DB_Artist,
+    DB_Image_path,
+    DB_Track_path,
+    STORAGE_songs,
+    STORAGE_images;
+
+}
 
 public class FBManager {
     FirebaseStorage storage;
@@ -34,51 +47,65 @@ public class FBManager {
     }
 
     public List<Track> SearchSongs(String name) {
-        final List<Track> result = new ArrayList<>();
+        final List<Track> result = Collections.synchronizedList( new ArrayList<Track>());
         name = name.toLowerCase();
-        CollectionReference songs = db.collection("Tracks");
-        Query query = songs.whereGreaterThanOrEqualTo("Title",name).whereLessThanOrEqualTo("Title", name+"z");
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                String title = (String) document.getData().get("Title");
-                                String artist = (String) document.getData().get("Artist");
-                                String img_path = (String) document.getData().get("Img_path");
-                                String track_path = (String) document.getData().get("Track_path");
-                                Track track = new Track(-1,title,artist,img_path,track_path);
-                                result.add(track);
-                            }
-                            Log.d("DB", "Finish searching");
-                        } else {
-                            Log.w("DB", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        String[] parts = name.split(" ");
+        List<Semaphore> semaphores = new ArrayList<>();
 
-        query = songs.whereGreaterThanOrEqualTo("Artist",name).whereLessThanOrEqualTo("Artist", name+"z");
+        for(String word : parts) {
+            Log.d("DB", word);
+            searchByAttribute(pathNames.DB_Title.name(), word, result,semaphores);
+            searchByAttribute(pathNames.DB_Artist.name(), word, result,semaphores);
+        }
+
+        for(Semaphore releaseSemaphore : semaphores) {
+            try {
+                releaseSemaphore.acquire();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.d("DB", "result is list of size: " + result.size());
+        return result;
+    }
+
+    private void searchByAttribute(String attribute, String name,final List<Track> result,List<Semaphore> semaphores) {
+        final Semaphore semaphore = new Semaphore(0);
+        semaphores.add(semaphore);
+
+        CollectionReference tracksRef = db.collection(pathNames.DB_tracks.name());
+        Query query = tracksRef.whereGreaterThanOrEqualTo(attribute,name).whereLessThanOrEqualTo(attribute, name+"z");
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
                         Log.d("DB", document.getId() + " => " + document.getData());
-                        String title = (String) document.getData().get("Title");
-                        String artist = (String) document.getData().get("Artist");
-                        String img_path = (String) document.getData().get("Img_path");
-                        String track_path = (String) document.getData().get("Track_path");
+                        String title = (String) document.getData().get(pathNames.DB_Title.name());
+                        String artist = (String) document.getData().get(pathNames.DB_Artist.name());
+                        String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
+                        String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
                         Track track = new Track(-1,title,artist,img_path,track_path);
-                        result.add(track);
+                        addToResult(track,result);
                     }
                     Log.d("DB", "Finish searching");
                 } else {
                     Log.w("DB", "Error getting documents.", task.getException());
                 }
+                semaphore.release();
             }
         });
-        return result;
+    }
+
+    private void addToResult(Track track,final List<Track> result) {
+        synchronized (result){
+            for (Track tmpTrack : result){
+                if(tmpTrack.track_path.equals(track.img_path))
+                    return;
+            }
+            result.add(track);
+        }
     }
 
 

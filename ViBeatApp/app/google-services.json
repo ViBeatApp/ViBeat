@@ -19,7 +19,8 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.vibeat.vibeatapp",
-            "certificate_hash": "03c72297d3d10531fe39626238a07baf550f4136"
+            "certificate_hash": "03c72297d3d10531fe39626238a07baf550f4136",
+            "certificate_hash": "9f1746b32ef9074e7ea440de9e0177a2f1dd04ba"
           }
         },
         {
