@@ -30,7 +30,7 @@ public class SenderThread extends Thread {
     public void run() {
         try {
             Log.d("remark", "choose your own IpAddress ");
-            conn = new ReadWriteAux("172.17.172.27");
+            conn = new ReadWriteAux("52.23.168.179");
 
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
