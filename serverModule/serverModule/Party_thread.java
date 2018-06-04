@@ -20,7 +20,7 @@ import serverObjects.CommandType;
 import serverObjects.Location;
 import serverObjects.Party;
 import serverObjects.ReadWriteAux;
-import serverObjects.Track;
+//import serverObjects.Track;
 import serverObjects.User;
 import serverObjects.jsonKey;
 
@@ -356,7 +356,8 @@ public class Party_thread implements Runnable {
 	public void AddSong(Command cmd) throws JSONException {
 		if(!party.nonEmptyPlaylist())
 			touchCurrentSong = true;
-		Track newTrack = party.addSong(cmd.getStringAttribute(jsonKey.URL));
+		//Track newTrack = party.addSong(cmd.getStringAttribute(jsonKey.URL));
+		party.addSong(cmd.getStringAttribute(jsonKey.URL));
 		
 		//JSONObject trackJSON = newTrack.get_JSON();
 		//addToJSONArray(jsonKey.NEW_SONGS,trackJSON);
