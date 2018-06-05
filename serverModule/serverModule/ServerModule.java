@@ -32,7 +32,7 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("172.31.95.43",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.16",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -162,6 +162,10 @@ public class ServerModule {
 
 	public static void send_nearby_parties(User user,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
+		if(user == null) {
+			System.out.println("error send nearbyParties.!!!!!!!!!!!!!!!!!!!!!!!");
+			return;
+		}
 		user.setLocation(location);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
@@ -250,7 +254,15 @@ public class ServerModule {
 
 	//mini thread and locks.
 	static void addDisconenctedUser(User user) throws IOException {
-		disconnected_users.add(user);
+		synchronized (disconnected_users) {	
+			for(User disUser : disconnected_users){
+				if(disUser.id == user.id){
+					disUser.currentPartyId = user.currentPartyId;
+					return;
+				}
+			}	
+			disconnected_users.add(user);
+		}
 		user.closeChannel();
 	}
 
