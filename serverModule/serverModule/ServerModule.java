@@ -32,7 +32,7 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("172.16.0.175",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -93,6 +93,7 @@ public class ServerModule {
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.setChannel(client);
+				key.attach(disconnectedUser);
 				if(join_party(disconnectedUser,disconnectedUser.currentPartyId)) 
 					break;
 			}
@@ -163,7 +164,7 @@ public class ServerModule {
 	public static void send_nearby_parties(User user,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
 		if(user == null) {
-			System.out.println("error send nearbyParties.!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("error send nearbyParties.!!!!!!!!!!!!!!!!!!!!!!!!");
 			return;
 		}
 		user.setLocation(location);
