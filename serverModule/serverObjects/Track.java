@@ -6,10 +6,10 @@ public class Track {
 	String database_id;
 	int trackId;					//unique to track, not to name !
 	
-	public Track(String url,int trackID) {
+	public Track(String database_id,int trackID) {
 		super();
 		this.trackId = trackID;
-		this.database_id = url;
+		this.database_id = database_id;
 	}
 	
 	public JSONObject get_JSON() throws JSONException {
