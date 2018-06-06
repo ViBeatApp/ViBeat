@@ -85,8 +85,8 @@ public class CommandClientAux {
 		for(int i = 0; i < objectArray.length(); ++i) {
 			JSONObject songJsonObject = objectArray.getJSONObject(i);
 			int trackId = songJsonObject.getInt(jsonKey.TRACK_ID.name());
-			String path = songJsonObject.getString(jsonKey.URL.name());
-			songArray.put(new trackInfo(trackId,path));
+			String db_id = songJsonObject.getString(jsonKey.DB_ID.name());
+			songArray.put(new trackInfo(trackId,db_id));
 		}
 		return songArray;
 	}

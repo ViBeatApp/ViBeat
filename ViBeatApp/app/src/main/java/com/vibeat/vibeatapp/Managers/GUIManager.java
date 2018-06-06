@@ -106,7 +106,7 @@ public class GUIManager{
     }
 
     public void requestJoin(partyInfo party) {
-        app.client_manager.connectParty(party);
+        app.client_manager.requested_party = party;
         Intent intent = new Intent(act, LoadingActivity.class);
         act.startActivity(intent);
     }
@@ -133,13 +133,18 @@ public class GUIManager{
 
     public void rejected() {
         if( act instanceof LoadingActivity ) {
-            Toast.makeText(act,
-                    "Sorry, your request was not accepted...",
-                    Toast.LENGTH_LONG).show();
-            if(!(act instanceof EnterPartyActivity)) {
-                Intent intent = new Intent(act, EnterPartyActivity.class);
-                act.startActivity(intent);
-            }
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(act,
+                            "Sorry, your request was not accepted...",
+                            Toast.LENGTH_LONG).show();
+                    if (!(act instanceof EnterPartyActivity)) {
+                        Intent intent = new Intent(act, EnterPartyActivity.class);
+                        act.startActivity(intent);
+                    }
+                }
+            });
         }
     }
 
@@ -242,6 +247,8 @@ public class GUIManager{
 
     public void initLoadingActivity(){
         initToolBar();
+        app.client_manager.connectParty(app.client_manager.requested_party);
+        app.client_manager.requested_party = null;
 
         ImageButton back = (ImageButton) act.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -556,9 +563,20 @@ public class GUIManager{
                     }
                     recycler_adapter.notifyDataSetChanged();
                     act.findViewById(R.id.playlist_xml).refreshDrawableState();
+                    act.findViewById(R.id.admin_toolbar).refreshDrawableState();
+                    act.findViewById(R.id.connected_toolbar).refreshDrawableState();
                 }
             });
 
+        }
+        if (act instanceof LoadingActivity) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                Intent intent = new Intent(act, PlaylistActivity.class);
+                act.startActivity(intent);
+                }
+            });
         }
     }
 

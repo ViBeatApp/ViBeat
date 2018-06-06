@@ -48,6 +48,11 @@
         android:textColor="@color/colorPrimary"
         android:textSize="25sp"
         app:fontFamily="@font/josefin_sans" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/parties_list"
@@ -56,4 +61,5 @@
         android:divider="#00ff0000"
         android:dividerHeight="1dp"/>
 
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

@@ -4,6 +4,7 @@ public enum jsonKey {
 	NAME,
 	
 	IMAGE,
+	DB_ID,
 	URL,
 	
 	CLIENT_LOCATION,

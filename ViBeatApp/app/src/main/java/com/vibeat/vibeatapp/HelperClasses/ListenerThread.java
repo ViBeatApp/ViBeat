@@ -2,7 +2,6 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import android.util.Log;
 
-import com.vibeat.vibeatapp.Managers.DBManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
@@ -177,7 +176,7 @@ public class ListenerThread extends Thread {
         List<Track> tracks = new ArrayList<Track>();
         for (int i = 0; i < arr.length(); i++ ){
             trackInfo s = (trackInfo)arr.get(i);
-            Track track = DBManager.getTrackByURL(s.track_path, s.track_id);
+            Track track = app.fb_manager.getTrackByDBid(s.db_id, s.track_id);
             tracks.add(track);
         }
         return tracks;

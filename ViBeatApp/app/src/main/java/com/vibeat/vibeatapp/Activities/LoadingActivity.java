@@ -22,7 +22,6 @@ public class LoadingActivity extends AppCompatActivity {
 
         app = (MyApplication) this.getApplication();
         app.gui_manager.changeActivity(LoadingActivity.this,(List<Adapter>) null);
-
         app.gui_manager.initLoadingActivity();
     }
 }

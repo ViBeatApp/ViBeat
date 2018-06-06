@@ -14,4 +14,5 @@ public class MyApplication extends Application {
     public ListenerThread listener_thread = null;
     public SenderThread sender_thread = null;
     public GUIManager gui_manager = null;
+    public FBManager fb_manager = null;
 }

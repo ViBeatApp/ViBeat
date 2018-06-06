@@ -115,9 +115,9 @@ public class Command {
 		return cmd;
 	}
 	
-	public static Command create_addSons_Command(String url) throws JSONException {
+	public static Command create_addSons_Command(String db_id) throws JSONException {
 		Command cmd = new Command(CommandType.ADD_SONG);
-		cmd.setAttribute(jsonKey.URL, url);
+		cmd.setAttribute(jsonKey.DB_ID, db_id);
 		return cmd;
 	}
 	public static Command create_deleteSong_Command(int trackId) throws JSONException {

@@ -15,11 +15,10 @@ public class DBManager {
 
 
     public static void startDBManager(){
-
+/*
         Track song0 = new Track(0, "Haverot Shelach", "Omer Adam",
-                "https://dl.dropboxusercontent.com/s/5isfotrabj50osk/omeradam.jpg?dl=0"
-                /*"https://dl.dropboxusercontent.com/home/music_files/music_images?preview=omeradam.jpg"*/,
-                "http://docs.google.com/uc?/export=download&id=1u4oDSRXhZ5oXc8XWCI92mrbqheHQtzJL");
+                "https://firebasestorage.googleapis.com/v0/b/vibeatapp-2eb70.appspot.com/o/STORAGE_images%2Fomeradam.jpg?alt=media&token=975a433d-a122-4472-9dcf-4c1a9e3d92b1"
+                "https://firebasestorage.googleapis.com/v0/b/vibeatapp-2eb70.appspot.com/o/STORAGE_songs%2F%D7%A2%D7%95%D7%9E%D7%A8%20%D7%90%D7%93%D7%9D%20-%20%D7%97%D7%91%D7%A8%D7%95%D7%AA%20%D7%A9%D7%9C%D7%9A.mp3?alt=media&token=312004ec-a155-4ddb-bdd1-9ab48e33223c");
         Track song1 = new Track(1, "Toy", "Neta Barzilai",
                 "https://dl.dropboxusercontent.com/s/l05zkicj3pbnvav/netabrazilai.jpg?dl=0",
                 "http://docs.google.com/uc?/export=download&id=1Ri_gXnYHt1pdBw1b22uVzEnqzNs0pmxr");
@@ -86,7 +85,7 @@ public class DBManager {
         party1.addConnected(user4);
 
         parties.add(party0);
-        parties.add(party1);
+        parties.add(party1);*/
     }
 
     public static Track getTrack(int id){
@@ -96,7 +95,7 @@ public class DBManager {
     public static Track getTrackByURL(String url, int track_id){
         for(Track t : tracks){
             if( t.track_path.equals(url) )
-                return new Track(track_id,t.title,t.artist,t.img_path,t.track_path);
+                return new Track(null,track_id,t.title,t.artist,t.img_path,t.track_path);
         }
         return null;
     }

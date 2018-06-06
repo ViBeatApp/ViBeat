@@ -33,6 +33,12 @@ public class CreatePartyActivity extends AppCompatActivity {
                                 app.client_manager.user.name+"'s Party",
                                 true, -1);
         app.client_manager.party = party;
+        new Thread() {
+            public void run() {
+                Playlist search_res = app.client_manager.searchTracks("");
+            }
+        }.start();
+
         Playlist search_res = app.client_manager.searchTracks("");
 
         listOfSongs = (ListView) findViewById(R.id.list);

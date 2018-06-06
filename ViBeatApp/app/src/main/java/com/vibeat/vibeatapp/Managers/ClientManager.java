@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.vibeat.vibeatapp.FBManager;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
@@ -30,6 +31,7 @@ public class ClientManager {
     public Party party;
     public MyApplication app;
     public Location location;
+    public partyInfo requested_party = null;
 
     public ClientManager(User user, MyApplication app){
         this.user= user;
@@ -44,6 +46,7 @@ public class ClientManager {
         }
 
         app.media_manager = new MediaPlayerManager(app);
+        app.fb_manager = new FBManager();
 
 
         this.app = app;
@@ -61,7 +64,7 @@ public class ClientManager {
 
     public void connectParty(partyInfo party){
         try {
-            if (app.sender_thread != null)
+            if (app.sender_thread != null && party != null)
                 app.sender_thread.addCmd(Command.create_join_Command(party.id));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -72,7 +75,7 @@ public class ClientManager {
         this.party.playlist.addTrack(track);
         try {
             if (app.sender_thread != null)
-                app.sender_thread.addCmd(Command.create_addSons_Command(track.track_path));
+                app.sender_thread.addCmd(Command.create_addSons_Command(track.db_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -115,7 +118,7 @@ public class ClientManager {
 
     // not with server
     public Playlist searchTracks(String search_string){
-        return new Playlist(DBManager.getTracksByString(search_string),
+        return new Playlist(app.fb_manager.SearchSongs(search_string),
                 false,0);
     }
 

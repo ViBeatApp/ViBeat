@@ -1,39 +1,39 @@
 {
   "project_info": {
-    "project_number": "617076451703",
-    "firebase_url": "https://vibeat-206207.firebaseio.com",
-    "project_id": "vibeat-206207",
-    "storage_bucket": "vibeat-206207.appspot.com"
+    "project_number": "246145880865",
+    "firebase_url": "https://vibeatapp-2eb70.firebaseio.com",
+    "project_id": "vibeatapp-2eb70",
+    "storage_bucket": "vibeatapp-2eb70.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:617076451703:android:bee5dc80fa03db0a",
+        "mobilesdk_app_id": "1:246145880865:android:bee5dc80fa03db0a",
         "android_client_info": {
           "package_name": "com.vibeat.vibeatapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "617076451703-le62b96jgc9g65j0dc0eu2cu6vcs20eb.apps.googleusercontent.com",
+          "client_id": "246145880865-lv48ok1i2nigv14fq0t51gp82r4ud5oq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vibeat.vibeatapp",
-            "certificate_hash": "03c72297d3d10531fe39626238a07baf550f4136"
+            "certificate_hash": "9f1746b32ef9074e7ea440de9e0177a2f1dd04ba"
           }
         },
         {
-          "client_id": "617076451703-ld1b4uhsgdr7sv7lkjcdq26onpugrcvq.apps.googleusercontent.com",
+          "client_id": "246145880865-rhh5vbub79j04felcrlo69lej48hikid.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "617076451703-ld1b4uhsgdr7sv7lkjcdq26onpugrcvq.apps.googleusercontent.com",
+          "client_id": "246145880865-rhh5vbub79j04felcrlo69lej48hikid.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBF62dlv0fKP9NWcTxrnTYYQmT4knFatxQ"
+          "current_key": "AIzaSyCkrRWawX6BFPTLHt8dCVm5fYHTmFmSklA"
         }
       ],
       "services": {
@@ -44,7 +44,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "617076451703-ld1b4uhsgdr7sv7lkjcdq26onpugrcvq.apps.googleusercontent.com",
+              "client_id": "246145880865-rhh5vbub79j04felcrlo69lej48hikid.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

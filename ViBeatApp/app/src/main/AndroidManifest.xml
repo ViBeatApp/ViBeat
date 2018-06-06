@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".Activities.EnterPartyActivity" />
         <activity android:name=".Activities.CreatePartyActivity"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustPan"
+            android:fitsSystemWindows="false"/>
         <activity android:name=".Activities.PlaylistActivity" />
 
         <meta-data
@@ -35,7 +36,8 @@
             android:value="1300552146744496" />
 
         <activity android:name=".Activities.ConnectedActivity"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustPan"
+            android:fitsSystemWindows="false"/>
         <activity android:name=".Activities.AddMusicActivity" />
         <activity android:name=".Activities.LoadingActivity" />
     </application>
