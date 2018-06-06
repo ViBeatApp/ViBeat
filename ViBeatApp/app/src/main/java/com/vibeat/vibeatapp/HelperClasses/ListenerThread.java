@@ -154,12 +154,6 @@ public class ListenerThread extends Thread {
             case REJECTED:
                 app.gui_manager.rejected();
                 break;
-            /*case CLOSE_PARTY:
-                if(openparty) {
-                    app.gui_manager.closeParty();
-                    openparty = false;
-                }
-                break;*/
 
             case DISCONNECTED:
                 if (!disconnected ) {

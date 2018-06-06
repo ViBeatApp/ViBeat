@@ -23,10 +23,19 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
+import static com.vibeat.vibeatapp.pathNames.DB_Artist;
+import static com.vibeat.vibeatapp.pathNames.DB_Title;
+import static com.vibeat.vibeatapp.pathNames.DB_hash1;
+import static com.vibeat.vibeatapp.pathNames.DB_hash2;
+import static com.vibeat.vibeatapp.pathNames.DB_hash3;
+import static com.vibeat.vibeatapp.pathNames.DB_hash4;
 import static com.vibeat.vibeatapp.pathNames.DB_tracks;
 
 enum pathNames{
@@ -35,6 +44,10 @@ enum pathNames{
     DB_Artist,
     DB_Image_path,
     DB_Track_path,
+    DB_hash1,
+    DB_hash2,
+    DB_hash3,
+    DB_hash4,
     STORAGE_songs,
     STORAGE_images;
 
@@ -50,6 +63,7 @@ public class FBManager {
     }
 
     public List<Track> SearchSongs(String name) {
+        Log.d("DB", "getApp: " + storage.getApp());
         final List<Track> result = Collections.synchronizedList( new ArrayList<Track>());
         //name = name.toLowerCase();
         if(name.equals(""))
@@ -57,9 +71,10 @@ public class FBManager {
         String[] parts = name.split(" ");
         List<Semaphore> semaphores = new ArrayList<>();
 
+
         for(String word : parts) {
             Log.d("DB", word);
-            searchByAttribute(pathNames.DB_Title.name(), word, result,semaphores);
+            searchByAttribute(DB_Title.name(), word, result,semaphores);
             searchByAttribute(pathNames.DB_Artist.name(), word, result,semaphores);
         }
 
@@ -80,6 +95,8 @@ public class FBManager {
         semaphores.add(semaphore);
 
         CollectionReference tracksRef = db.collection(DB_tracks.name());
+        Log.d("DB", "start searching");
+
         Query query = tracksRef.whereGreaterThanOrEqualTo(attribute,name).whereLessThanOrEqualTo(attribute, name+"z");
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -88,11 +105,12 @@ public class FBManager {
                     for (DocumentSnapshot document : task.getResult()) {
                         Log.d("DB", document.getId() + " => " + document.getData());
                         String db_id = document.getId();
-                        String title = (String) document.getData().get(pathNames.DB_Title.name());
+                        String title = (String) document.getData().get(DB_Title.name());
                         String artist = (String) document.getData().get(pathNames.DB_Artist.name());
                         String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
                         String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
                         Track track = new Track(db_id,-1,title,artist,img_path,track_path);
+                        Log.d("DB", "add song: " + title);
                         addToResult(track,result);
                     }
                     Log.d("DB", "Finish searching");
@@ -100,6 +118,12 @@ public class FBManager {
                     Log.w("DB", "Error getting documents.", task.getException());
                 }
                 semaphore.release();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                Log.d("DB", "Failed searching !!!");
             }
         });
     }
@@ -112,6 +136,39 @@ public class FBManager {
             }
             result.add(track);
         }
+    }
+
+    public Track getTrackByDBid(String db_id, final int track_id) {
+        final Semaphore semaphore = new Semaphore(0);
+        final List<Track> track = new ArrayList<>();
+        DocumentReference docRef = db.collection(pathNames.DB_tracks.name()).document(db_id);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d("DB", "DocumentSnapshot data: " + document.getData());
+                        String db_id = document.getId();
+                        String title = (String) document.getData().get(DB_Title.name());
+                        String artist = (String) document.getData().get(pathNames.DB_Artist.name());
+                        String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
+                        String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
+                        track.add(new Track(db_id,track_id,title,artist,img_path,track_path));
+                    } else {
+                        Log.d("DB", "No such document");
+                    }
+                } else {
+                    Log.d("DB", "get failed with ", task.getException());
+                }
+            }
+        });
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return track.get(0);
     }
 
 
@@ -152,39 +209,5 @@ public class FBManager {
             }
         });
 
-    }
-
-
-    public Track getTrackByDBid(String db_id, final int track_id) {
-        final Semaphore semaphore = new Semaphore(0);
-        final List<Track> track = new ArrayList<>();
-        DocumentReference docRef = db.collection(pathNames.DB_tracks.name()).document(db_id);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d("DB", "DocumentSnapshot data: " + document.getData());
-                        String db_id = document.getId();
-                        String title = (String) document.getData().get(pathNames.DB_Title.name());
-                        String artist = (String) document.getData().get(pathNames.DB_Artist.name());
-                        String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
-                        String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
-                        track.add(new Track(db_id,track_id,title,artist,img_path,track_path));
-                    } else {
-                        Log.d("DB", "No such document");
-                    }
-                } else {
-                    Log.d("DB", "get failed with ", task.getException());
-                }
-            }
-        });
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return track.get(0);
     }
 }
