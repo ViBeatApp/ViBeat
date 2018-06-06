@@ -15,12 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "617076451703-sf6fvu49blh2djor3j19p3t7gm09qper.apps.googleusercontent.com",
+          "client_id": "617076451703-le62b96jgc9g65j0dc0eu2cu6vcs20eb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vibeat.vibeatapp",
-            "certificate_hash": "03c72297d3d10531fe39626238a07baf550f4136",
-            "certificate_hash": "9f1746b32ef9074e7ea440de9e0177a2f1dd04ba"
+            "certificate_hash": "03c72297d3d10531fe39626238a07baf550f4136"
           }
         },
         {
