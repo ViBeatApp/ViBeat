@@ -32,7 +32,7 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("172.31.95.43",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("172.16.0.196",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
