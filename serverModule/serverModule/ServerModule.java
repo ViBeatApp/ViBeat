@@ -32,11 +32,7 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-<<<<<<< HEAD
 		serverSocketChannel.socket().bind(new InetSocketAddress("172.16.0.196",2000));
-=======
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.16",2000));
->>>>>>> branch 'master' of https://github.com/ViBeatApp/ViBeat.git
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
