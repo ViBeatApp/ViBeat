@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
@@ -23,9 +24,11 @@
         <!-- Gets rid of the search icon -->
         <item name="searchIcon">@drawable/ic_search</item>
         <!-- Gets rid of the "underline" in the text -->
-        <item name="queryBackground">@color/white</item>
+        <!--item name="queryBackground">@color/white</item-->
         <!-- Gets rid of the search icon when the SearchView is expanded -->
-        <item name="searchHintIcon">@null</item>
+        <item name="searchHintIcon">@drawable/ic_search</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:editTextColor">@android:color/white</item>
     </style>
 
 </resources>

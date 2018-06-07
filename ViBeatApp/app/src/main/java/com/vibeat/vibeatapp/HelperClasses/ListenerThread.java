@@ -106,7 +106,7 @@ public class ListenerThread extends Thread {
 
                 if(app.client_manager.party.playlist != null) {
                     int prev_size = app.client_manager.party.playlist.tracks.size();
-                    Log.d("MediaManager", "prev playlist size = "+prev_size);
+                    Log.d("MediaManager", "sync_party prev playlist size = "+prev_size);
                     app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
                     if(prev_size == 1 && app.client_manager.party.playlist.tracks.size() > 1){
                         Log.d("MediaManager", "prepare 2nd song");
@@ -140,6 +140,7 @@ public class ListenerThread extends Thread {
                 break;
 
             case PLAY_SONG:
+                app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.gui_manager.play(play_track_id);

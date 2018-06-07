@@ -156,7 +156,7 @@ public class test implements Runnable {
 		Command add_song = new Command(CommandType.ADD_SONG);
 		Command reply;
 		System.out.println("admin - sending new_command");
-		add_song.setAttribute(jsonKey.URL, "www.youtube1");
+		add_song.setAttribute(jsonKey.DB_ID, "www.youtube1");
 		ReadWriteAux.writeSocket(socket, add_song);
 		
 		System.out.println("admin - send URL1");
@@ -164,7 +164,7 @@ public class test implements Runnable {
 		System.out.println("admin - got reply");
 		System.out.println("admin - command: " + reply.cmd_type + " info:" + reply.cmd_info);
 		
-		add_song.setAttribute(jsonKey.URL, "www.youtube2");
+		add_song.setAttribute(jsonKey.DB_ID, "www.youtube2");
 		ReadWriteAux.writeSocket(socket, add_song);
 		reply = ReadWriteAux.readSocket(socket);
 		System.out.println("admin - got reply");

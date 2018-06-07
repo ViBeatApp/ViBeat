@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".Activities.CreatePartyActivity"
     android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:weightSum="100">
 
     <include layout="@layout/toolbar"></include>
 
@@ -14,8 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"/>
-
-    <include layout="@layout/change_name"></include>
+    <LinearLayout android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="10">
+        <include layout="@layout/change_name"></include>
+    </LinearLayout>
 
     <Space
         android:layout_width="match_parent"
@@ -34,8 +38,34 @@
         android:textSize="25dp"
         app:fontFamily="@font/josefin_sans" />
 
+    <LinearLayout
+        android:id="@+id/dancing_balls"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="0dp"
+        android:layout_weight="80"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="top"
+        android:background="@color/background"
+        android:weightSum="100">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="30"
+            android:src="@drawable/dancing_balls" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="70"/>
+
+    </LinearLayout>
+
     <ListView
-        android:id = "@+id/list"
+        android:id = "@+id/songlist"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="80"/>

@@ -1,6 +1,8 @@
 package com.vibeat.vibeatapp.Activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
@@ -42,5 +44,21 @@ public class EnterPartyActivity extends AppCompatActivity {
         l.add(adap);
         app.gui_manager.changeActivity(EnterPartyActivity.this,l);
         app.gui_manager.initEnterPartyActivity();
-    }
+
+        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                app.client_manager.getPartiesNearby();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override public void run() {
+                        swipeLayout.setRefreshing(false);
+                    }
+                }, 5000);
+            }
+        });
+
+
+}
 }

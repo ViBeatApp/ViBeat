@@ -32,6 +32,7 @@ public class ClientManager {
     public MyApplication app;
     public Location location;
     public partyInfo requested_party = null;
+    public boolean waiting_for_response = false;
 
     public ClientManager(User user, MyApplication app){
         this.user= user;
@@ -86,8 +87,10 @@ public class ClientManager {
             app.media_manager.pause();
             int pos = (party.playlist.cur_track+1)%party.playlist.tracks.size();
             int id = party.playlist.tracks.get(pos).track_id;
-            if (app.sender_thread != null)
+            if (app.sender_thread != null) {
                 app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
+                waiting_for_response = true;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -158,7 +161,7 @@ public class ClientManager {
                         @Override
                         public void onLocationChanged(Location new_location) {
                             location = new_location;
-                            Toast.makeText(activity, "Location Changed", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "Location Changed", Toast.LENGTH_SHORT).show();
 
                             if( user.is_admin && app.sender_thread != null) {
                                 try {
@@ -194,12 +197,13 @@ public class ClientManager {
         }
     }
 
-    public void commandPlayPause(){
+    public void commandPlayPause() {
         try {
-            if (this.party.playlist.is_playing && app.sender_thread != null)
+            if (this.party.playlist.is_playing && app.sender_thread != null) {
                 app.sender_thread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
-                    app.media_manager.getOffset()));
-            else{
+                        app.media_manager.getOffset()));
+                waiting_for_response = true;
+            } else {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
                 if (app.sender_thread != null)
                     app.sender_thread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
@@ -241,6 +245,7 @@ public class ClientManager {
 
     public void leaveParty(){
         try {
+            waiting_for_response = false;
             if(party != null && party.playlist!= null && party.playlist.is_playing)
                 app.media_manager.stop();
             if (app.sender_thread != null)

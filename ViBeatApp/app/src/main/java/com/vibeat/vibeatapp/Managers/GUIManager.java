@@ -5,8 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,9 +34,11 @@ import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
+import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
@@ -153,7 +158,7 @@ public class GUIManager{
             app.client_manager.createParty();
         }
         int prev_size = app.client_manager.party.playlist.tracks.size();
-        Log.d("MediaManager", "prev playlist size = "+prev_size);
+        Log.d("MediaManager", "song_chosen prev playlist size = "+prev_size);
         app.client_manager.addTrack(track);
         if(prev_size == 1){
             Log.d("MediaManager", "prepare 2nd song");
@@ -171,6 +176,10 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    act.findViewById(R.id.loading_music).setVisibility(View.GONE);
+                    act.findViewById(R.id.play_pause).setVisibility(View.VISIBLE);
+
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
                     play_pause.setImageResource(R.drawable.ic_pause_blue);
                 }
@@ -307,7 +316,11 @@ public class GUIManager{
                 Intent intent = new Intent(act, EnterPartyActivity.class);
                 act.startActivity(intent);
             }
-        });    }
+        });
+
+        searchAndUpdate("");
+
+    }
 
     public void initConnectedActivity() {
         initToolBar();
@@ -391,22 +404,24 @@ public class GUIManager{
     public void initAddMusicActivity(){
         initToolBar();
 
-        /*final SearchView search_bar = (SearchView) act.findViewById(R.id.search_bar);
+        final SearchView search_bar = (SearchView) act.findViewById(R.id.search_bar);
 
         search_bar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 search_bar.clearFocus();
-                ((PlaylistList)((CostumeListAdapter)adapters.get(0)).list_obj).playlist = app.client_manager.searchTracks(query);
-                ((BaseAdapter)adapters.get(0)).notifyDataSetChanged();
+                searchAndUpdate(query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                EditText searchEditText = (EditText) search_bar.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+                searchEditText.setTextColor(Color.WHITE);
+                searchEditText.setHintTextColor(Color.WHITE);
                 return false;
             }
-        });*/
+        });
 
         ImageButton back = (ImageButton) act.findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -416,6 +431,8 @@ public class GUIManager{
                 act.startActivity(intent);
             }
         });
+
+        searchAndUpdate("");
     }
 
     public void initPlaylistActivity(){
@@ -432,6 +449,15 @@ public class GUIManager{
 
         party_name.setText(app.client_manager.party.party_name);
         party_name_conn.setText(app.client_manager.party.party_name);
+
+        if(app.client_manager.waiting_for_response){
+            act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
+            act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+        }
+        else{
+            act.findViewById(R.id.loading_music).setVisibility(View.GONE);
+            act.findViewById(R.id.play_pause).setVisibility(View.VISIBLE);
+        }
 
         if(app.client_manager.party.playlist.is_playing)
             play_pause.setImageResource(R.drawable.ic_pause_blue);
@@ -469,8 +495,15 @@ public class GUIManager{
             public void onClick(View v) {
                 app.client_manager.party.playlist.is_playing = !app.client_manager.party.playlist.is_playing;
                 app.client_manager.commandPlayPause();
-                if(app.client_manager.party.playlist.is_playing)
-                    play_pause.setImageResource(R.drawable.ic_pause_blue);
+                if(app.client_manager.party.playlist.is_playing){
+                     act.runOnUiThread(new Runnable() {
+                         @Override
+                         public void run() {
+                             act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
+                             act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+                         }
+                     });
+                }
                 else
                     play_pause.setImageResource(R.drawable.ic_play_blue);
             }
@@ -607,5 +640,37 @@ public class GUIManager{
                         .show();
             }
         });
+    }
+
+
+    public void searchAndUpdate(String query){
+        AsyncTask<String, Integer, Playlist> searchForSongs_thread = new AsyncTask<String, Integer, Playlist>() {
+            @Override
+            protected Playlist doInBackground(String... strings) {
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        act.findViewById(R.id.dancing_balls).setVisibility(View.VISIBLE);
+                        act.findViewById(R.id.songlist).setVisibility(View.GONE);
+                    }
+                });
+
+                return app.client_manager.searchTracks(strings[0]);
+            }
+
+            protected void onPostExecute(final Playlist search_res) {
+                Log.d("DB","post execute");
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        act.findViewById(R.id.dancing_balls).setVisibility(View.GONE);
+                        act.findViewById(R.id.songlist).setVisibility(View.VISIBLE);
+
+                        ((PlaylistList) ((CostumeListAdapter) adapters.get(0)).list_obj).playlist = search_res;
+                        ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
+                    }
+                });
+            }
+        }.execute(query);
     }
 }

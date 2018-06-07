@@ -13,6 +13,15 @@ import java.util.List;
 
 public class imageLoader {
     public static void loadImage(final Activity act, final List<String> img_paths,final List<ImageView> views){
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(ImageView view : views){
+                    view.setImageResource(R.drawable.blank);
+                }
+            }
+        });
+
         new Thread() {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){
@@ -40,6 +49,15 @@ public class imageLoader {
     }
 
     public static void loadImageSquare(final Activity act, final List<String> img_paths,final List<ImageView> views){
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for(ImageView view : views){
+                    view.setImageResource(R.drawable.blank);
+                }
+            }
+        });
+
         new Thread() {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){

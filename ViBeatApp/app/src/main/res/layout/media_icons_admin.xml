@@ -37,15 +37,28 @@
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_mute_blue" />
 
-        <ImageButton
-            android:id="@+id/play_pause"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="2dp"
-            android:layout_weight="20"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_play_blue" />
+            android:orientation="vertical"
+            android:layout_weight="20">
+
+            <ImageButton
+                android:id="@+id/play_pause"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="2dp"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/ic_play_blue" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/loading_music"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/loading_music3" />
+
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/next"

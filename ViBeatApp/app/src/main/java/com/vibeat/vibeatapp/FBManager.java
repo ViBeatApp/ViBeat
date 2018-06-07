@@ -23,19 +23,11 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Semaphore;
 
-import static com.vibeat.vibeatapp.pathNames.DB_Artist;
 import static com.vibeat.vibeatapp.pathNames.DB_Title;
-import static com.vibeat.vibeatapp.pathNames.DB_hash1;
-import static com.vibeat.vibeatapp.pathNames.DB_hash2;
-import static com.vibeat.vibeatapp.pathNames.DB_hash3;
-import static com.vibeat.vibeatapp.pathNames.DB_hash4;
 import static com.vibeat.vibeatapp.pathNames.DB_tracks;
 
 enum pathNames{
@@ -66,8 +58,8 @@ public class FBManager {
         Log.d("DB", "getApp: " + storage.getApp());
         final List<Track> result = Collections.synchronizedList( new ArrayList<Track>());
         //name = name.toLowerCase();
-        if(name.equals(""))
-            name = "Omer";
+        /*if(name.equals(""))
+            name = "Omer";*/
         String[] parts = name.split(" ");
         List<Semaphore> semaphores = new ArrayList<>();
 
