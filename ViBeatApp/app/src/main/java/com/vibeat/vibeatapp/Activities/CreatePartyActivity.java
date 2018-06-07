@@ -1,21 +1,18 @@
 package com.vibeat.vibeatapp.Activities;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 import android.widget.Adapter;
 import android.widget.ListView;
 
-import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
+import com.vibeat.vibeatapp.ListHelpers.CostumeListAdapter;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
-import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,34 +34,16 @@ public class CreatePartyActivity extends AppCompatActivity {
                                 true, -1);
         app.client_manager.party = party;
 
+        listOfSongs = (ListView) findViewById(R.id.songlist);
+        CostumeListAdapter adap = new CostumeListAdapter(CreatePartyActivity.this,
+                new PlaylistList(new Playlist()));
 
-        AsyncTask<String, Integer, Playlist> searchForSongs_thread = new AsyncTask<String, Integer, Playlist>() {
-            @Override
-            protected Playlist doInBackground(String... strings) {
-                return app.client_manager.searchTracks(strings[0]);
-                //put here the waiting animation.
-                //put here the waiting animation.
-                //put here the waiting animation.
-                //put here the waiting animation.
-            }
+        listOfSongs.setAdapter(adap);
 
-            protected void onPostExecute(Playlist search_res) {
-                //your code goes here, This is after search.
-                //your code goes here, This is after search.
-                //your code goes here, This is after search.
-                //your code goes here, This is after search.
-                listOfSongs = (ListView) findViewById(R.id.list);
-                CostumeListAdapter adap = new CostumeListAdapter(CreatePartyActivity.this,
-                        new PlaylistList(search_res));
-
-                listOfSongs.setAdapter(adap);
-
-                List<Adapter> l = new ArrayList<Adapter>();
-                l.add(adap);
-                app.gui_manager.changeActivity(CreatePartyActivity.this, l);
-                app.gui_manager.initCreatePartyActivity();
-            }
-        }.execute("");
+        List<Adapter> l = new ArrayList<Adapter>();
+        l.add(adap);
+        app.gui_manager.changeActivity(CreatePartyActivity.this, l);
+        app.gui_manager.initCreatePartyActivity();
 
     }
 
