@@ -147,6 +147,7 @@ public class FBManager {
                         String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
                         String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
                         track.add(new Track(db_id,track_id,title,artist,img_path,track_path));
+                        semaphore.release();
                     } else {
                         Log.d("DB", "No such document");
                     }
