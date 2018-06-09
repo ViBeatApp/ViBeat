@@ -91,8 +91,7 @@ public class ServerModule {
 		switch(cmd.cmd_type){
 
 		case AUTHENTICATION:
-			System.out.println("handleReadCommands - all-users: " + allClients.toString());
-			System.out.println("handleReadCommands - disconnected: " + disconnected_users.toString());
+			
 			int userId = cmd.getIntAttribute(jsonKey.USER_ID);	
 
 			User disconnectedUser = isDisconnectedUser(userId);
@@ -100,8 +99,8 @@ public class ServerModule {
 				disconnectedUser.setChannel(client);
 				key.attach(disconnectedUser);
 				System.out.println("disconnectedUser");
-				if(join_party(disconnectedUser,disconnectedUser.currentPartyId)) 
-					break;
+				join_party(disconnectedUser,disconnectedUser.currentPartyId);
+				break;
 			}
 			else{
 				User existingUser = searchAllUsers(userId);
@@ -154,6 +153,8 @@ public class ServerModule {
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;
 		}
+		System.out.println("handleReadCommands - all-users: " + allClients.toString());
+		System.out.println("handleReadCommands - disconnected: " + disconnected_users.toString());
 	}
 
 	public static User isDisconnectedUser(int id) {

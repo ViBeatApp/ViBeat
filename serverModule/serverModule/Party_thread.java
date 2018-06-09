@@ -134,7 +134,7 @@ public class Party_thread implements Runnable {
 			party.status = Party.Party_Status.playing;
 			sendPlayToList();
 			last_offset_update_time = Instant.now();
-			System.out.println("play-condition: update last_offset_update_time: " + last_offset_update_time.toString());
+			//System.out.println("play-condition: update last_offset_update_time: " + last_offset_update_time.toString());
 		}
 		if(syncChange)
 			syncPartyToAll();
@@ -345,6 +345,7 @@ public class Party_thread implements Runnable {
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		System.out.println("startPlayProtocol thread - currentTrackId: " + cmd.getIntAttribute(jsonKey.TRACK_ID));
 		update_get_ready_command(); // not updating the offset
+		syncPartyToAll();		//for checking if we're at the current track.
 		SendCommandToAll(get_ready_command);
 	}
 
@@ -512,8 +513,7 @@ public class Party_thread implements Runnable {
 	public void update_get_ready_command() throws JSONException {	
 		if (party.status == Party.Party_Status.playing) {
 			Instant current_time = Instant.now();
-			
-			//total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
+			total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
 			//System.out.println("update_get_ready_command: update total-offset: " + total_offset);
 			last_offset_update_time = current_time;
 			//System.out.println("update_get_ready_command: update current-last_offset_update_time: " + last_offset_update_time.toString());
