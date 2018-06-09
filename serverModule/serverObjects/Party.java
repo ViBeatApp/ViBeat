@@ -21,6 +21,7 @@ public class Party {
 	public Party_Status status;
 	public Playlist playlist;
 	public int numOfAdmins = 0;
+	public List<User> comeBackUsers;
 	public List<User> connected;
 	public List<User> waitingClients;
 	public List<User> request; //only if private
@@ -37,6 +38,7 @@ public class Party {
 		this.connected = new ArrayList<>();
 		this.request = new ArrayList<>();
 		this.waitingClients = Collections.synchronizedList(new ArrayList<User>());
+		this.comeBackUsers = Collections.synchronizedList(new ArrayList<User>());
 		this.is_private = is_private;
 		this.selector = Selector.open();
 		this.keep_on = true;
@@ -167,6 +169,17 @@ public class Party {
 		fullJson.put(jsonKey.REQUESTS.name(), User.getUserArray(request));
 		fullJson.put(jsonKey.CURRENT_TRACK_ID.name(), new JSONArray().put(this.get_current_track_id()));
 		return fullJson;
+	}
+	
+	public void addComeBackUsers(User existingUser) throws IOException {
+		synchronized (comeBackUsers) {	
+			for(User comeBackUser : comeBackUsers){
+				if(comeBackUser.id == existingUser.id){
+					return;
+				}
+			}	
+			comeBackUsers.add(existingUser);
+		}
 	}
 
 	

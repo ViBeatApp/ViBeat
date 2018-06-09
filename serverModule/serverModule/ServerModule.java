@@ -7,6 +7,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,7 @@ public class ServerModule {
 	static List<Party> current_parties = Collections.synchronizedList(new ArrayList<Party>());
 	static List<User>  disconnected_users = Collections.synchronizedList(new ArrayList<User>());
 	static List<User>  comeback_users = Collections.synchronizedList(new ArrayList<User>());
+	static List<User>  allClients = new ArrayList<User>();
 	static int partyID = 0;
 	static Selector selector;
 
@@ -32,8 +34,8 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.19",2000));
 
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.12", 2000)); // private address of server
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -79,7 +81,7 @@ public class ServerModule {
 				iter.remove();
 			}
 		}
-		
+
 	}
 
 	protected static void handleReadCommands(Selector selector, SelectionKey key) throws IOException, JSONException {
@@ -89,18 +91,39 @@ public class ServerModule {
 		switch(cmd.cmd_type){
 
 		case AUTHENTICATION:
-			int userId = cmd.getIntAttribute(jsonKey.USER_ID);		
+			System.out.println("handleReadCommands - all-users: " + allClients.toString());
+			System.out.println("handleReadCommands - disconnected: " + disconnected_users.toString());
+			int userId = cmd.getIntAttribute(jsonKey.USER_ID);	
+
 			User disconnectedUser = isDisconnectedUser(userId);
 			if(disconnectedUser != null) {
 				disconnectedUser.setChannel(client);
 				key.attach(disconnectedUser);
+				System.out.println("disconnectedUser");
 				if(join_party(disconnectedUser,disconnectedUser.currentPartyId)) 
 					break;
 			}
+			else{
+				User existingUser = searchAllUsers(userId);
+				if(existingUser != null) {
+					System.out.println("searchAllUsers");
+					existingUser.setChannel(client);
+					key.attach(existingUser);
+					Party party = FindPartyByID(existingUser.currentPartyId);
+					if(party == null)
+						break;
+					key.interestOps(key.interestOps() ^ SelectionKey.OP_READ);
+					party.addComeBackUsers(existingUser);
+					party.selector.wakeup();
+					break;
+				}
+			}
 
+			System.out.println("new User");
 			String name = cmd.getStringAttribute(jsonKey.NAME);
 			String image = cmd.getStringAttribute(jsonKey.IMAGE);
 			User newUser = new User(name,userId,image, client);
+			allClients.add(newUser);
 			key.attach(newUser);					///check this
 			break;
 
@@ -133,12 +156,13 @@ public class ServerModule {
 		}
 	}
 
-	private static User isDisconnectedUser(int id) {
+	public static User isDisconnectedUser(int id) {
 		synchronized (disconnected_users) {
 			Iterator<User> iter = disconnected_users.iterator();
 			while (iter.hasNext()){
 				User user = iter.next();
 				if(user.id == id) {	
+					System.out.println("party-thread removeDisconnectedUser - user has disconnected");
 					iter.remove();
 					return user;
 				}
@@ -147,9 +171,18 @@ public class ServerModule {
 		return null;
 	}
 
+	private static User searchAllUsers(int userId) {
+		for(User user: allClients){
+			if(user.id == userId) {	
+				return user;
+			}
+		}
+		return null;
+	}
+
 	private static Command getPartiesByName(String name) throws JSONException {
 		JSONArray resultArray = new JSONArray();
-		
+
 		synchronized (current_parties) {
 			for (Party party : current_parties){
 				if (party.party_name.contains(name)) {
@@ -175,7 +208,7 @@ public class ServerModule {
 				System.out.println(party.getPublicJson());
 			}
 		}
-		
+
 		Command result = Command.create_searchResult_command(partyArray);
 		System.out.print("send to " +user.name + " command: ");
 		cmd.printCommand();
@@ -186,33 +219,33 @@ public class ServerModule {
 		double lat1 = loc1.latitude; 
 		double lat2 = loc2.latitude;
 		double lon1 = loc1.longitude;
-        double lon2 = loc2.longitude;
-        double el1 = loc1.altitude;
-        double el2 = loc2.altitude;
-	    final int R = 6371; // Radius of the earth
+		double lon2 = loc2.longitude;
+		double el1 = loc1.altitude;
+		double el2 = loc2.altitude;
+		final int R = 6371; // Radius of the earth
 
-	    double latDistance = Math.toRadians(lat2 - lat1);
-	    double lonDistance = Math.toRadians(lon2 - lon1);
-	    double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-	            + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-	            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	    double distance = R * c * 1000; // convert to meters
+		double latDistance = Math.toRadians(lat2 - lat1);
+		double lonDistance = Math.toRadians(lon2 - lon1);
+		double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+				+ Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+				* Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double distance = R * c * 1000; // convert to meters
 
-	    double height = el1 - el2;
+		double height = el1 - el2;
 
-	    distance = Math.pow(distance, 2) + Math.pow(height, 2);
+		distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
-	    return Math.sqrt(distance);
+		return Math.sqrt(distance);
 	}
-	
-	
+
+
 	/* creating a new party
 	 * making admin the client who created the party */
 	public static void create_party(User party_creator, Command cmd, Selector selector) throws JSONException, IOException {
 		String name = cmd.getStringAttribute(jsonKey.NAME);
 		boolean is_private = cmd.getBoolAttribute(jsonKey.IS_PRIVATE);
-		
+
 		SelectionKey key = party_creator.get_channel().keyFor(selector);
 		key.interestOps(key.interestOps() ^ SelectionKey.OP_READ);
 
@@ -228,9 +261,9 @@ public class ServerModule {
 		if (party == null)
 			return false;
 		SelectionKey key = client.get_channel().keyFor(selector);
-		
+
 		System.out.println("serverModule - looked for partyID: " + partyId);
-		
+
 		synchronized (party.waitingClients) {
 			if (party.keep_on) {
 				key.interestOps(key.interestOps() ^ SelectionKey.OP_READ);
@@ -272,7 +305,7 @@ public class ServerModule {
 		comeback_users.add(user);
 		selector.wakeup();
 	}
-	
+
 	static void deleteParty(Party party) {
 		boolean remove = current_parties.remove(party);
 		System.out.println("removing party: " + party.party_name + " result: " + remove);

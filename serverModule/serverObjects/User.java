@@ -60,9 +60,16 @@ public class User {
 		channel.close();
 	}
 	public void setChannel(SocketChannel channel) throws IOException {
+		if(this.channel != null) {
+			closeChannel();
+		}
 		this.channel = channel;
 	}
 	public SocketChannel getChannel() throws IOException {
 		return channel;
+	}
+	public String toString(){
+		return this.name;
+		
 	}
 }

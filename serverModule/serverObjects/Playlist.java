@@ -27,18 +27,14 @@ public class Playlist {
 	}
 
 	public void setCurrentTrack(int trackID) {
-		int currentIndex = -1;
 		for(int i = 0;i < get_list_size(); ++i){
 			Track track = songs.get(i);
 			if(track.trackId == trackID) {
 				currentTrack = trackID;
 				return;
 			}
-			if(track.trackId == currentTrack){
-				currentIndex = i;
-			}
 		}
-		currentTrack = (currentIndex + 1) % get_list_size();
+		System.out.println("error setCurrentTrack");
 	}
 
 	public int get_current_track_id() {
@@ -54,18 +50,19 @@ public class Playlist {
 		while (iter.hasNext()){
 			Track track = iter.next();
 			if(track.trackId == trackID) {
-				//int index = songs.indexOf(track);
+				int index = songs.indexOf(track);
 				if(trackID == currentTrack){
 					System.out.println("You need to send playNextSong before deleting the current song!!!!!!!!!!!!!!!");
-					//int nextIndex = (index+1) % get_list_size();
-					//currentTrack = songs.get(nextIndex).trackId;
-					return -1;
+					int nextIndex = (index+1) % get_list_size();
+					currentTrack = songs.get(nextIndex).trackId;
+					iter.remove();
+					return 1;
 				}
 				iter.remove();
-				return 1;
+				return 0;
 			}
 		}
-		return -1;
+		return 0;
 	}
 
 	public int changeSongsOrder(int trackID_1, int trackID_2){

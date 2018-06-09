@@ -19,10 +19,12 @@ import serverObjects.Command;
 import serverObjects.CommandType;
 import serverObjects.Location;
 import serverObjects.Party;
+import serverObjects.Party.Party_Status;
 import serverObjects.ReadWriteAux;
 //import serverObjects.Track;
 import serverObjects.User;
 import serverObjects.jsonKey;
+
 
 public class Party_thread implements Runnable {
 
@@ -74,10 +76,42 @@ public class Party_thread implements Runnable {
 			syncChange = false;
 			touchCurrentSong = false;
 			update_party = new Command(CommandType.UPDATE_PARTY);
+			handler_comeBack_clients();
 			handler_new_clients();
 			handle_current_clients();
 		}
 		System.out.println("party has stopped");
+	}
+
+	private void handler_comeBack_clients() throws Exception {
+		List<User> comeBackUsers = getComeBackClients();
+		Iterator<User> iter = comeBackUsers.iterator();
+		while (iter.hasNext()){
+			User user = iter.next();
+			removeDisconnectedUser(user);
+			register_for_selection(user);
+			boolean isAdmin = user.is_admin;
+			party.removeClient(user, false);
+			addClientToParty(user,isAdmin);
+			iter.remove();
+		}
+		
+	}
+
+	private void removeDisconnectedUser(final User user) {
+		CompletableFuture.runAsync(new Runnable() {
+			@Override
+			public void run() {
+				ServerModule.isDisconnectedUser(user.id);
+			}
+		});
+		
+	}
+
+	private List<User> getComeBackClients() {
+		List<User> comeBackUser = new ArrayList<>();
+		clone_User_list(party.comeBackUsers, comeBackUser,true);
+		return comeBackUser;
 	}
 
 	private void handle_current_clients() throws IOException, JSONException, Exception {
@@ -159,7 +193,7 @@ public class Party_thread implements Runnable {
 	}
 
 	public boolean play_condition() {
-		return (0.5*party.numOfClients() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
+		return (0.8*party.numOfClients() < ready_for_play.size()) && party.status == Party.Party_Status.preparing;
 	}
 
 	public void do_command(Command cmd, SelectionKey key) throws Exception {
@@ -202,10 +236,15 @@ public class Party_thread implements Runnable {
 				makePublicHandle();
 			break;
 		case DISCONNECTED:	
-			returnToServerModule(user,true);
+			synchronized (party.comeBackUsers) {
+				if(isComeBackUser(party.comeBackUsers,user.id))
+					break;
+				returnToServerModule(user,true);
+			}
 			break;
-		case LEAVE_PARTY:	
-			returnToServerModule(user,false);
+		case LEAVE_PARTY:
+			if(SendCommandToUser(user, Command.create_leaveParty_Command()))
+				returnToServerModule(user,false);
 			break;
 		default:
 			break;
@@ -289,14 +328,22 @@ public class Party_thread implements Runnable {
 				&& cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id()) {
 			return;
 		}
+		
+		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
+		
 		if (cmd.getIntAttribute(jsonKey.TRACK_ID) != party.get_current_track_id()) {
 			syncChange = true;
+			if(party.status == Party.Party_Status.pause || party.status == Party.Party_Status.not_started){
+				party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
+				return;
+			}
 		}
+		
+		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
-		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
+		System.out.println("startPlayProtocol thread - currentTrackId: " + cmd.getIntAttribute(jsonKey.TRACK_ID));
 		update_get_ready_command(); // not updating the offset
 		SendCommandToAll(get_ready_command);
 	}
@@ -310,7 +357,8 @@ public class Party_thread implements Runnable {
 			SendCommandToUser(user, play_command);
 			break;
 		case preparing:
-			ready_for_play.add(user);
+			if(!ready_for_play.contains(user))
+				ready_for_play.add(user);
 			break;
 		default:
 			break;
@@ -334,11 +382,16 @@ public class Party_thread implements Runnable {
 		SendCommandToAll(pause_command);
 	}
 
-	public void DeleteSong(Command cmd) throws JSONException {
+	public void DeleteSong(Command cmd) throws JSONException, IOException {
 		int trackID = cmd.getIntAttribute(jsonKey.TRACK_ID);
 		if(trackID == party.get_current_track_id())
 			touchCurrentSong = true;
-		party.deleteSong(trackID);
+		if(party.deleteSong(trackID) == 1){
+			if(party.status == Party_Status.playing || party.status == Party_Status.preparing){
+				party.status = Party_Status.not_started;
+				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), 0));
+			}
+		}
 		
 		//addToJSONArray(jsonKey.DELETE_SONGS,cmd.cmd_info);
 	}
@@ -387,22 +440,26 @@ public class Party_thread implements Runnable {
 			return;
 		}
 		
-		if(disconnected) {
-			CompletableFuture.runAsync(new Runnable() {
-				@Override
-				public void run() {
-					System.out.println("party-thread - user " + user.name + " has disconnected");
-					try {
-						ServerModule.addDisconenctedUser(user);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-		}
+		if(disconnected)
+			addDisconenctedUser(user);
 	}
 
+	private void addDisconenctedUser(final User user) {
+		CompletableFuture.runAsync(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("party-thread addDisconenctedUser - user " + user.name + " has disconnected");
+				try {
+					ServerModule.addDisconenctedUser(user);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+	}
+	
 	private void destroyParty() throws IOException, JSONException {
 		synchronized (party.waitingClients) {
 			if(party.waitingClients.size() != 0){
@@ -429,13 +486,14 @@ public class Party_thread implements Runnable {
 		}
 	}
 
-	public void SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
+	public boolean SendCommandToUser(User user, Command cmd) throws IOException, JSONException {
 		System.out.print("send to " +user.name + " command: ");
 		cmd.printCommand();
 		if(ReadWriteAux.writeSocket(user.get_channel(), cmd) == -1){
 			returnToServerModule(user, true);
-			return;
+			return false;
 		}
+		return true;
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {
@@ -476,5 +534,18 @@ public class Party_thread implements Runnable {
 		}
 		play_command.setAttribute(jsonKey.OFFSET, total_offset);
 		play_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
+	}
+	
+	private static boolean isComeBackUser(List<User> comeBackUser, int id) {
+		synchronized (comeBackUser) {
+			Iterator<User> iter = comeBackUser.iterator();
+			while (iter.hasNext()){
+				User user = iter.next();
+				if(user.id == id) {	
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
