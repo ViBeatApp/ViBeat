@@ -122,12 +122,17 @@ public class FBManager {
 
     private void addToResult(Track track,final List<Track> result) {
         synchronized (result){
-            for (Track tmpTrack : result){
-                if(tmpTrack.track_path.equals(track.img_path))
-                    return;
-            }
-            result.add(track);
+            if(!isTrackInResult(result, track))
+                result.add(track);
         }
+    }
+
+    private boolean isTrackInResult(List<Track> result, Track track) {
+        for (Track t : result){
+            if (t.db_id.equals(track.db_id))
+                return true;
+        }
+        return false;
     }
 
     public Track getTrackByDBid(String db_id, final int track_id) {

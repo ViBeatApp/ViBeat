@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Adapter;
@@ -23,5 +24,12 @@ public class LoadingActivity extends AppCompatActivity {
         app = (MyApplication) this.getApplication();
         app.gui_manager.changeActivity(LoadingActivity.this,(List<Adapter>) null);
         app.gui_manager.initLoadingActivity();
+    }
+
+    @Override
+    public void onBackPressed(){
+        app.client_manager.leaveParty();
+        Intent intent = new Intent(this, EnterPartyActivity.class);
+        startActivity(intent);
     }
 }

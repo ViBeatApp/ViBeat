@@ -32,7 +32,7 @@ public class ServerModule {
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27",2000));
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.19",2000));
 
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
@@ -178,6 +178,7 @@ public class ServerModule {
 		
 		Command result = Command.create_searchResult_command(partyArray);
 		System.out.print("send to " +user.name + " command: ");
+		cmd.printCommand();
 		ReadWriteAux.writeSocket(user.get_channel(), result);
 	}
 

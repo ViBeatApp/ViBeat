@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
@@ -23,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -157,13 +160,13 @@ public class GUIManager{
         if (act instanceof CreatePartyActivity) {
             app.client_manager.createParty();
         }
-        int prev_size = app.client_manager.party.playlist.tracks.size();
-        Log.d("MediaManager", "song_chosen prev playlist size = "+prev_size);
+        /*int prev_size = app.client_manager.party.playlist.tracks.size();
+        Log.d("MediaManager", "song_chosen prev playlist size = "+prev_size);*/
         app.client_manager.addTrack(track);
-        if(prev_size == 1){
+        /*if(prev_size == 1){
             Log.d("MediaManager", "prepare 2nd song");
             app.media_manager.prepare2nd(track.track_id);
-        }
+        }*/
         Intent intent = new Intent(act, PlaylistActivity.class);
         act.startActivity(intent);
     }
@@ -499,6 +502,10 @@ public class GUIManager{
                      act.runOnUiThread(new Runnable() {
                          @Override
                          public void run() {
+                             ProgressBar b = act.findViewById(R.id.loading_music);
+                             //b.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                             b.getIndeterminateDrawable()
+                                     .setColorFilter(ContextCompat.getColor(act, R.color.colorPrimary), PorterDuff.Mode.SRC_IN );
                              act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
                              act.findViewById(R.id.play_pause).setVisibility(View.GONE);
                          }

@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Adapter;
@@ -37,5 +38,11 @@ public class AddMusicActivity extends AppCompatActivity {
 
         app.gui_manager.changeActivity(AddMusicActivity.this, l);
         app.gui_manager.initAddMusicActivity();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, PlaylistActivity.class);
+        startActivity(intent);
     }
 }

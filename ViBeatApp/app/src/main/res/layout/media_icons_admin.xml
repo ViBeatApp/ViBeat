@@ -52,11 +52,25 @@
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/ic_play_blue" />
 
-            <pl.droidsonroids.gif.GifImageView
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/loading_music"
+                android:progressDrawable="@drawable/circle_progress_bar"
+                android:layout_below="@+id/button"
+                android:layout_alignRight="@+id/textView"
+                android:layout_alignEnd="@+id/textView"
+                android:layout_alignLeft="@+id/textview"
+                android:layout_alignStart="@+id/textview"
+                android:layout_alignParentBottom="true"
+                android:indeterminateTint="@color/colorPrimary"/>
+
+            <!--pl.droidsonroids.gif.GifImageView
                 android:id="@+id/loading_music"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/loading_music3" />
+                android:src="@drawable/loading_music3" /-->
 
         </LinearLayout>
 

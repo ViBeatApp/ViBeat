@@ -22,6 +22,7 @@ public class MediaPlayerManager {
     }
 
     public void getReady(int track_id, int offset){
+        //before getting ready, seekto offset.
         try {
             int num_tracks = app.client_manager.party.playlist.tracks.size();
             int next_track = app.client_manager.party.playlist.tracks.get((
@@ -30,21 +31,31 @@ public class MediaPlayerManager {
             if (num_tracks == 0) {
                 return; //ERROR
             } else if (num_tracks == 1) {
-                m1.getReady(track_id, offset);
-                active_mp = 1;
+                if (track_id == m1.track_id) {
+                    m1.getReady(track_id, offset);
+                    active_mp = 1;
+                }
+                else if (track_id == m2.track_id) {
+                    m2.getReady(track_id, offset);
+                    active_mp = 2;
+                }
+                else{
+                    m1.getReady(track_id, offset);
+                    active_mp = 1;
+                }
             } else {
                 // if there was a pause command, m1.id == track_id or m2.id == track_id because we already played it.
                 if (track_id == m1.track_id) {
                     m1.getReady(track_id, offset);
-                    m2.getReadyOffline(next_track, 0);
+                    m2.getReady(next_track, 0);
                 } else if (track_id == m2.track_id) {
                     m2.getReady(track_id, offset);
-                    m1.getReadyOffline(next_track, 0);
+                    m1.getReady(next_track, 0);
                 }
                 // new songs to prepare on.
                 else {
                     m1.getReady(track_id, offset);
-                    m2.getReadyOffline(next_track, 0);
+                    m2.getReady(next_track, 0);
                 }
             }
         }
@@ -57,9 +68,9 @@ public class MediaPlayerManager {
     public void prepare2nd(int next_track) {
         try {
             if(active_mp == 1)
-                m2.getReadyOffline(next_track, 0);
+                m2.getReady(next_track, 0);
             else
-                m1.getReadyOffline(next_track, 0);
+                m1.getReady(next_track, 0);
         }
         catch (IOException e) {
             e.printStackTrace();

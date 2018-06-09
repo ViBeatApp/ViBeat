@@ -15,7 +15,7 @@ public class MyMediaPlayer extends MediaPlayer {
     public boolean is_mute = false;
     public boolean preparing = false;
     public boolean is_prepared = false;
-    public Boolean request_ready = false;
+    public int offset = 0;
 
     public MyMediaPlayer(final MyApplication app){
         super();
@@ -31,7 +31,8 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                app.client_manager.nextSong();
+                if(isCurTrack())
+                    app.client_manager.nextSong();
             }
         });
 
@@ -41,10 +42,10 @@ public class MyMediaPlayer extends MediaPlayer {
     private synchronized void whenPrepared() {
         is_prepared = true;
         preparing = false;
-        Log.e("MediaManager", request_ready ? "Requested" : "Offline");
-        if (request_ready)
+        this.seekTo(this.offset);
+        Log.e("MediaManager", "after prepare");
+        if(isCurTrack())
             app.client_manager.sendReady(track_id);
-        request_ready = false;
     }
 
     public synchronized void setCurrentTrack(int track_id)throws IOException {
@@ -57,47 +58,32 @@ public class MyMediaPlayer extends MediaPlayer {
     }
 
     public synchronized void getReady(int track_id, int offset)throws IOException {
-
+        this.offset = offset;
         Log.e("MediaManager", "before prepare async");
-        if (!preparing || this.track_id != track_id) {
+        if (is_prepared && this.track_id == track_id)
+            app.client_manager.sendReady(track_id);
+        else if (!preparing || this.track_id != track_id) {
             Log.e("MediaManager", "inside prepare async");
             setCurrentTrack(track_id);
-            request_ready = true;
-            preparing = true;
-            is_prepared = false;
-            this.prepareAsync();
-        } else if (is_prepared && this.track_id == track_id)
-            app.client_manager.sendReady(track_id);
-        else if (preparing)
-            request_ready = true;
-
-        Log.e("MediaManager", "after prepare async");
-
-    }
-
-    public synchronized void getReadyOffline(int track_id, int offset)throws IOException {
-
-        Log.e("MediaManager", "before prepare async offline");
-        if (!(preparing || is_prepared) || this.track_id != track_id) {
-            setCurrentTrack(track_id);
-            request_ready = false;
             preparing = true;
             is_prepared = false;
             this.prepareAsync();
         }
-        Log.e("MediaManager", "after prepare async offline");
+        Log.e("MediaManager", "after prepare async");
 
     }
 
     public synchronized void play(int track_id, int offset) throws IOException {
-
+        if(this.offset != offset) {
+            this.offset = offset;
+            this.seekTo(this.offset);
+        }
         if (this.track_id != track_id || !is_prepared) {
             setCurrentTrack(track_id);
             this.prepare();
             this.is_prepared = true;
         }
         this.start();
-        this.seekTo(offset);
 
     }
 
@@ -109,6 +95,10 @@ public class MyMediaPlayer extends MediaPlayer {
     public void unmute(){
         this.setVolume(1, 1 );
         is_mute = false;
+    }
+
+    public boolean isCurTrack(){
+        return app.client_manager.getTrackPosFromId(this.track_id) == app.client_manager.party.playlist.cur_track;
     }
 
 }

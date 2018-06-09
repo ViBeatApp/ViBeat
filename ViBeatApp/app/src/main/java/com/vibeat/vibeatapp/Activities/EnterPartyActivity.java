@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,10 +56,18 @@ public class EnterPartyActivity extends AppCompatActivity {
                     @Override public void run() {
                         swipeLayout.setRefreshing(false);
                     }
-                }, 5000);
+                }, 1000);
             }
         });
 
 
-}
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent homeIntene = new Intent(Intent.ACTION_MAIN);
+        homeIntene.addCategory(Intent.CATEGORY_HOME);
+        homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntene);
+    }
 }

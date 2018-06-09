@@ -16,7 +16,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.vibeat.vibeatapp.FBManager;
 import com.vibeat.vibeatapp.Managers.AuthenticationManager;
 import com.vibeat.vibeatapp.Managers.ClientManager;
 import com.vibeat.vibeatapp.Managers.DBManager;
@@ -94,5 +93,13 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent homeIntene = new Intent(Intent.ACTION_MAIN);
+        homeIntene.addCategory(Intent.CATEGORY_HOME);
+        homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(homeIntene);
     }
 }

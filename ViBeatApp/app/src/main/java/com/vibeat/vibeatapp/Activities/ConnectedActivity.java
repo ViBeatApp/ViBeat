@@ -1,5 +1,6 @@
 package com.vibeat.vibeatapp.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
@@ -46,5 +47,11 @@ public class ConnectedActivity extends AppCompatActivity {
         l.add(request_adapter);
         app.gui_manager.changeActivity(ConnectedActivity.this, l);
         app.gui_manager.initConnectedActivity();
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(this, PlaylistActivity.class);
+        startActivity(intent);
     }
 }

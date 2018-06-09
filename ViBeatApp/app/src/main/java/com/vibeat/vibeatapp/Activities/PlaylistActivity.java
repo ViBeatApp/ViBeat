@@ -3,15 +3,16 @@ package com.vibeat.vibeatapp.Activities;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelper;
 import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelperListener;
-import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
@@ -54,5 +55,12 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
     public void onDrag(RecyclerView.ViewHolder viewHolder) {
         if(viewHolder.getAdapterPosition() != app.client_manager.party.playlist.cur_track)
             itemTouchHelper.startDrag(viewHolder);
+    }
+
+    @Override
+    public void onBackPressed(){
+        app.client_manager.leaveParty();
+        Intent intent = new Intent(this, EnterPartyActivity.class);
+        startActivity(intent);
     }
 }
