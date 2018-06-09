@@ -9,7 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.vibeat.vibeatapp.FBManager;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
@@ -83,6 +83,7 @@ public class ClientManager {
     }
 
     public void nextSong(){
+        Log.d("GET_READY","next song");
         if(isAdmin()) {
             try {
                 app.media_manager.pause();
@@ -90,7 +91,8 @@ public class ClientManager {
                 int id = party.playlist.tracks.get(pos).track_id;
                 if (app.sender_thread != null) {
                     app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
-                    waiting_for_response = true;
+                    if(party.playlist.is_playing)
+                        waiting_for_response = true;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -114,6 +116,7 @@ public class ClientManager {
     public void removeTrack(int pos){
         try {
             int track_id = party.playlist.tracks.get(pos).track_id;
+            app.media_manager.stop();
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id));
         } catch (JSONException e) {
@@ -179,12 +182,12 @@ public class ClientManager {
 
                         @Override
                         public void onProviderEnabled(String provider) {
-                            Toast.makeText(activity, "Privider Enabled", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "Privider Enabled", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onProviderDisabled(String provider) {
-                            Toast.makeText(activity, "Privider Disabled", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(activity, "Privider Disabled", Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -200,15 +203,16 @@ public class ClientManager {
     }
 
     public void commandPlayPause() {
+        Log.d("GET_READY","playpause");
         try {
             if (this.party.playlist.is_playing && app.sender_thread != null) {
-                app.sender_thread.addCmd(Command.create_playSong_Command(this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id,
-                        app.media_manager.getOffset()));
+                int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
+                app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.media_manager.getOffset(track_id)));
                 waiting_for_response = true;
             } else {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
                 if (app.sender_thread != null)
-                    app.sender_thread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset()));
+                    app.sender_thread.addCmd(Command.create_pause_Command(track_id, app.media_manager.getOffset(track_id)));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -250,13 +254,12 @@ public class ClientManager {
             waiting_for_response = false;
             if(party != null && party.playlist!= null && party.playlist.is_playing)
                 app.media_manager.stop();
+            app.media_manager = new MediaPlayerManager(app);
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_leaveParty_Command());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        party = null;
-        user.is_admin = false;
     }
 
     public void logout(){

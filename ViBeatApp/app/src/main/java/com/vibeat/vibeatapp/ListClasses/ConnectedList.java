@@ -45,12 +45,11 @@ public class ConnectedList implements ListAdapterable {
             img_paths.add(party.admin.get(position).img_path);
             name.setText(party.admin.get(position).name);
             //admin.setTextColor(R.color.text);
-            crown.setImageResource(R.drawable.chess);
+            crown.setImageResource(R.drawable.white_crown_full);
         } else {
             img_paths.add(party.connected.get(position - party.admin.size()).img_path);
             name.setText(party.connected.get(position - party.admin.size()).name);
-            //admin.setTextColor(Color.TRANSPARENT);
-            crown.setImageResource(R.drawable.chess_not);
+            crown.setImageResource(R.drawable.white_crown);
         }
         views.add(img);
         imageLoader.loadImage(activity, img_paths, views);
@@ -60,7 +59,7 @@ public class ConnectedList implements ListAdapterable {
             public void onClick(View v) {
                 if (ind >= party.admin.size()) {
                     app.client_manager.makeAdmin(party.connected.get(ind - party.admin.size()));
-                    crown.setImageResource(R.drawable.chess);
+                    crown.setImageResource(R.drawable.white_crown_full);
                 }
             }
         });

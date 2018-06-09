@@ -42,7 +42,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="11dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/chess_not" />
+            app:srcCompat="@drawable/white_crown" />
 
     </LinearLayout>
 

@@ -143,8 +143,13 @@ public class ListenerThread extends Thread {
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                app.gui_manager.play(play_track_id);
                 app.media_manager.play(play_track_id,play_offset);
+                app.gui_manager.play(play_track_id);
+                break;
+
+            case LEAVE_PARTY:
+                app.client_manager.party = null;
+                app.client_manager.user.is_admin = false;
                 break;
 
             case PAUSE:

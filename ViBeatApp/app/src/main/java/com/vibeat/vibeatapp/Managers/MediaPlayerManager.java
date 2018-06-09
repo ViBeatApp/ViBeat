@@ -22,12 +22,13 @@ public class MediaPlayerManager {
     }
 
     public void getReady(int track_id, int offset){
-        //before getting ready, seekto offset.
         try {
             int num_tracks = app.client_manager.party.playlist.tracks.size();
             int next_track = app.client_manager.party.playlist.tracks.get((
                     app.client_manager.getTrackPosFromId(track_id) + 1) %
                     app.client_manager.party.playlist.tracks.size()).track_id;
+            Log.d("GET_READY","#tracks = "+num_tracks+" , next_track_id = "+next_track);
+
             if (num_tracks == 0) {
                 return; //ERROR
             } else if (num_tracks == 1) {
@@ -45,15 +46,19 @@ public class MediaPlayerManager {
                 }
             } else {
                 // if there was a pause command, m1.id == track_id or m2.id == track_id because we already played it.
+                Log.d("GET_READY","#tracks = "+num_tracks+" , next_track_id = "+next_track);
                 if (track_id == m1.track_id) {
+                    Log.d("GET_READY","1");
                     m1.getReady(track_id, offset);
                     m2.getReady(next_track, 0);
                 } else if (track_id == m2.track_id) {
+                    Log.d("GET_READY","2");
                     m2.getReady(track_id, offset);
                     m1.getReady(next_track, 0);
                 }
                 // new songs to prepare on.
                 else {
+                    Log.d("GET_READY","else");
                     m1.getReady(track_id, offset);
                     m2.getReady(next_track, 0);
                 }
@@ -116,11 +121,15 @@ public class MediaPlayerManager {
         m2.unmute();
     }
 
-    public int getOffset() {
-        if(active_mp == 2)
-            return m2.getCurrentPosition();
+    public int getOffset(int track_id) {
+        if(getPlayingTrackId()==track_id) {
+            if (active_mp == 2)
+                return m2.getCurrentPosition();
+            else
+                return m1.getCurrentPosition();
+        }
         else
-            return m1.getCurrentPosition();
+            return 0;
     }
 
     public void pause() {
@@ -143,6 +152,7 @@ public class MediaPlayerManager {
     }
 
     public void stop() {
+        Log.d("GET_READY","stop");
         if(active_mp == 2)
             m2.reset();
         else

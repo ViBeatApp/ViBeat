@@ -24,6 +24,7 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnPreparedListener(new OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                Log.e("MediaManager", "on prepared");
                 whenPrepared();
             }
         });
@@ -31,50 +32,75 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnCompletionListener(new OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                Log.e("GET_READY", "on complete "+app.client_manager.party.playlist.tracks.get(
+                        app.client_manager.party.playlist.cur_track).track_id);
                 if(isCurTrack())
                     app.client_manager.nextSong();
             }
         });
 
+        /*this.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                Log.e("GET_READY", "on error "+app.client_manager.party.playlist.tracks.get(
+                        app.client_manager.party.playlist.cur_track).track_id);
+                return true;
+            }
+        });*/
+
         this.unmute();
     }
 
     private synchronized void whenPrepared() {
-        is_prepared = true;
-        preparing = false;
-        this.seekTo(this.offset);
-        Log.e("MediaManager", "after prepare");
-        if(isCurTrack())
-            app.client_manager.sendReady(track_id);
+        Log.e("MediaManager", "inside when prepared");
+        if(app.client_manager.party != null) {
+            Log.e("MediaManager", "inside when prepared if statement");
+            is_prepared = true;
+            preparing = false;
+            this.seekTo(this.offset);
+            Log.e("MediaManager", "after prepare");
+            if (isCurTrack())
+                app.client_manager.sendReady(track_id);
+        }
     }
 
     public synchronized void setCurrentTrack(int track_id)throws IOException {
-
-        this.track_id = track_id;
+        Log.d("GET_READY","setCurrentTruck");
         this.reset();
         this.setAudioStreamType(AudioManager.STREAM_MUSIC);
         this.setDataSource(app.client_manager.getURLByTrackId(track_id));
 
+        this.track_id = track_id;
     }
 
     public synchronized void getReady(int track_id, int offset)throws IOException {
         this.offset = offset;
         Log.e("MediaManager", "before prepare async");
-        if (is_prepared && this.track_id == track_id)
+        if (is_prepared && this.track_id == track_id) {
+            Log.d("GET_READY","im ready send");
             app.client_manager.sendReady(track_id);
+        }
         else if (!preparing || this.track_id != track_id) {
-            Log.e("MediaManager", "inside prepare async");
+            Log.e("MediaManager", "inside if in get ready");
             setCurrentTrack(track_id);
             preparing = true;
             is_prepared = false;
+            Log.e("MediaManager", "before calling prepare async");
+            /*try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
             this.prepareAsync();
+            Log.e("MediaManager", "after calling prepare async");
         }
-        Log.e("MediaManager", "after prepare async");
+        Log.e("MediaManager", "finish get ready");
 
     }
 
     public synchronized void play(int track_id, int offset) throws IOException {
         if(this.offset != offset) {
+            Log.d("OFFSET",""+offset);
             this.offset = offset;
             this.seekTo(this.offset);
         }

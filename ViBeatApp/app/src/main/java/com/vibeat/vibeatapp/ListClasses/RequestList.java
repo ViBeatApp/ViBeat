@@ -65,8 +65,8 @@ public class RequestList implements ListAdapterable {
             }
         });
 
-        ok.setImageResource(R.drawable.ic_ok);
-        no.setImageResource(R.drawable.ic_no);
+        ok.setImageResource(R.drawable.ic_ok_blue);
+        no.setImageResource(R.drawable.ic_no_blue);
 
         img_paths.add(party.request.get(position).img_path);
         views.add(img);

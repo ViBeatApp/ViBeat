@@ -174,8 +174,8 @@ public class GUIManager{
     public void play(int play_track_id) {
 
         app.client_manager.party.playlist.cur_track = app.client_manager.party.playlist.searchTrack(play_track_id);
+        app.client_manager.party.playlist.is_playing = true;
         if (act instanceof PlaylistActivity){
-            app.client_manager.party.playlist.is_playing = true;
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -334,6 +334,10 @@ public class GUIManager{
             req_title.setVisibility(View.GONE);
             ((ConnectedActivity)act).request_list.setVisibility(View.GONE);
         }
+        else{
+            req_title.setVisibility(View.VISIBLE);
+            ((ConnectedActivity)act).request_list.setVisibility(View.VISIBLE);
+        }
 
         final EditText partyName = (EditText) act.findViewById(R.id.editText);
         partyName.setText(app.client_manager.party.party_name);
@@ -369,6 +373,8 @@ public class GUIManager{
         final ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
         if (!app.client_manager.party.is_private)
             isPrivate.setImageResource(R.drawable.ic_unlock_blue);
+        else
+            isPrivate.setImageResource(R.drawable.ic_lock_blue);
 
         isPrivate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -467,6 +473,7 @@ public class GUIManager{
         else
             play_pause.setImageResource(R.drawable.ic_play_blue);
 
+
         if(app.media_manager.isMute()) {
             mute.setImageResource(R.drawable.ic_mute_blue);
             mute_conn.setImageResource(R.drawable.ic_mute_blue);
@@ -519,6 +526,14 @@ public class GUIManager{
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(app.client_manager.party.playlist.is_playing) {
+                    ProgressBar b = act.findViewById(R.id.loading_music);
+                    //b.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                    b.getIndeterminateDrawable()
+                            .setColorFilter(ContextCompat.getColor(act, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
+                    act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+                }
                 app.client_manager.nextSong();
                 recycler_adapter.notifyDataSetChanged();
             }
@@ -530,11 +545,11 @@ public class GUIManager{
             public void onClick(View v) {
                 if(app.media_manager.isMute()) {
                     app.media_manager.unmute();
-                    mute.setImageResource(R.drawable.ic_mute_blue);
+                    mute.setImageResource(R.drawable.ic_unmute_blue);
                 }
                 else {
                     app.media_manager.mute();
-                    mute.setImageResource(R.drawable.ic_unmute_blue);
+                    mute.setImageResource(R.drawable.ic_mute_blue);
                 }
             }
         });
@@ -545,11 +560,11 @@ public class GUIManager{
             public void onClick(View v) {
                 if(app.media_manager.isMute()) {
                     app.media_manager.unmute();
-                    mute_conn.setImageResource(R.drawable.ic_mute_blue);
+                    mute_conn.setImageResource(R.drawable.ic_unmute_blue);
                 }
                 else {
                     app.media_manager.mute();
-                    mute_conn.setImageResource(R.drawable.ic_unmute_blue);
+                    mute_conn.setImageResource(R.drawable.ic_mute_blue);
                 }
             }
         });
@@ -584,9 +599,11 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    initConnectedActivity();
                     ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
                     ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
                     act.findViewById(R.id.connected_xml).refreshDrawableState();
+                    act.findViewById(R.id.change_name).refreshDrawableState();
                 }
             });
         }
@@ -597,6 +614,7 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    initPlaylistActivity();
                     if(app.client_manager.isAdmin()){
                         act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
                         act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
@@ -621,6 +639,10 @@ public class GUIManager{
     }
 
     public void disconnected() {
+        if (app.client_manager.party != null) {
+            if (app.client_manager.party.playlist.is_playing)
+                app.media_manager.stop();
+        }
         app.client_manager.terminateConnection();
         act.runOnUiThread(new Runnable() {
             @Override
