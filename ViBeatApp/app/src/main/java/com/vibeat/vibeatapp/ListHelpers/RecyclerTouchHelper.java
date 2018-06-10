@@ -23,6 +23,8 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     private PlaylistRecyclerView adapter;
     private Context context;
     private MyApplication app;
+    private RecyclerView.ViewHolder mFrom = null;
+    private RecyclerView.ViewHolder mTo = null;
 
     public RecyclerTouchHelper(PlaylistRecyclerView adapter, Context context, MyApplication app) {
 
@@ -63,10 +65,15 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         if (source.getItemViewType() != target.getItemViewType()) {
             return false;
         }
+        if(mFrom == null)
+            mFrom = source;
+        mTo = target;
+
         source.itemView.setBackgroundColor(colorAccentlight);
         adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
     }
+
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
@@ -108,6 +115,10 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         super.clearView(recyclerView, viewHolder);
         if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
             // Tell the view holder it's time to restore the idle state
+            if(mFrom != null && mTo != null && mTo != mFrom)
+                app.client_manager.swapTrack(mFrom.getAdapterPosition(),mTo.getAdapterPosition());
+            mFrom = null;
+            mTo = null;
             PlaylistRecyclerView.playlistViewHolder itemViewHolder = (PlaylistRecyclerView.playlistViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }

@@ -70,7 +70,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
 
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(playlist.tracks, fromPosition, toPosition);
-        app.client_manager.swapTrack(fromPosition,toPosition);
+        //app.client_manager.swapTrack(fromPosition,toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
 
