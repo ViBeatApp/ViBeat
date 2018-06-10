@@ -31,6 +31,8 @@ public class SenderThread extends Thread {
         try {
             Log.d("SenderThread", "choose your own IpAddress ");
             conn = new ReadWriteAux("52.23.168.179");
+            if(conn.socket == null)
+                app.gui_manager.disconnected(false);
             Log.d("SenderThread", "after connection ");
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
