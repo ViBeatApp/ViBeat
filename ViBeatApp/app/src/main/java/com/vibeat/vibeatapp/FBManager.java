@@ -95,14 +95,12 @@ public class FBManager {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
-                        Log.d("DB", document.getId() + " => " + document.getData());
                         String db_id = document.getId();
                         String title = (String) document.getData().get(DB_Title.name());
                         String artist = (String) document.getData().get(pathNames.DB_Artist.name());
                         String img_path = (String) document.getData().get(pathNames.DB_Image_path.name());
                         String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
                         Track track = new Track(db_id,-1,title,artist,img_path,track_path);
-                        Log.d("DB", "add song: " + title);
                         addToResult(track,result);
                     }
                     Log.d("DB", "Finish searching");
