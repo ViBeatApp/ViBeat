@@ -293,7 +293,7 @@ public class Party_thread implements Runnable {
 		return null; /* no such user */
 	}
 
-	/*TODO handling the locks */
+
 	public void getNewClients() {
 		unHandledClients = new ArrayList<>();
 		clone_User_list(party.waitingClients, unHandledClients,true);
@@ -325,7 +325,7 @@ public class Party_thread implements Runnable {
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
 		System.out.println("--- party-thread: party-songs-#: " + party.get_playlist_size());
 		if ((party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing)
-				&& cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id()) {
+				&& cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id() && party.get_playlist_size() != 1) {
 			return;
 		}
 		
@@ -368,7 +368,7 @@ public class Party_thread implements Runnable {
 
 	private void updateLocation(Command cmd) throws JSONException {
 		Location location = new Location(cmd);		
-		party.UpdateLocation(location);						//TODO should be sync?
+		party.UpdateLocation(location);
 
 	}
 
@@ -453,7 +453,6 @@ public class Party_thread implements Runnable {
 				try {
 					ServerModule.addDisconenctedUser(user);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
