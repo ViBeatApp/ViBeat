@@ -35,7 +35,7 @@ public class ServerModule {
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.12", 2000)); // private address of server
+		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27", 2000)); // private address of server
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 

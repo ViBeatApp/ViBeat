@@ -134,12 +134,14 @@ public class ListenerThread extends Thread {
                 break;
 
             case GET_READY:
+                Log.d("Test1","get ready in listener");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.media_manager.getReady(prep_track_id, prep_offset);
                 break;
 
             case PLAY_SONG:
+                Log.d("Test1","play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);

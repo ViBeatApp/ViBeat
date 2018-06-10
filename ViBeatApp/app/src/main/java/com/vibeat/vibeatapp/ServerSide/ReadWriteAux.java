@@ -1,5 +1,7 @@
 package com.vibeat.vibeatapp.ServerSide;
 
+import android.util.Log;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -13,7 +15,12 @@ public class ReadWriteAux {
 	SocketChannel socket;
 	
 	public ReadWriteAux(String ipAddress) throws IOException {
-		socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
+		Log.d("ReadWriteAux", "before creating socket ");
+		try {
+			socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public Command recieve() throws IOException, JSONException {

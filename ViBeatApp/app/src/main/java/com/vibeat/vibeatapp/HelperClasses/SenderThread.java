@@ -29,9 +29,9 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            Log.d("remark", "choose your own IpAddress ");
-            conn = new ReadWriteAux("10.0.0.12");
-
+            Log.d("SenderThread", "choose your own IpAddress ");
+            conn = new ReadWriteAux("52.23.168.179");
+            Log.d("SenderThread", "after connection ");
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
 
