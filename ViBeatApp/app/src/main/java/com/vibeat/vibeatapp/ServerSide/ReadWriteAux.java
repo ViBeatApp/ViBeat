@@ -20,6 +20,7 @@ public class ReadWriteAux {
 			socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
 		}catch (Exception e){
 			e.printStackTrace();
+			socket = null;
 		}
 	}
 	
@@ -36,6 +37,8 @@ public class ReadWriteAux {
 	}
 	
 	public static int readSize(SocketChannel channel) {
+        if(channel == null)
+            return -1;
 		int bytesRead = 0;
 		ByteBuffer buf = ByteBuffer.allocate(4);		
 		while (buf.hasRemaining()) { 
@@ -44,11 +47,7 @@ public class ReadWriteAux {
 				if(bytesRead < 0)
 					return -1;
 			} 
-			catch (IOException e) {
-				e.printStackTrace();
-				return -1;
-			}
-			catch (NotYetConnectedException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 				return -1;
 			}
@@ -61,7 +60,7 @@ public class ReadWriteAux {
 	}
 
 	public static Command readCommand(SocketChannel channel,int length) throws JSONException, IOException {
-		if(length == -1) {
+		if(length == -1 || channel == null) {
 			return new Command(CommandType.DISCONNECTED);
 		}
 		int bytesRead = 0;
@@ -80,6 +79,8 @@ public class ReadWriteAux {
 	}
 	
 	public static int writeSocket(SocketChannel channel,Command cmd) throws JSONException{
+	    if(channel == null)
+	        return -1;
 		byte[] byteArray = cmd.commandTobyte();
 		int size = byteArray.length;
 		ByteBuffer commandBuf = ByteBuffer.wrap(byteArray);
