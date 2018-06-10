@@ -12,7 +12,7 @@ import java.nio.channels.SocketChannel;
 
 
 public class ReadWriteAux {
-	SocketChannel socket;
+	public SocketChannel socket;
 	
 	public ReadWriteAux(String ipAddress) throws IOException {
 		Log.d("ReadWriteAux", "before creating socket ");
@@ -91,11 +91,7 @@ public class ReadWriteAux {
 			try {
 				writeRead += channel.write(message);
 			} 
-			catch (IOException e) {
-				e.printStackTrace();
-				return -1;
-			}
-			catch (NotYetConnectedException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 				return -1;
 			}

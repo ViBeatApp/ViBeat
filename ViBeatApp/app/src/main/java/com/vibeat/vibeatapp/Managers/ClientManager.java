@@ -297,24 +297,25 @@ public class ClientManager {
         return (user.is_admin);
     }
 
-    public void closeParty() {
+    /*public void closeParty() {
         party = null;
         user.is_admin = false;
         terminateConnection();
         startConnection();
-    }
+    }*/
 
-    public void terminateConnection(){
+    public void terminateConnection(boolean join){
         //try {
             ///this.senderThread.connected = false;
 
             if(app.sender_thread != null) {
                 logout();
-                try {
-                    app.sender_thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                if(join)
+                    try {
+                        app.sender_thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
             }
             this.app.sender_thread = null;
         /*} catch (InterruptedException e) {
@@ -322,7 +323,7 @@ public class ClientManager {
         }*/
     }
 
-    public void startConnection(){
+    /*public void startConnection(){
         app.sender_thread = new SenderThread(app);
         app.sender_thread.start();
         try {
@@ -330,7 +331,7 @@ public class ClientManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public int getTrackPosFromId(int track_id){
         for (int i = 0; i < app.client_manager.party.playlist.tracks.size(); i++){

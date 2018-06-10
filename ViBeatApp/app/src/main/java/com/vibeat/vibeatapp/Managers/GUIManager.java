@@ -204,14 +204,14 @@ public class GUIManager{
         }
     }
 
-    public void closeParty() {
+    /*public void closeParty() {
         if(app.client_manager.party != null)
             app.client_manager.closeParty();
         if(!(act instanceof EnterPartyActivity)) {
             Intent intent = new Intent(act, EnterPartyActivity.class);
             act.startActivity(intent);
         }
-    }
+    }*/
 
     public void initToolBar(){
         act.runOnUiThread(new Runnable() {
@@ -638,12 +638,12 @@ public class GUIManager{
         }
     }
 
-    public void disconnected() {
+    public void disconnected(Boolean fromListener) {
         if (app.client_manager.party != null) {
             if (app.client_manager.party.playlist.is_playing)
                 app.media_manager.stop();
         }
-        app.client_manager.terminateConnection();
+        app.client_manager.terminateConnection(fromListener);
         act.runOnUiThread(new Runnable() {
             @Override
             public void run() {

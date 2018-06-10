@@ -46,7 +46,7 @@ public class SenderThread extends Thread {
                                 Log.d("SENDER", cmd.cmd_type.name());
                                 if (conn.send(cmd) < 0) {
                                     Log.d("SENDER", "got -1");
-                                    app.gui_manager.disconnected();
+                                    app.gui_manager.disconnected(false);
                                 }
 
                             } catch (JSONException e) {

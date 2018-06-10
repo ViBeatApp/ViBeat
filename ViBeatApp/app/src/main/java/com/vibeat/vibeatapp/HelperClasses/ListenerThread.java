@@ -165,7 +165,7 @@ public class ListenerThread extends Thread {
 
             case DISCONNECTED:
                 if (!disconnected ) {
-                    app.gui_manager.disconnected();
+                    app.gui_manager.disconnected(true);
                     disconnected = true;
                 }
                 break;
