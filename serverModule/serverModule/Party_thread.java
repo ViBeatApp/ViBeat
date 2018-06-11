@@ -114,7 +114,7 @@ public class Party_thread implements Runnable {
 
 		while(keyIterator.hasNext() && party.keep_on) {
 			SelectionKey key = keyIterator.next();
-			if (key.isReadable()) {
+			if (key.isValid() && key.isReadable()) {
 				SocketChannel channel  = (SocketChannel) key.channel();
 				Command cmd = ReadWriteAux.readSocket(channel);
 				System.out.print("from user " + ((User)key.attachment()).name + " to server: ");
@@ -412,8 +412,10 @@ public class Party_thread implements Runnable {
 			return;
 		}
 
-		if(disconnected)
+		if(disconnected) {
+			user.closeChannel();
 			addDisconenctedUser(user);
+		}
 	}
 
 	private void addDisconenctedUser(final User user) {

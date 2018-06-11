@@ -101,7 +101,7 @@ public class MyMediaPlayer extends MediaPlayer {
         Log.e("Test1", "got offset = "+offset);
         Log.e("Test1", "media player old offset = "+this.offset);
         this.offset = offset;
-
+        //if(this.isPlaying()) this.pause();
         if (is_prepared && this.track_id == track_id){
             Log.e("Test1", "already prepared");
             Log.e("Test1", "changing offset");

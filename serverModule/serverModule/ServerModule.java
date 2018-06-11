@@ -52,9 +52,9 @@ public class ServerModule {
 			while(keyIterator.hasNext()) {
 
 				SelectionKey key = keyIterator.next();
-
+				
 				// a connection was accepted by a ServerSocketChannel.
-				if(key.isAcceptable()) {
+				if(key.isValid() && key.isAcceptable()) {
 
 					SocketChannel socket = serverSocketChannel.accept();
 					socket.configureBlocking(false);
@@ -63,7 +63,7 @@ public class ServerModule {
 
 				} 
 				// a channel is ready for reading
-				else if (key.isReadable()) {
+				else if (key.isValid() && key.isReadable()) {
 					handleReadCommands(selector, key);
 				} 
 				keyIterator.remove();
@@ -300,7 +300,6 @@ public class ServerModule {
 			}	
 			disconnected_users.add(user);
 		}
-		user.closeChannel();
 	}
 
 	static void backToServer(User user) {
