@@ -8,6 +8,8 @@ import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.Managers.GUIManager;
 
+import java.util.concurrent.Semaphore;
+
 public class MyApplication extends Application {
     public ClientManager client_manager = null;
     public MediaPlayerManager media_manager = null;
@@ -15,4 +17,5 @@ public class MyApplication extends Application {
     public SenderThread sender_thread = null;
     public GUIManager gui_manager = null;
     public FBManager fb_manager = null;
+    public Semaphore semaphore = null;
 }

@@ -1,15 +1,18 @@
 debugging:
-1. kill the party, disconnected (from wifi)
-2. DB
-3. server on Amazon
+
+
+1. next song when there are 2 songs doesn't stop the first song.
+2. songs delay in relate to rendering.
+3. between getReady and play there's a rendering just for setCurrentTrack.
 4. if the server has fallen the client should comeback to main activity(with alert\toast)
-5. refresh nearby parties.
-6. search by name.
+5. Ido leaves and after that recieves a Sync command. (sync after leave - adding locks (?) )
+
+remarks:
+1. touch current song. Do we need to send getReady after Songs list has changed.
+2. search by name. (party)
+3. A lot of callbacks.
 
 
 
-
-
-
-
+99. Party's image at the client code.
 100. facebook auth (in the end)

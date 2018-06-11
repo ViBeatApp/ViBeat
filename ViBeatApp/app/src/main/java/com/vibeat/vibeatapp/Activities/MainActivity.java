@@ -24,6 +24,7 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (account != null && app.client_manager == null) {
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
-            Log.d("after auth", "onCreate: ");
+            app.semaphore.release();
             app.gui_manager.login();
             Log.d("if authentication null", "3333333");
         } else {
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
+                app.semaphore.release();
                 app.gui_manager.login();
 
             } catch (ApiException e) {

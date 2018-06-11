@@ -69,7 +69,7 @@ public class ListenerThread extends Thread {
         return null;
     }
 
-    public void handlerCommand(Command cmd) throws  JSONException{
+    public void handlerCommand(Command cmd) throws JSONException, InterruptedException {
         if( cmd == null )
             return;
 
@@ -95,6 +95,13 @@ public class ListenerThread extends Thread {
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IS_PRIVATE);
                 JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.CURRENT_TRACK_ID);
                 boolean move = false;
+
+                //String msg = app.client_manager == null ? "true" : "false";
+                //Log.d("NULL", "app.client_manager IS NULL: " + msg);
+                //msg = app.client_manager.party == null ? "true" : "false";
+                //Log.d("NULL", "app.client_manager.party IS NULL: " + msg);
+                app.semaphore.acquire();                //Trying to modify app.client_manager before the client_manager's constructor finish to run.
+                app.semaphore.release();
                 if (app.client_manager.party == null) {
                     app.client_manager.party = new Party();
                     move = true;

@@ -28,8 +28,9 @@ public class Party {
 	public Selector selector; //for wakeUp
 	public boolean is_private;
 	public boolean keep_on;
+	public Command update_party;
 	
-	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException {
+	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException, JSONException {
 		super();
 		this.party_name = party_name;
 		this.party_id = party_id;
@@ -72,16 +73,18 @@ public class Party {
 		return null;
 	}
 
-	public void makeAdmin(User user){
+	public void makeAdmin(User user) throws JSONException{
 		if(!user.is_admin) {
 			user.is_admin = true;
 			++numOfAdmins;
 		}	
+		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
 	}
 	
-	public void disableAdmin(User user){
+	public void disableAdmin(User user,boolean disconnected){
 		if(user.is_admin) {
-			user.is_admin = false;
+			if(!disconnected)
+				user.is_admin = false;
 			--numOfAdmins;
 		}	
 	}
@@ -90,31 +93,39 @@ public class Party {
 		return this.get_current_track_id() != -1;
 	}
 	
-	public void addClient(User user){
+	public void addClient(User user) throws JSONException{
 		user.currentPartyId = this.party_id;
 		connected.add(user);
 		user.is_admin = false;
+		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
 	}
 	
-	public void removeClient(User user, boolean disconnected){
+	public void removeClient(User user, boolean disconnected) throws JSONException{
+		boolean changeImage = user.id == connected.get(0).id;
 		if(!disconnected) {
 			user.currentPartyId = -1;
 		}
 		
-		disableAdmin(user);
+		disableAdmin(user,disconnected);
 		connected.remove(user);
 		
 		if(numOfAdmins == 0 && numOfClients() != 0) {
 			makeAdmin(connected.get(0));
 		}
+		
+		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
+		if(changeImage)
+			this.addToJSONArray(jsonKey.IMAGE,new JSONArray().put(this.getPartyImage()));
 	}
 
-	public void addRequest(User user){
+	public void addRequest(User user) throws JSONException{
 		request.add(user);
+		this.addToJSONArray(jsonKey.REQUESTS, User.getUserArray(request));
 	}
 
-	public boolean removeRequest(User user){
-		return request.remove(user);
+	public void removeRequest(User user) throws JSONException{
+		if(request.remove(user))
+			this.addToJSONArray(jsonKey.REQUESTS, User.getUserArray(request));
 	}
 	
 	// new_clients is a synchronized object
@@ -126,16 +137,25 @@ public class Party {
 		return connected.size();
 	}
 
-	public Track addSong(String url){ 		
-		return playlist.addSong(url);
+	public void addSong(String DB_ID) throws JSONException{ 		
+		playlist.addSong(DB_ID);
+		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
 	}
 	
-	public int deleteSong(int trackID){
-		return playlist.deleteSong(trackID);
+	public int deleteSong(int trackID) throws JSONException{
+		int deleteCurrentSong = playlist.deleteSong(trackID);
+		if(deleteCurrentSong == 1) {
+			this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
+		}
+		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+		return deleteCurrentSong;
 	}
 	
-	public int changeSongsOrder(int trackID_1, int trackID_2){	
-		return playlist.changeSongsOrder(trackID_1,trackID_2);
+	public void changeSongsOrder(int trackID_1, int trackID_2) throws JSONException{	
+		int changeHappened = playlist.changeSongsOrder(trackID_1,trackID_2);
+		if(changeHappened == 1) {
+			this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+		}
 	}
 	
 	public int get_playlist_size() {
@@ -146,9 +166,9 @@ public class Party {
 		return playlist.get_current_track_id();
 	}
 
-	public void setCurrentTrack(int trackId) {
+	public void setCurrentTrack(int trackId) throws JSONException {
 		playlist.setCurrentTrack(trackId);
-		
+		addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 	}
 
 	public JSONObject getPublicJson() throws JSONException{
@@ -181,6 +201,22 @@ public class Party {
 			comeBackUsers.add(existingUser);
 		}
 	}
+	
+	public void addToJSONArray(jsonKey classifier, JSONArray jsonArray) throws JSONException {
+		update_party.cmd_info.remove(classifier.name());
+		update_party.cmd_info.put(classifier.name(), jsonArray);
+	}
+
+	public void setName(String name) throws JSONException {
+		this.party_name = name;
+		this.addToJSONArray(jsonKey.NAME,new JSONArray().put(party_name));
+	}
+
+	public void changePrivacy(boolean boolAttribute) throws JSONException {
+		this.is_private = boolAttribute;
+		this.addToJSONArray(jsonKey.IS_PRIVATE,new JSONArray().put(is_private));
+	}
+
 
 	
 

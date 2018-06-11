@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.FBManager;
+import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
@@ -24,6 +25,7 @@ import com.vibeat.vibeatapp.ServerSide.partyInfo;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class ClientManager {
 
@@ -35,6 +37,7 @@ public class ClientManager {
     public boolean waiting_for_response = false;
 
     public ClientManager(User user, MyApplication app){
+        app.semaphore = new Semaphore(0);
         this.user= user;
         this.party = null;
         app.sender_thread = new SenderThread(app);
@@ -48,8 +51,6 @@ public class ClientManager {
 
         app.media_manager = new MediaPlayerManager(app);
         app.fb_manager = new FBManager();
-
-
         this.app = app;
     }
 

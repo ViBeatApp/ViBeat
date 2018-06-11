@@ -18,12 +18,11 @@ public class Playlist {
 		nextTrackID = new Random().nextInt(123456789);
 	}
 	//TODO
-	public Track addSong(String url){
-		Track track = new Track(url,nextTrackID++);
+	public void addSong(String DB_ID){
+		Track track = new Track(DB_ID,nextTrackID++);
 		songs.add(track);
 		if(currentTrack == -1)
 			setCurrentTrack(track.trackId);
-		return track;
 	}
 
 	public void setCurrentTrack(int trackID) {
@@ -77,11 +76,12 @@ public class Playlist {
 				secondIndex = i;
 			}
 		}
-		if(firstIndex == -1 || secondIndex == -1) return -1;
+		if(firstIndex == -1 || secondIndex == -1) 
+			return 0;
 		Track tmpTrack = songs.get(firstIndex);
 		songs.set(firstIndex, songs.get(secondIndex));
 		songs.set(secondIndex, tmpTrack);
-		return 0;
+		return 1;
 	}
 
 	public JSONArray getTrackArray() throws JSONException {

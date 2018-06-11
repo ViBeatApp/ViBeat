@@ -7,10 +7,10 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -35,7 +35,7 @@ public class ServerModule {
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
-		serverSocketChannel.socket().bind(new InetSocketAddress("172.17.172.27", 2000)); // private address of server
+		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.8", 2000)); // private address of server
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
@@ -99,7 +99,8 @@ public class ServerModule {
 				disconnectedUser.setChannel(client);
 				key.attach(disconnectedUser);
 				System.out.println("disconnectedUser");
-				join_party(disconnectedUser,disconnectedUser.currentPartyId);
+				if(!join_party(disconnectedUser,disconnectedUser.currentPartyId))
+					disconnectedUser.is_admin = false;
 				break;
 			}
 			else{

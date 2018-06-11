@@ -64,6 +64,8 @@ public class CommandClientAux {
 	private static JSONArray createUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.USERS);
+		if(objectArray == null)
+			return null;
 		Log.d("USERS", "in create users array");
 		for(int i = 0; i < objectArray.length(); ++i) {
 			Log.d("USERS", "in create users array "+i);
@@ -82,6 +84,8 @@ public class CommandClientAux {
 	private static JSONArray createSongsArray(Command cmd) throws JSONException {
 		JSONArray songArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.SONGS);
+		if(objectArray == null)
+			return null;
 		for(int i = 0; i < objectArray.length(); ++i) {
 			JSONObject songJsonObject = objectArray.getJSONObject(i);
 			int trackId = songJsonObject.getInt(jsonKey.TRACK_ID.name());
@@ -94,6 +98,8 @@ public class CommandClientAux {
 	private static JSONArray createRequestUserArray(Command cmd) throws JSONException {
 		JSONArray userArray = new JSONArray();
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.REQUESTS);
+		if(objectArray == null)
+			return null;
 		for(int i = 0; i < objectArray.length(); ++i) {
 			JSONObject userJsonObject = objectArray.getJSONObject(i);
 			String name = userJsonObject.getString(jsonKey.NAME.name());

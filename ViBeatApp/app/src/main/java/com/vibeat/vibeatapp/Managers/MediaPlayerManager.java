@@ -41,18 +41,18 @@ public class MediaPlayerManager {
                 return; //ERROR
             } else if (num_tracks == 1) {
                 if (track_id == m1.track_id) {
-                    m2.reset();
                     m1.getReady(track_id, offset);
+                    m2.reset();
                     active_mp = 1;
                 }
                 else if (track_id == m2.track_id) {
-                    m1.reset();
                     m2.getReady(track_id, offset);
+                    m1.reset();
                     active_mp = 2;
                 }
                 else{
-                    m2.reset();
                     m1.getReady(track_id, offset);
+                    m2.reset();
                     active_mp = 1;
                 }
             } else {

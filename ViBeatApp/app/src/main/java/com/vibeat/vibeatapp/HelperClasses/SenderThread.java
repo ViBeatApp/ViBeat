@@ -30,7 +30,7 @@ public class SenderThread extends Thread {
     public void run() {
         try {
             Log.d("SenderThread", "choose your own IpAddress ");
-            conn = new ReadWriteAux("52.23.168.179");
+            conn = new ReadWriteAux("10.0.0.17");
             if(conn.socket == null)
                 app.gui_manager.disconnected(false);
             Log.d("SenderThread", "after connection ");

@@ -81,6 +81,8 @@ public class MyMediaPlayer extends MediaPlayer {
             this.is_prepared = true;
             this.preparing = false;
             this.startAfterSeek = false;
+            this.start();
+            this.pause();
             this.seekTo(this.offset);
         }
     }
@@ -123,9 +125,14 @@ public class MyMediaPlayer extends MediaPlayer {
 
     public synchronized void play(int track_id, int offset) throws IOException {
         Log.d("Test1","inside play");
+
+        if(!isCurTrack())
+            Log.d("Test1","ERROR");
+
         if(this.offset == offset)
             this.start();
-        else if(this.offset != offset && isCurTrack()) {
+
+        else if(this.offset != offset) {
             Log.d("Test1","offset ="+offset);
             this.offset = offset;
             this.startAfterSeek = true;

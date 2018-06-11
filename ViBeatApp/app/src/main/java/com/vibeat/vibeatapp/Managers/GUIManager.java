@@ -533,9 +533,9 @@ public class GUIManager{
                             .setColorFilter(ContextCompat.getColor(act, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
                     act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
                     act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+                    //recycler_adapter.notifyDataSetChanged();
                 }
                 app.client_manager.nextSong();
-                recycler_adapter.notifyDataSetChanged();
             }
         });
 
