@@ -644,31 +644,33 @@ public class GUIManager{
                 app.media_manager.stop();
         }
         app.client_manager.terminateConnection(fromListener);
-        act.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(act);
+        if(!(act instanceof MainActivity)) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
+                    } else {
+                        builder = new AlertDialog.Builder(act);
+                    }
+                    builder.setTitle("Connection Error")
+                            .setMessage("Please try to reopen the app :)")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent homeIntene = new Intent(Intent.ACTION_MAIN);
+                                    homeIntene.addCategory(Intent.CATEGORY_HOME);
+                                    homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    act.startActivity(homeIntene);
+                                    //android.os.Process.killProcess(android.os.Process.myPid());
+                                    //System.exit(0);
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
                 }
-                builder.setTitle("Connection Error")
-                        .setMessage("Please try to reopen the app :)")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent homeIntene = new Intent(Intent.ACTION_MAIN);
-                                homeIntene.addCategory(Intent.CATEGORY_HOME);
-                                homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                act.startActivity(homeIntene);
-                                //android.os.Process.killProcess(android.os.Process.myPid());
-                                //System.exit(0);
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
+            });
+        }
     }
 
 

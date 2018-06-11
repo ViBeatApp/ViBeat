@@ -15,11 +15,13 @@ import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
+import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_DRAG;
 import static android.support.v7.widget.helper.ItemTouchHelper.ACTION_STATE_SWIPE;
 import static com.vibeat.vibeatapp.R.color.colorAccentlight;
 
 public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
+    public static final float ALPHA_FULL = 1.0f;
     private PlaylistRecyclerView adapter;
     private Context context;
     private MyApplication app;
@@ -110,9 +112,27 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         }
     }
 
+    @SuppressLint("ResourceAsColor")
+    @Override
+    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState){
+        if (actionState == ACTION_STATE_DRAG) {
+            viewHolder.itemView.setAlpha(ALPHA_FULL / 2);
+            viewHolder.itemView.setBackgroundColor(colorAccentlight);
+        }
+        super.onSelectedChanged(viewHolder, actionState);
+    }
+
+    @SuppressLint("ResourceAsColor")
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-        super.clearView(recyclerView, viewHolder);
+        viewHolder.itemView.setAlpha(ALPHA_FULL);
+        viewHolder.itemView.setBackgroundColor(0);
+
+        if(app.client_manager.party.playlist.cur_track == viewHolder.getAdapterPosition())
+            viewHolder.itemView.setBackgroundColor(R.color.colorPrimary);
+        else
+            viewHolder.itemView.setBackgroundColor(Color.TRANSPARENT);
+
         if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
             // Tell the view holder it's time to restore the idle state
             if(mFrom != null && mTo != null && mTo != mFrom)
@@ -122,6 +142,7 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
             PlaylistRecyclerView.playlistViewHolder itemViewHolder = (PlaylistRecyclerView.playlistViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }
+        super.clearView(recyclerView, viewHolder);
     }
 
 }
