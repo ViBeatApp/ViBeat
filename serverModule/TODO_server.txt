@@ -4,9 +4,9 @@ debugging:
 1. next song when there are 2 songs doesn't stop the first song.
 2. songs delay in relate to rendering.
 3. between getReady and play there's a rendering just for setCurrentTrack.
-4. if the server has fallen the client should comeback to main activity(with alert\toast)
+4. If the server has fallen the client should comeback to main activity(with alert\toast)
 5. Ido leaves and after that recieves a Sync command. (sync after leave - adding locks (?) )
-6. resume activity instead of recreate.
+6. Resume activity instead of recreate.
 
 remarks:
 1. touch current song. Do we need to send getReady after Songs list has changed.
