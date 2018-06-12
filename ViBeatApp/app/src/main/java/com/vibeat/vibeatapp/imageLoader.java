@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+import com.vibeat.vibeatapp.HelperClasses.CircleTransform;
 import com.vibeat.vibeatapp.HelperClasses.pictureChange;
 
 import java.net.URL;
@@ -26,17 +28,28 @@ public class imageLoader {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){
                     try {
-                        URL newurl = new URL(img_paths.get(i));
-                        final Bitmap bm_before_crop = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());  //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-                        final Bitmap bm = pictureChange.getCroppedBitmap(bm_before_crop);
+//                        URL newurl = new URL(img_paths.get(i));
+//                        final Bitmap bm_before_crop = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());  //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
+//                        final Bitmap bm = pictureChange.getCroppedBitmap(bm_before_crop);
+//                        final int index = i;
+//                        act.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Log.d("Hey jude", "test");
+//                                views.get(index).setImageBitmap(bm);
+//                            }
+//                            //user_img.setImageURI(Uri.parse(user.img_path));
+//                        });
                         final int index = i;
                         act.runOnUiThread(new Runnable() {
-                            @Override
                             public void run() {
-                                Log.d("Hey jude", "test");
-                                views.get(index).setImageBitmap(bm);
+                                Picasso.with(act)
+                                    .load(img_paths.get(index))
+                                    .transform(new CircleTransform())
+                                    .error(R.drawable.cardib)
+                                    .placeholder(R.drawable.blank)
+                                    .into(views.get(index));
                             }
-                            //user_img.setImageURI(Uri.parse(user.img_path));
                         });
                     }
                     catch (Exception e) {
@@ -62,16 +75,28 @@ public class imageLoader {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){
                     try {
-                        URL newurl = new URL(img_paths.get(i));
-                        final Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+//                        URL newurl = new URL(img_paths.get(i));
+//                        final Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+//                        final int index = i;
+//                        act.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Log.d("Hey jude", "test");
+//                                views.get(index).setImageBitmap(bm);
+//                            }
+//                            //user_img.setImageURI(Uri.parse(user.img_path));
+//                        });
                         final int index = i;
                         act.runOnUiThread(new Runnable() {
-                            @Override
                             public void run() {
-                                Log.d("Hey jude", "test");
-                                views.get(index).setImageBitmap(bm);
+                                Picasso.with(act)
+                                        .load(img_paths.get(index))
+                                        .centerCrop()
+                                        .resize(views.get(index).getMeasuredWidth(),views.get(index).getMeasuredHeight())
+                                        .error(R.drawable.cardib)
+                                        .placeholder(R.drawable.blank)
+                                        .into(views.get(index));
                             }
-                            //user_img.setImageURI(Uri.parse(user.img_path));
                         });
                     }
                     catch (Exception e) {
