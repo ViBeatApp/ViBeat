@@ -28,14 +28,15 @@ public class ServerModule {
 	static List<User>  allClients = new ArrayList<User>();
 	static int partyID = 0;
 	static Selector selector;
+	static String address = "172.31.95.43"; // the private address of the server on AWS
 
 	public static void main(String[] args) throws IOException, JSONException{
 
 		selector = Selector.open();
 
 		ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-
-		serverSocketChannel.socket().bind(new InetSocketAddress("10.0.0.8", 2000)); // private address of server
+		System.out.println("ServerModule - bind to: " + args[0]);
+		serverSocketChannel.socket().bind(new InetSocketAddress(args[0], 2000)); // address from command line
 		serverSocketChannel.configureBlocking(false);
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
