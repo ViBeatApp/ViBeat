@@ -1,16 +1,13 @@
 package com.vibeat.vibeatapp;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-import com.vibeat.vibeatapp.HelperClasses.CircleTransform;
-import com.vibeat.vibeatapp.HelperClasses.pictureChange;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.vibeat.vibeatapp.HelperClasses.MyTransformation;
 
-import java.net.URL;
 import java.util.List;
 
 public class imageLoader {
@@ -28,26 +25,16 @@ public class imageLoader {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){
                     try {
-//                        URL newurl = new URL(img_paths.get(i));
-//                        final Bitmap bm_before_crop = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());  //Bitmap bm = BitmapFactory.decodeFile(user.img_path);
-//                        final Bitmap bm = pictureChange.getCroppedBitmap(bm_before_crop);
-//                        final int index = i;
-//                        act.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Log.d("Hey jude", "test");
-//                                views.get(index).setImageBitmap(bm);
-//                            }
-//                            //user_img.setImageURI(Uri.parse(user.img_path));
-//                        });
                         final int index = i;
                         act.runOnUiThread(new Runnable() {
                             public void run() {
-                                Picasso.with(act)
+                                Glide.with(act)
                                     .load(img_paths.get(index))
-                                    .transform(new CircleTransform())
+                                    .transform(new MyTransformation(act))
                                     .error(R.drawable.cardib)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                                     .placeholder(R.drawable.blank)
+                                        .dontAnimate()
                                     .into(views.get(index));
                             }
                         });
@@ -75,26 +62,16 @@ public class imageLoader {
             public void run() {
                 for (int i = 0; i < img_paths.size(); ++i){
                     try {
-//                        URL newurl = new URL(img_paths.get(i));
-//                        final Bitmap bm = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-//                        final int index = i;
-//                        act.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Log.d("Hey jude", "test");
-//                                views.get(index).setImageBitmap(bm);
-//                            }
-//                            //user_img.setImageURI(Uri.parse(user.img_path));
-//                        });
                         final int index = i;
                         act.runOnUiThread(new Runnable() {
                             public void run() {
-                                Picasso.with(act)
+                                Glide.with(act)
                                         .load(img_paths.get(index))
-                                        .centerCrop()
-                                        .resize(views.get(index).getMeasuredWidth(),views.get(index).getMeasuredHeight())
+                                        //.centerCrop()
+                                        .override(views.get(index).getMeasuredWidth(),views.get(index).getMeasuredHeight())
                                         .error(R.drawable.cardib)
                                         .placeholder(R.drawable.blank)
+                                        .dontAnimate()
                                         .into(views.get(index));
                             }
                         });
