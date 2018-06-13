@@ -29,9 +29,6 @@ public class Party_thread implements Runnable {
 
 	public Party party;
 	public Selector server_selector;
-
-	//public Command get_ready_command;
-	//public Command play_command;
 	public Command pause_command;
 
 	public List<User> ready_for_play;
@@ -45,8 +42,6 @@ public class Party_thread implements Runnable {
 		this.party = party;
 		this.server_selector = server_selector;
 		pause_command = new Command(CommandType.PAUSE);
-		//play_command = new Command(CommandType.PLAY_SONG);
-		//get_ready_command = new Command(CommandType.GET_READY);
 		total_offset = 0;
 		ready_for_play = new ArrayList<>();
 		unHandledClients = new ArrayList<>();
@@ -345,6 +340,7 @@ public class Party_thread implements Runnable {
 			return;
 		switch(party.status) {
 		case playing:
+			System.out.println("handle-ready - party is playing");
 			Command play_command = create_play_command(true);
 			SendCommandToUser(user, play_command);
 			break;
@@ -513,8 +509,10 @@ public class Party_thread implements Runnable {
 
 	/* updates the play command */
 	public Command create_play_command(boolean updateOffset) throws JSONException {
+		System.out.println("create_play_command - before update");
 		Command play_command = new Command(CommandType.PLAY_SONG);
 		if (updateOffset) {
+			System.out.println("create_play_command - updating offset");
 			Instant current_time = Instant.now();
 			play_command.setAttribute(jsonKey.OFFSET_UPDATE_TIME, current_time.toEpochMilli());
 			//System.out.println("update-play-command: offset_update " + current_time.toString());

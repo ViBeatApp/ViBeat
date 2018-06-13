@@ -74,7 +74,7 @@ public class ListenerThread extends Thread {
         return null;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+    //@RequiresApi(api = Build.VERSION_CODES.O)
     public void handlerCommand(Command cmd) throws JSONException, InterruptedException {
         if( cmd == null )
             return;
@@ -167,14 +167,22 @@ public class ListenerThread extends Thread {
                 break;
 
             case PLAY_SONG:
-                Log.d("Test1","play song in listener");
+                Log.d("Test2","play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
-                    long time = Instant.now().getEpochSecond();
-                    play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) + 40;
+                    try {
+                        Log.d("Test2", "after checking OFFSET_UPDATE_TIME");
+                        //long time = Instant.now().getEpochSecond();
+                        long time = System.currentTimeMillis();
+                        play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) + 30;
+                    } catch (Exception e) {
+                        Log.d("Test2", "Exception!!! OFFSET_UPDATE_TIME");
+                        e.printStackTrace();
+                    }
                 }
+                Log.d("Test2","after checking OFFSET_UPDATE_TIME");
                 app.media_manager.play(play_track_id,play_offset);
                 app.gui_manager.play(play_track_id);
                 break;
@@ -199,7 +207,6 @@ public class ListenerThread extends Thread {
                     disconnected = true;
                 }
                 break;
-
         }
     }
 
