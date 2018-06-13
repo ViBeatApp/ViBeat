@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
@@ -230,7 +231,7 @@ public class GUIManager{
                 img_paths.add(user.img_path);
                 views.add(user_img);
 
-                imageLoader.loadImage(act,img_paths,views);
+                imageLoader.loadImage(act,img_paths,views, R.color.stroke);
             }
         });
     }
@@ -595,103 +596,81 @@ public class GUIManager{
         });
     }
 
-    public void syncParty() {
-        Iterator<change> iter = cur_changes.iterator();
+    public void syncParty(final int old_cur_track) {
         if (act instanceof ConnectedActivity) {
-            while (iter.hasNext()) {
-                change c = iter.next();
-                switch (c) {
-                    case users:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Iterator<change> iter = cur_changes.iterator();
+                    while (iter.hasNext()) {
+                        change c = iter.next();
+                        switch (c) {
+                            case users:
                                 ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
                                 act.findViewById(R.id.connected_list).refreshDrawableState();
-
-                            }
-                        });
-                        break;
-                    case requests:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                break;
+                            case requests:
                                 ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
                                 act.findViewById(R.id.waiting_list).refreshDrawableState();
+                                break;
+                            case is_private:
 
-                            }
-                        });
-                        break;
-                    case is_private:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
                                 ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
                                 if (!app.client_manager.party.is_private)
                                     isPrivate.setImageResource(R.drawable.ic_unlock_blue);
                                 else
                                     isPrivate.setImageResource(R.drawable.ic_lock_blue);
                                 act.findViewById(R.id.change_name).refreshDrawableState();
-
-                            }
-                        });
-                        break;
-                    case party_name:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                break;
+                            case party_name:
                                 EditText partyName = (EditText) act.findViewById(R.id.editText);
                                 partyName.setText(app.client_manager.party.party_name);
                                 partyName.clearFocus();
                                 act.findViewById(R.id.change_name).refreshDrawableState();
-
-                            }
-                        });
-
-                        break;
+                                break;
+                        }
+                        iter.remove();
+                    }
                 }
-                iter.remove();
-            }
+            });
         }
         if (act instanceof PlaylistActivity) {
-            while (iter.hasNext()) {
-                change c = iter.next();
-                switch (c) {
-                    case songs:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Iterator<change> iter = cur_changes.iterator();
+                    while (iter.hasNext()) {
+                        change c = iter.next();
+                        switch (c) {
+                            case songs:
                                 recycler_adapter.notifyDataSetChanged();
                                 act.findViewById(R.id.playlist).refreshDrawableState();
-
-                            }
-                        });
-                        break;
-                    case party_name:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                break;
+                            case party_name:
                                 TextView party_name = (TextView) act.findViewById(R.id.party_name);
                                 TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
                                 party_name.setText(app.client_manager.party.party_name);
                                 party_name_conn.setText(app.client_manager.party.party_name);
                                 act.findViewById(R.id.admin_toolbar).refreshDrawableState();
                                 act.findViewById(R.id.connected_toolbar).refreshDrawableState();
-                            }
-                        });
-                        break;
-                    case admin:
-                        act.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+                                break;
+                            case admin:
                                 act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
                                 act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
                                 act.findViewById(R.id.admin_toolbar).refreshDrawableState();
-                            }
-                        });
-                        break;
+                                break;
+                            case cur_track:
+                                if(cur_changes.indexOf(change.songs) == -1){
+                                    // assume that the previous current track is cur_trak - 1.
+                                    ((PlaylistRecyclerView)recycler_adapter).setCurTrackBackground(
+                                            old_cur_track,app.client_manager.party.playlist.cur_track);
+                                }
+                                break;
+                        }
+                    }
+                    cur_changes.clear();
                 }
-                iter.remove();
-            }
+            });
         }
         if (act instanceof LoadingActivity) {
             act.runOnUiThread(new Runnable() {
@@ -751,8 +730,13 @@ public class GUIManager{
                         act.findViewById(R.id.songlist).setVisibility(View.GONE);
                     }
                 });
-
-                return app.client_manager.searchTracks(strings[0]);
+                Playlist search_res = app.client_manager.searchTracks(strings[0]);
+                for (Track track : search_res.tracks) {
+                    Glide.with(act)
+                            .load(track.img_path)
+                            .downloadOnly(400,400);
+                }
+                return search_res;
             }
 
             protected void onPostExecute(final Playlist search_res) {

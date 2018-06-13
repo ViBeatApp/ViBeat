@@ -46,7 +46,7 @@ public class PartiesList implements ListAdapterable {
 
             img_paths1.add(path1);
             views1.add(img1);
-            imageLoader.loadImage(context, img_paths1, views1);
+            imageLoader.loadImage(context, img_paths1, views1, R.color.background);
 
             party1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -68,7 +68,7 @@ public class PartiesList implements ListAdapterable {
 
             img_paths2.add(path2);
             views2.add(img2);
-            imageLoader.loadImage(context, img_paths2, views2);
+            imageLoader.loadImage(context, img_paths2, views2, R.color.background);
 
             party2.setOnClickListener(new View.OnClickListener() {
                 @Override

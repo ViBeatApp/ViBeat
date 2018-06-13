@@ -80,6 +80,8 @@ public class ListenerThread extends Thread {
 
             case SYNC_PARTY:
 
+                int old_cur_track = -1;
+
                 // Getting changes from server. If nothing was changed, get Null.
                 JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.USERS);
                 JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.REQUESTS);
@@ -134,6 +136,7 @@ public class ListenerThread extends Thread {
                             app.client_manager.party.playlist = new Playlist(new_tracks, false, 0);
                     }
                     if(cur_track != null) {
+                        old_cur_track = app.client_manager.party.playlist.cur_track;
                         app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
                         app.gui_manager.cur_changes.add(change.cur_track);
                     }
@@ -141,7 +144,7 @@ public class ListenerThread extends Thread {
                 if (move)
                     app.gui_manager.completeJoin();
                 else
-                    app.gui_manager.syncParty();
+                    app.gui_manager.syncParty(old_cur_track);
 
                 break;
 
