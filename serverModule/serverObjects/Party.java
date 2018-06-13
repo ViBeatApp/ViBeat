@@ -44,6 +44,7 @@ public class Party {
 		this.selector = Selector.open();
 		this.keep_on = true;
 		this.location = admin.location;
+		update_party = new Command(CommandType.SYNC_PARTY);
 		addClient(admin);
 		makeAdmin(admin);
 	}
@@ -140,14 +141,13 @@ public class Party {
 	public void addSong(String DB_ID) throws JSONException{ 		
 		playlist.addSong(DB_ID);
 		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 	}
 	
 	public int deleteSong(int trackID) throws JSONException{
 		int deleteCurrentSong = playlist.deleteSong(trackID);
-		if(deleteCurrentSong == 1) {
-			this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
-		}
 		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 		return deleteCurrentSong;
 	}
 	
@@ -155,6 +155,10 @@ public class Party {
 		int changeHappened = playlist.changeSongsOrder(trackID_1,trackID_2);
 		if(changeHappened == 1) {
 			this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+			this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
+		}
+		else{
+			System.out.println("error mother fucker - changeSongsOrder");
 		}
 	}
 	
@@ -167,6 +171,8 @@ public class Party {
 	}
 
 	public void setCurrentTrack(int trackId) throws JSONException {
+		if(this.get_current_track_id() == trackId)
+			return;
 		playlist.setCurrentTrack(trackId);
 		addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 	}

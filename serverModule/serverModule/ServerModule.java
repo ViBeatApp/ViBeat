@@ -256,6 +256,7 @@ public class ServerModule {
 		System.out.println("serverModule - party.party_id = " + party.party_id);
 		current_parties.add(party);
 		(new Thread(new Party_thread(party,selector))).start();
+		
 
 	}
 
