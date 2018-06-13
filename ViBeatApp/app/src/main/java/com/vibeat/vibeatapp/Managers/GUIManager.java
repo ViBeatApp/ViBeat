@@ -29,7 +29,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
@@ -231,7 +230,7 @@ public class GUIManager{
                 img_paths.add(user.img_path);
                 views.add(user_img);
 
-                imageLoader.loadImage(act,img_paths,views, R.color.stroke);
+                imageLoader.loadImage(act,img_paths,views);
             }
         });
     }
@@ -731,11 +730,11 @@ public class GUIManager{
                     }
                 });
                 Playlist search_res = app.client_manager.searchTracks(strings[0]);
-                for (Track track : search_res.tracks) {
+                /*for (Track track : search_res.tracks) {
                     Glide.with(act)
                             .load(track.img_path)
                             .downloadOnly(400,400);
-                }
+                }*/
                 return search_res;
             }
 

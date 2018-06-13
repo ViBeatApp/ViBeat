@@ -39,6 +39,7 @@ public class ListenerThread extends Thread {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
 

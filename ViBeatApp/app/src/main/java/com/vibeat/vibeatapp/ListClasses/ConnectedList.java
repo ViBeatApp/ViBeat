@@ -52,7 +52,7 @@ public class ConnectedList implements ListAdapterable {
             crown.setImageResource(R.drawable.white_crown);
         }
         views.add(img);
-        imageLoader.loadImage(activity, img_paths, views, R.color.background);
+        imageLoader.loadImage(activity, img_paths, views);
 
         crown.setOnClickListener(new View.OnClickListener() {
             @Override

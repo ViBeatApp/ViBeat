@@ -70,7 +70,7 @@ public class RequestList implements ListAdapterable {
 
         img_paths.add(party.request.get(position).img_path);
         views.add(img);
-        imageLoader.loadImage(activity, img_paths, views, R.color.background);
+        imageLoader.loadImage(activity, img_paths, views);
 
         name.setText(party.request.get(position).name);
 
