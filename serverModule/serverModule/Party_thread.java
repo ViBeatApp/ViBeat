@@ -482,16 +482,16 @@ public class Party_thread implements Runnable {
 			return;
 		}
 		System.out.println("party thread - updatePartyToAll were updates");
-		//SendCommandToAll(party.update_party);
+		SendCommandToAll(party.update_party);
 		party.update_party = new Command(CommandType.SYNC_PARTY);
-		syncPartyToAll();
+		//syncPartyToAll();
 	}
 	
-	private void syncPartyToAll() throws JSONException, IOException {
+	/*private void syncPartyToAll() throws JSONException, IOException {
 		JSONObject party_info = party.getFullJson();
 		Command sync_command = Command.create_syncParty_Command(party_info);
 		SendCommandToAll(sync_command);
-	}
+	}*/
 
 	/* updates the GetReady command */
 	public void update_get_ready_command() throws JSONException {	
