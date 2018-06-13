@@ -1,4 +1,6 @@
 package com.vibeat.vibeatapp.ServerSide;
+import android.support.annotation.NonNull;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -6,17 +8,17 @@ import org.json.JSONObject;
 public class Command {
 	public CommandType cmd_type;
 	public JSONObject cmd_info;
-	
+
 	public Command(CommandType cmd_type) throws JSONException {
 		this.cmd_type = cmd_type;
 		this.cmd_info = new JSONObject();
 	}
-	
+
 	public Command(CommandType cmd_type, JSONObject obj) {
 		this.cmd_type = cmd_type;
 		this.cmd_info = obj;
 	}
-	
+
 	public Command(byte[] message) throws JSONException {
 		if(message == null){
 			this.cmd_type = CommandType.DISCONNECTED;
@@ -33,19 +35,20 @@ public class Command {
 		json.put(jsonKey.COMMAND_INFO.name(), this.cmd_info);
 		return json.toString().getBytes();
 	}
-	
+
 	public void printCommand() {
 		System.out.println("command " + this.cmd_type + ", info" + this.cmd_info);
 	}
-	
+
+	@NonNull
 	private JSONObject byteToJson(byte[] message) throws JSONException {
 		return new JSONObject(new String(message));
 	}
-	
+
 	public void setAttribute(jsonKey key, String string) throws JSONException {
 		this.cmd_info.put(key.name(),string);
 	}
-	
+
 	public void setAttribute(jsonKey key, int num) throws JSONException {
 		this.cmd_info.put(key.name(),num);
 	}
@@ -53,35 +56,43 @@ public class Command {
 	public void setAttribute(jsonKey key, double num) throws JSONException {
 		this.cmd_info.put(key.name(),num);
 	}
-	
+
+	public void setAttribute(jsonKey key, long num) throws JSONException {
+		this.cmd_info.put(key.name(),num);
+	}
+
 	public void setAttribute(jsonKey key, boolean bool) throws JSONException {
 		this.cmd_info.put(key.name(),bool);
 	}
-	
+
 	public void setAttribute(jsonKey key, JSONArray resultArray) throws JSONException {
 		this.cmd_info.put(key.name(),resultArray);
 	}
-	
+
 	public String getStringAttribute(jsonKey key) throws JSONException {
 		return this.cmd_info.getString(key.name());
 	}
-	
+
 	public int getIntAttribute(jsonKey key) throws JSONException {
 		return this.cmd_info.getInt(key.name());
 	}
-	
+
+	public long getLongAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getLong(key.name());
+	}
+
 	public boolean getBoolAttribute(jsonKey key) throws JSONException {
 		return this.cmd_info.getBoolean(key.name());
 	}
-	
+
 	public double getDoubleAttribute(jsonKey key) throws JSONException {
 		return this.cmd_info.getDouble(key.name());
 	}
-	
+
 	public JSONArray getSyncPartyAttribute(jsonKey key) throws JSONException {
-		return cmd_info.has(key.name()) ? cmd_info.getJSONArray(key.name()) : null;
+		return cmd_info.getJSONArray(key.name());
 	}
-	
+
 	public static Command create_authentication_command(String name,int userID,String image) throws JSONException {
 		Command cmd = new Command(CommandType.AUTHENTICATION);
 		cmd.setAttribute(jsonKey.NAME, name);
@@ -101,23 +112,23 @@ public class Command {
 		cmd.setAttribute(jsonKey.NAME, name);
 		return cmd;
 	}
-	
+
 	public static Command create_join_Command(int partyID) throws JSONException {
 		Command cmd = new Command(CommandType.JOIN);
 		cmd.setAttribute(jsonKey.PARTY_ID, partyID);
 		return cmd;
 	}
-	
+
 	public static Command create_create_Command(String name,boolean isPrivate) throws JSONException {
 		Command cmd = new Command(CommandType.CREATE);
 		cmd.setAttribute(jsonKey.NAME, name);
 		cmd.setAttribute(jsonKey.IS_PRIVATE, isPrivate);
 		return cmd;
 	}
-	
-	public static Command create_addSons_Command(String db_id) throws JSONException {
+
+	public static Command create_addSons_Command(String database_id) throws JSONException {
 		Command cmd = new Command(CommandType.ADD_SONG);
-		cmd.setAttribute(jsonKey.DB_ID, db_id);
+		cmd.setAttribute(jsonKey.DB_ID, database_id);
 		return cmd;
 	}
 	public static Command create_deleteSong_Command(int trackId) throws JSONException {
@@ -148,13 +159,13 @@ public class Command {
 		cmd.setAttribute(jsonKey.OFFSET, offset);
 		return cmd;
 	}
-	
+
 	public static Command create_makePrivate_Command(boolean isPrivate) throws JSONException {
 		Command cmd = new Command(CommandType.MAKE_PRIVATE);
 		cmd.setAttribute(jsonKey.IS_PRIVATE, isPrivate);
 		return cmd;
 	}
-	
+
 	public static Command create_renameParty_Command(String name) throws JSONException {
 		Command cmd = new Command(CommandType.RENAME_PARTY);
 		cmd.setAttribute(jsonKey.NAME, name);
@@ -182,12 +193,12 @@ public class Command {
 		Command cmd = new Command(CommandType.LEAVE_PARTY);
 		return cmd;
 	}
-	
+
 	public static Command create_syncParty_Command(JSONObject partyInfo) throws JSONException {
 		Command cmd = new Command(CommandType.SYNC_PARTY,partyInfo);
 		return cmd;
 	}
-	
+
 	public static Command create_rejected_Command() throws JSONException {
 		Command cmd = new Command(CommandType.REJECTED);
 		return cmd;

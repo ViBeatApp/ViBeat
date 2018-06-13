@@ -1,5 +1,7 @@
 package com.vibeat.vibeatapp.HelperClasses;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.Managers.change;
@@ -19,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +73,7 @@ public class ListenerThread extends Thread {
         return null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void handlerCommand(Command cmd) throws JSONException, InterruptedException {
         if( cmd == null )
             return;
@@ -166,6 +170,10 @@ public class ListenerThread extends Thread {
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
+                if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
+                    long time = Instant.now().getEpochSecond();
+                    play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) + 40;
+                }
                 app.media_manager.play(play_track_id,play_offset);
                 app.gui_manager.play(play_track_id);
                 break;

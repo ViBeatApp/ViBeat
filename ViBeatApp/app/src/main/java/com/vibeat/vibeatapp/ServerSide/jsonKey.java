@@ -14,6 +14,7 @@ public enum jsonKey {
 	CONFIRMED,		//Send to the person that want to join - boolean
 	
 	OFFSET,
+	OFFSET_UPDATE_TIME,
 	USERS,
 	ADMINS,
 	REQUESTS,
