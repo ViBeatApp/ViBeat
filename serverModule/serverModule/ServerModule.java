@@ -206,7 +206,7 @@ public class ServerModule {
 		user.setLocation(location);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
-			if(distance(party.get_Location(), location) < 5000000) {
+			if(distance(party.get_Location(), location) < 100) {
 				partyArray.put(party.getPublicJson());
 				System.out.println(party.getPublicJson());
 			}
