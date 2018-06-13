@@ -89,11 +89,13 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     @SuppressLint("ResourceAsColor")
     public void setCurTrackBackground(int position_old, int position_new){
         PlaylistRecyclerView.playlistViewHolder viewHolder_new, viewHolder_old;
-        viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
+        if (position_old != -1){
+            viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
+            viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
+            notifyItemChanged(position_old);
+        }
         viewHolder_new = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_new);
-        viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
         viewHolder_new.background.setBackgroundColor(R.color.colorPrimaryDark);
-        notifyItemChanged(position_old);
         notifyItemChanged(position_new);
     }
 

@@ -90,7 +90,7 @@ public class Command {
 	}
 
 	public JSONArray getSyncPartyAttribute(jsonKey key) throws JSONException {
-		return cmd_info.getJSONArray(key.name());
+		return cmd_info.has(key.name()) ? cmd_info.getJSONArray(key.name()) : null;
 	}
 
 	public static Command create_authentication_command(String name,int userID,String image) throws JSONException {
