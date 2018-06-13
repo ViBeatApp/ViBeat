@@ -49,6 +49,7 @@ import com.vibeat.vibeatapp.ServerSide.partyInfo;
 import com.vibeat.vibeatapp.imageLoader;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GUIManager{
@@ -56,12 +57,15 @@ public class GUIManager{
     List<Adapter> adapters;
     MyApplication app;
     RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> recycler_adapter;
+    public List<change> cur_changes;
+
 
     public GUIManager(Activity act, List<Adapter> adapters){
         this.act = act;
         this.adapters = adapters;
         this.recycler_adapter = null;
         app = (MyApplication) act.getApplication();
+        this.cur_changes = new ArrayList<change>();
         //createTimer();
     }
 
@@ -592,47 +596,109 @@ public class GUIManager{
     }
 
     public void syncParty() {
+        Iterator<change> iter = cur_changes.iterator();
         if (act instanceof ConnectedActivity) {
-            Log.d("syncPart", "before start activity");
-            /*act.finish();
-            act.startActivity(act.getIntent());*/
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initConnectedActivity();
-                    ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
-                    ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
-                    act.findViewById(R.id.connected_xml).refreshDrawableState();
-                    act.findViewById(R.id.change_name).refreshDrawableState();
+            while (iter.hasNext()) {
+                change c = iter.next();
+                switch (c) {
+                    case users:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
+                                act.findViewById(R.id.connected_list).refreshDrawableState();
+
+                            }
+                        });
+                        break;
+                    case requests:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
+                                act.findViewById(R.id.waiting_list).refreshDrawableState();
+
+                            }
+                        });
+                        break;
+                    case is_private:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
+                                if (!app.client_manager.party.is_private)
+                                    isPrivate.setImageResource(R.drawable.ic_unlock_blue);
+                                else
+                                    isPrivate.setImageResource(R.drawable.ic_lock_blue);
+                                act.findViewById(R.id.change_name).refreshDrawableState();
+
+                            }
+                        });
+                        break;
+                    case party_name:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                EditText partyName = (EditText) act.findViewById(R.id.editText);
+                                partyName.setText(app.client_manager.party.party_name);
+                                partyName.clearFocus();
+                                act.findViewById(R.id.change_name).refreshDrawableState();
+
+                            }
+                        });
+
+                        break;
                 }
-            });
+                iter.remove();
+            }
         }
         if (act instanceof PlaylistActivity) {
-            Log.d("syncPart", "before start activity");
-            /*act.finish();
-            act.startActivity(act.getIntent());*/
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initPlaylistActivity();
-                    if(app.client_manager.isAdmin()){
-                        act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
-                        act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
-                    }
-                    recycler_adapter.notifyDataSetChanged();
-                    act.findViewById(R.id.playlist_xml).refreshDrawableState();
-                    act.findViewById(R.id.admin_toolbar).refreshDrawableState();
-                    act.findViewById(R.id.connected_toolbar).refreshDrawableState();
-                }
-            });
+            while (iter.hasNext()) {
+                change c = iter.next();
+                switch (c) {
+                    case songs:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recycler_adapter.notifyDataSetChanged();
+                                act.findViewById(R.id.playlist).refreshDrawableState();
 
+                            }
+                        });
+                        break;
+                    case party_name:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView party_name = (TextView) act.findViewById(R.id.party_name);
+                                TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
+                                party_name.setText(app.client_manager.party.party_name);
+                                party_name_conn.setText(app.client_manager.party.party_name);
+                                act.findViewById(R.id.admin_toolbar).refreshDrawableState();
+                                act.findViewById(R.id.connected_toolbar).refreshDrawableState();
+                            }
+                        });
+                        break;
+                    case admin:
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
+                                act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
+                                act.findViewById(R.id.admin_toolbar).refreshDrawableState();
+                            }
+                        });
+                        break;
+                }
+                iter.remove();
+            }
         }
         if (act instanceof LoadingActivity) {
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                Intent intent = new Intent(act, PlaylistActivity.class);
-                act.startActivity(intent);
+                    Intent intent = new Intent(act, PlaylistActivity.class);
+                    act.startActivity(intent);
                 }
             });
         }

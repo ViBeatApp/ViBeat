@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp.HelperClasses;
 
 import android.util.Log;
 
+import com.vibeat.vibeatapp.Managers.change;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
@@ -75,59 +76,69 @@ public class ListenerThread extends Thread {
 
         Log.e("Listener",cmd.cmd_type.name());
 
-        switch (cmd.cmd_type){
+        switch (cmd.cmd_type) {
 
-            /*
-            * Get from the server the entire party.
-            * things that can updated:
-            * 1. the current user is now an admin.
-            * 2. the playlist is different.
-            * 3. not playing or yes playing.
-            * 4.
-            * */
             case SYNC_PARTY:
-                JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.USERS);
-                // no party image at the moment.
-                //JSONArray image = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IMAGE);
-                JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.REQUESTS);
-                JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.SONGS);
-                JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.NAME);
-                JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.IS_PRIVATE);
-                JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd , jsonKey.CURRENT_TRACK_ID);
+
+                // Getting changes from server. If nothing was changed, get Null.
+                JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.USERS);
+                JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.REQUESTS);
+                JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.SONGS);
+                JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.NAME);
+                JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.IS_PRIVATE);
+                JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.CURRENT_TRACK_ID);
                 boolean move = false;
 
-                //String msg = app.client_manager == null ? "true" : "false";
-                //Log.d("NULL", "app.client_manager IS NULL: " + msg);
-                //msg = app.client_manager.party == null ? "true" : "false";
-                //Log.d("NULL", "app.client_manager.party IS NULL: " + msg);
-                app.semaphore.acquire();                //Trying to modify app.client_manager before the client_manager's constructor finish to run.
+                //Trying to modify app.client_manager before the client_manager's constructor finish to run.
+                app.semaphore.acquire();
                 app.semaphore.release();
+
                 if (app.client_manager.party == null) {
                     app.client_manager.party = new Party();
                     move = true;
                 }
-                app.client_manager.party.is_private = is_private.getBoolean(0);
-                app.client_manager.party.party_name = name.getString(0);
-                updateUserList(getUserListFromJSON(users),app.client_manager.party);
-                app.client_manager.party.request = getUserListFromJSON(requests);
-
-                if(app.client_manager.party.playlist != null) {
-                    int prev_size = app.client_manager.party.playlist.tracks.size();
-                    Log.d("MediaManager", "sync_party prev playlist size = "+prev_size);
-                    app.client_manager.party.playlist.tracks = getTrackListFromJSON(songs);
-                    if(prev_size == 1 && app.client_manager.party.playlist.tracks.size() > 1){
-                        Log.d("MediaManager", "prepare 2nd song");
-                        app.media_manager.prepare2nd(app.client_manager.party.playlist.tracks.get(
-                                (app.client_manager.party.playlist.cur_track + 1)%
-                                app.client_manager.party.playlist.tracks.size()).track_id);
+                synchronized (app.gui_manager.cur_changes) {
+                    if (is_private != null) {
+                        app.client_manager.party.is_private = is_private.getBoolean(0);
+                        app.gui_manager.cur_changes.add(change.is_private);
                     }
+                    if (name != null) {
+                        app.client_manager.party.party_name = name.getString(0);
+                        app.gui_manager.cur_changes.add(change.is_private);
+                    }
+                    if(users != null){
+                        boolean was_admin = app.client_manager.isAdmin();
+                        updateUserList(getUserListFromJSON(users), app.client_manager.party);
+                        app.gui_manager.cur_changes.add(change.users);
+                        if(!was_admin && app.client_manager.isAdmin())
+                            app.gui_manager.cur_changes.add(change.admin);
+                    }
+                    if(requests != null){
+                        app.client_manager.party.request = getUserListFromJSON(requests);
+                        app.gui_manager.cur_changes.add(change.requests);
+                    }
+                    if(songs != null){
+                        List<Track> new_tracks = getTrackListFromJSON(songs);
+                        app.gui_manager.cur_changes.add(change.songs);
 
+                        if (app.client_manager.party.playlist != null) {
+                            int prev_size = app.client_manager.party.playlist.tracks.size();
+                            app.client_manager.party.playlist.tracks = new_tracks;
+                            if (prev_size == 1 && app.client_manager.party.playlist.tracks.size() > 1) {
+                                app.media_manager.prepare2nd(app.client_manager.party.playlist.tracks.get(
+                                        (app.client_manager.party.playlist.cur_track + 1) %
+                                                app.client_manager.party.playlist.tracks.size()).track_id);
+                            }
+
+                        } else
+                            app.client_manager.party.playlist = new Playlist(new_tracks, false, 0);
+                    }
+                    if(cur_track != null) {
+                        app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
+                        app.gui_manager.cur_changes.add(change.cur_track);
+                    }
                 }
-                else
-                    app.client_manager.party.playlist = new Playlist(getTrackListFromJSON(songs), false, 0);
-                app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
-
-                if(move)
+                if (move)
                     app.gui_manager.completeJoin();
                 else
                     app.gui_manager.syncParty();
