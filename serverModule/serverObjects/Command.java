@@ -54,6 +54,10 @@ public class Command {
 		this.cmd_info.put(key.name(),num);
 	}
 	
+	public void setAttribute(jsonKey key, long num) throws JSONException {
+		this.cmd_info.put(key.name(),num);
+	}
+	
 	public void setAttribute(jsonKey key, boolean bool) throws JSONException {
 		this.cmd_info.put(key.name(),bool);
 	}
@@ -68,6 +72,10 @@ public class Command {
 	
 	public int getIntAttribute(jsonKey key) throws JSONException {
 		return this.cmd_info.getInt(key.name());
+	}
+	
+	public long getLongAttribute(jsonKey key) throws JSONException {
+		return this.cmd_info.getLong(key.name());
 	}
 	
 	public boolean getBoolAttribute(jsonKey key) throws JSONException {
