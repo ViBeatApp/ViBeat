@@ -31,7 +31,7 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
         app = (MyApplication) this.getApplication();
 
         recyclerView = (RecyclerView)findViewById(R.id.playlist);
-        adapter = new PlaylistRecyclerView(PlaylistActivity.this, app.client_manager.party.playlist);
+        adapter = new PlaylistRecyclerView(PlaylistActivity.this, app.client_manager.party.playlist, recyclerView);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager (this);
         recyclerView.setLayoutManager (mLayoutManager);
         recyclerView.setHasFixedSize(true);

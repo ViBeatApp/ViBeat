@@ -5,15 +5,23 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 
 public class MyTransformation extends BitmapTransformation {
 
-    public MyTransformation(Context context) {
+    public int color;
+    public Context context;
+
+    public MyTransformation(Context context, int color) {
         super(context);
+        this.color = color;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected Bitmap transform(BitmapPool pool, Bitmap source,
                                int outWidth, int outHeight) {
@@ -31,8 +39,7 @@ public class MyTransformation extends BitmapTransformation {
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
-        BitmapShader shader = new BitmapShader(squaredBitmap,
-                BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
+        BitmapShader shader = new BitmapShader(squaredBitmap, BitmapShader.TileMode.CLAMP, BitmapShader.TileMode.CLAMP);
         paint.setShader(shader);
         paint.setAntiAlias(true);
 
@@ -42,7 +49,6 @@ public class MyTransformation extends BitmapTransformation {
         squaredBitmap.recycle();
         return bitmap;
     }
-
     @Override
     public String getId() {
         // Return some id that uniquely identifies your transformation.

@@ -28,11 +28,13 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     private Context context;
     private Playlist playlist;
     private MyApplication app;
+    private RecyclerView recyclerView;
 
-    public PlaylistRecyclerView(Context context, Playlist playlist) {
+    public PlaylistRecyclerView(Context context, Playlist playlist, RecyclerView recyclerView) {
         this.context = context;
         this.playlist = playlist;
         this.app = (MyApplication) (((Activity) context).getApplication());
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -57,9 +59,9 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         Log.d("ImagePath","after");
 
         if(this.playlist.cur_track == position)
-            holder.itemView.setBackgroundColor(R.color.colorPrimary);
+            holder.background.setBackgroundColor(R.color.colorPrimaryDark);
         else
-            holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            holder.background.setBackgroundColor(Color.TRANSPARENT);
 
     }
 
@@ -82,6 +84,17 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         app.client_manager.removeTrack(position);
         playlist.tracks.remove(position);
         notifyItemRemoved(position);
+    }
+
+    @SuppressLint("ResourceAsColor")
+    public void setCurTrackBackground(int position_old, int position_new){
+        PlaylistRecyclerView.playlistViewHolder viewHolder_new, viewHolder_old;
+        viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
+        viewHolder_new = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_new);
+        viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
+        viewHolder_new.background.setBackgroundColor(R.color.colorPrimaryDark);
+        notifyItemChanged(position_old);
+        notifyItemChanged(position_new);
     }
 
     public class playlistViewHolder extends RecyclerView.ViewHolder{
