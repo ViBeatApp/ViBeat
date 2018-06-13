@@ -1,3 +1,9 @@
 /Party$Party_Status.class
 /Party.class
 /Playlist.class
+/Command.class
+/Location.class
+/ReadWriteAux.class
+/Track.class
+/User.class
+/jsonKey.class

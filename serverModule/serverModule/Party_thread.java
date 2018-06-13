@@ -175,14 +175,12 @@ public class Party_thread implements Runnable {
 		Command sync_command = Command.create_syncParty_Command(party.getFullJson());
 		SendCommandToUser(user, sync_command);
 		if (party.nonEmptyPlaylist()) {
-			if (party.status == Party_Status.playing) {
-				pause_song(Command.create_pause_Command(party.get_current_track_id(), total_offset));
-				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
-			}
-			else{
-				Command get_ready_command = create_get_ready_command();
-				SendCommandToUser(user, get_ready_command);
-			}
+//			if (party.status == Party_Status.playing) {
+//				pause_song(Command.create_pause_Command(party.get_current_track_id(), total_offset));
+//				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
+//			}
+			Command get_ready_command = create_get_ready_command();
+			SendCommandToUser(user, get_ready_command);
 		}
 	}
 
