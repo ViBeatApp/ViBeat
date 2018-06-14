@@ -45,6 +45,7 @@ public class ClientManager {
         app.sender_thread.start();
         try {
             app.sender_thread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
+            Log.d("Dana", "ClientManager:  add command to sender");
         } catch (JSONException e) {
             e.printStackTrace();
         }

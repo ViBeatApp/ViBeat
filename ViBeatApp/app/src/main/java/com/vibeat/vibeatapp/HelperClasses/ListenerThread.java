@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class ListenerThread extends Thread {
     public MyApplication app;
     public Boolean disconnected;
     public boolean openparty = true;
+    public long offset_from_ntp;
 
     public ListenerThread(MyApplication app, ReadWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
@@ -43,7 +43,11 @@ public class ListenerThread extends Thread {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
-
+        try {
+            offset_from_ntp = TimerManager.getCurrentNetworkTime()-System.currentTimeMillis();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         while (!disconnected && openparty) {
             Command cmd = null;
             try {
@@ -176,12 +180,11 @@ public class ListenerThread extends Thread {
                 if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
                     try {
                         Log.d("Test2", "after checking OFFSET_UPDATE_TIME");
-                        long time = Instant.now().toEpochMilli();
-                        //long time = System.currentTimeMillis();
-                        long offset = time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME);
-                        Log.d("Time_difference_moshe", "" + offset);
-                        //play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME);
-                        //play_offset += 1189;
+                        //long time = Instant.now().toEpochMilli();
+                        //long time = System.currentTimeMillis() + offset_from_ntp;
+                        //long offset = cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) - time -600;
+                        //Log.d("Time_difference_moshe", "" + offset);
+                        //play_offset += 150;
                     } catch (Exception e) {
                         Log.d("Test2", "Exception!!! OFFSET_UPDATE_TIME");
                         e.printStackTrace();
