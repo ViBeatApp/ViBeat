@@ -29,13 +29,14 @@ import java.util.List;
 public class ListenerThread extends Thread {
 
     public ReadWriteAux readWriteAux;
-    public  MyApplication app;
-    public  boolean disconnected = false;
+    public MyApplication app;
+    public Boolean disconnected;
     public boolean openparty = true;
 
     public ListenerThread(MyApplication app, ReadWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
         this.app = app;
+        disconnected = new Boolean(false);
     }
 
 
@@ -75,6 +76,7 @@ public class ListenerThread extends Thread {
     }
 
     //@RequiresApi(api = Build.VERSION_CODES.O)
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void handlerCommand(Command cmd) throws JSONException, InterruptedException {
         if( cmd == null )
             return;
@@ -174,9 +176,12 @@ public class ListenerThread extends Thread {
                 if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
                     try {
                         Log.d("Test2", "after checking OFFSET_UPDATE_TIME");
-                        //long time = Instant.now().getEpochSecond();
-                        long time = System.currentTimeMillis();
-                        play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) + 30;
+                        long time = Instant.now().toEpochMilli();
+                        //long time = System.currentTimeMillis();
+                        long offset = time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME);
+                        Log.d("Time_difference_moshe", "" + offset);
+                        //play_offset += time - cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME);
+                        //play_offset += 1189;
                     } catch (Exception e) {
                         Log.d("Test2", "Exception!!! OFFSET_UPDATE_TIME");
                         e.printStackTrace();
@@ -193,8 +198,8 @@ public class ListenerThread extends Thread {
                 break;
 
             case PAUSE:
-                app.gui_manager.pause();
                 app.media_manager.pause();
+                app.gui_manager.pause();
                 break;
 
             case REJECTED:
@@ -202,7 +207,7 @@ public class ListenerThread extends Thread {
                 break;
 
             case DISCONNECTED:
-                if (!disconnected ) {
+                if (!disconnected) {
                     app.gui_manager.disconnected(true);
                     disconnected = true;
                 }

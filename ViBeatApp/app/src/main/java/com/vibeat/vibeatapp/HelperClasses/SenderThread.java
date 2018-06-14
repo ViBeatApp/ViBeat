@@ -8,7 +8,6 @@ import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.LinkedList;
 
 
@@ -31,8 +30,12 @@ public class SenderThread extends Thread {
         try {
             Log.d("SenderThread", "choose your own IpAddress ");
             conn = new ReadWriteAux("52.23.168.179");
-            if(conn.socket == null)
+            if(conn.socket == null) {
                 app.gui_manager.disconnected(false);
+                app.semaphoreSender.release();
+                return;
+            }
+            app.semaphoreSender.release();
             Log.d("SenderThread", "after connection ");
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
@@ -57,23 +60,16 @@ public class SenderThread extends Thread {
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+                        break;
                     }
                 }
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         Log.d("SENDER","at the end");
-        /*if (app.listener_thread != null) {
-            app.listener_thread.interrupt();
-            try {
-                app.listener_thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }*/
 
     }
 
@@ -89,9 +85,7 @@ public class SenderThread extends Thread {
     }
 
     public void logout(){
-        synchronized (task_queue){
-            this.connected = false;
-            task_queue.notify();
-        }
+        app.client_manager.terminateConnection(false);
+
     }
 }

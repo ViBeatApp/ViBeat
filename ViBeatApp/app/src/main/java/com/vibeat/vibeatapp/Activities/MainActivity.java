@@ -24,7 +24,6 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,25 +55,29 @@ public class MainActivity extends AppCompatActivity {
         // Check if a user has already signed in with google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         Log.d("after auth", "onCreate:11111 ");
+        SignInButton signInButton = findViewById(R.id.googleLogin);
+        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signInIntent, 123);
+                }
+                });
 
-        if (account != null && app.client_manager == null) {
+        if  (account != null && app.client_manager == null) {
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
             app.semaphore.release();
+            try {
+                Log.d("Test8", "before acquire");
+                app.semaphoreSender.acquire();
+                Log.d("Test8", "after acquire");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             app.gui_manager.login();
             Log.d("if authentication null", "3333333");
-        } else {
-            SignInButton signInButton = findViewById(R.id.googleLogin);
-            signInButton.setSize(SignInButton.SIZE_STANDARD);
-            signInButton.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                                                    startActivityForResult(signInIntent, 123);
-                                                }
-                                            }
-            );
         }
-
     }
 
     @Override
@@ -88,7 +91,15 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
                 app.semaphore.release();
+                try {
+                    Log.d("Test8", "before acquire");
+                    app.semaphoreSender.acquire();
+                    Log.d("Test8", "after acquire");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 app.gui_manager.login();
+
 
             } catch (ApiException e) {
                 Log.w("TAG", "signInResult:failed code=" + e.getStatusCode());

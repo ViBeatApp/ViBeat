@@ -112,9 +112,11 @@ public class GUIManager{
     }
 
     public void login() {
-        app.client_manager.initLocationTracking(act);
-        Intent intent = new Intent(act, EnterPartyActivity.class);
-        act.startActivity(intent);
+        if(app.sender_thread != null) {
+            app.client_manager.initLocationTracking(act);
+            Intent intent = new Intent(act, EnterPartyActivity.class);
+            act.startActivity(intent);
+        }
     }
 
     public void requestJoin(partyInfo party) {
@@ -136,7 +138,15 @@ public class GUIManager{
                 @Override
                 public void run() {
                     adap.notifyDataSetChanged();
-                    act.findViewById(R.id.parties_list).refreshDrawableState();
+                    if( adapters.get(0).isEmpty() ){
+                        act.findViewById(R.id.no_parties).setVisibility(View.VISIBLE);
+                        act.findViewById(R.id.parties_list).setVisibility(View.GONE);
+                    }
+                    else {
+                        act.findViewById(R.id.no_parties).setVisibility(View.GONE);
+                        act.findViewById(R.id.parties_list).setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
 
@@ -248,6 +258,16 @@ public class GUIManager{
                 act.startActivity(intent);
             }
         });
+
+        if( adapters.get(0).isEmpty() ){
+            act.findViewById(R.id.no_parties).setVisibility(View.VISIBLE);
+            act.findViewById(R.id.parties_list).setVisibility(View.GONE);
+        }
+        else {
+            act.findViewById(R.id.no_parties).setVisibility(View.GONE);
+            act.findViewById(R.id.parties_list).setVisibility(View.VISIBLE);
+        }
+
 
         TextView logout = (TextView) act.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -688,33 +708,36 @@ public class GUIManager{
                 app.media_manager.stop();
         }
         app.client_manager.terminateConnection(fromListener);
-        if(!(act instanceof MainActivity)) {
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
-                    } else {
-                        builder = new AlertDialog.Builder(act);
-                    }
-                    builder.setTitle("Connection Error")
-                            .setMessage("Please try to reopen the app :)")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent homeIntene = new Intent(Intent.ACTION_MAIN);
-                                    homeIntene.addCategory(Intent.CATEGORY_HOME);
-                                    homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    act.startActivity(homeIntene);
-                                    //android.os.Process.killProcess(android.os.Process.myPid());
-                                    //System.exit(0);
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
+                } else {
+                    builder = new AlertDialog.Builder(act);
                 }
-            });
-        }
+                builder.setTitle("Connection Error")
+                        .setMessage("Please try to reopen the app :)")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (!(act instanceof MainActivity)) {
+                                    Intent intent = new Intent(act, MainActivity.class);
+                                    act.startActivity(intent);
+                                }
+                                /*Intent homeIntene = new Intent(Intent.ACTION_MAIN);
+                                homeIntene.addCategory(Intent.CATEGORY_HOME);
+                                homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                act.startActivity(homeIntene);*/
+                                //android.os.Process.killProcess(android.os.Process.myPid());
+                                //System.exit(0);
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
+        });
+
     }
 
 

@@ -18,4 +18,5 @@ public class MyApplication extends Application {
     public GUIManager gui_manager = null;
     public FBManager fb_manager = null;
     public Semaphore semaphore = null;
+    public Semaphore semaphoreSender = null;
 }

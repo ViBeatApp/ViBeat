@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.FBManager;
-import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
@@ -38,6 +37,7 @@ public class ClientManager {
 
     public ClientManager(User user, MyApplication app){
         app.semaphore = new Semaphore(0);
+        app.semaphoreSender = new Semaphore(0);
         this.user= user;
         this.party = null;
         app.sender_thread = new SenderThread(app);
@@ -305,23 +305,25 @@ public class ClientManager {
         startConnection();
     }*/
 
-    public void terminateConnection(boolean join){
-        //try {
-            ///this.senderThread.connected = false;
-
-            if(app.sender_thread != null) {
-                logout();
-                if(join)
-                    try {
-                        app.sender_thread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+    public void terminateConnection(boolean fromListener){
+        if(fromListener && app.sender_thread != null) {
+            app.sender_thread.interrupt();
+            try {
+                app.sender_thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            this.app.sender_thread = null;
-        /*} catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+        }
+        else if (app.listener_thread != null) {
+                app.listener_thread.interrupt();
+                try {
+                    app.listener_thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+        }
+        this.app.sender_thread = null;
+        this.app.listener_thread = null;
     }
 
     /*public void startConnection(){
