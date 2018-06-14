@@ -8,9 +8,10 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
-import static android.support.constraint.Constraints.TAG;
 
 public class TimerManager {
+
+    // based on https://stackoverflow.com/questions/8049912/how-can-i-get-the-network-time-from-the-automatic-setting-called-use-netw/10758365#10758365
     public static final String TIME_SERVER = "time-a.nist.gov";
     public static long getCurrentNetworkTime() throws UnknownHostException, IOException{
         NTPUDPClient timeClient = new NTPUDPClient();
