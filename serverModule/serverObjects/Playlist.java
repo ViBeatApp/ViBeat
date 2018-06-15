@@ -33,7 +33,16 @@ public class Playlist {
 				return;
 			}
 		}
-		System.out.println("error setCurrentTrack");
+		if(trackID == -1){
+			for(int i = 0; i < songs.size(); ++i){
+				if(songs.get(i).trackId == currentTrack){
+					System.out.println("error setCurrentTrack !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					currentTrack = songs.get((i+1)%songs.size()).trackId;
+					return;
+				}
+			}
+		}
+
 	}
 
 	public int get_current_track_id() {

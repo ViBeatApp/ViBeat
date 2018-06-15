@@ -7,6 +7,11 @@ import android.util.Log;
 import com.vibeat.vibeatapp.MyApplication;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
+
+import static java.lang.Thread.sleep;
 
 public class MyMediaPlayer extends MediaPlayer {
 
@@ -18,6 +23,7 @@ public class MyMediaPlayer extends MediaPlayer {
     public int offset = 0;
     public int index;
     public boolean startAfterSeek = false;
+    public boolean joiningPlayingParty = false;
 
     public MyMediaPlayer(final MyApplication app, final int index){
         super();
@@ -27,7 +33,6 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnPreparedListener(new OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                Log.e("Test1", "on prepared");
                 whenPrepared();
             }
         });
@@ -54,20 +59,38 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnSeekCompleteListener(new OnSeekCompleteListener() {
             @Override
             public void onSeekComplete(MediaPlayer mp) {
-                Log.e("Test1", "after seek");
-
+                Log.e("Tomer", "after seek");
                 if(startAfterSeek) {
-                    Log.e("Test1", "before start");
-
-                    start();
+                    Log.e("DebugMediaPlayer", "startAfterSeek");
+                    if(!mp.isPlaying())
+                        start();
                     startAfterSeek = false;
                     return;
                 }
+
                 if (isCurTrack()) {
-                    Log.e("Test1", "before sending I'm ready");
+                    Log.e("DebugMediaPlayer", "not !!!! startAfterSeek");
+                    if(joiningPlayingParty){
+                        start();
+                        mp.setVolume(0,0);
+                        try {
+                            sleep(4500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                       }
+                        /*new java.util.Timer().schedule(
+                                new java.util.TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        Log.e("DebugMediaPlayer", "waitingTimer");
+                                        app.client_manager.sendReady(track_id);
+                                    }
+                                },
+                                4500);*/
+                    }
+                    Log.e("DebugMediaPlayer", "before sending I'm ready");
                     app.client_manager.sendReady(track_id);
                 }
-
             }
         });
 
@@ -77,7 +100,6 @@ public class MyMediaPlayer extends MediaPlayer {
     private synchronized void whenPrepared() {
         Log.e("Test1", "inside when prepared");
         if(app.client_manager.party != null) {
-            Log.e("Test1", "inside when prepared if statement");
             this.is_prepared = true;
             this.preparing = false;
             this.startAfterSeek = false;
@@ -96,55 +118,45 @@ public class MyMediaPlayer extends MediaPlayer {
         this.track_id = track_id;
     }
 
-    public synchronized void getReady(int track_id, int offset)throws IOException {
-        Log.e("Test1", "inside get ready my media player: index = "+index);
-        Log.e("Test1", "got offset = "+offset);
-        Log.e("Test1", "media player old offset = "+this.offset);
+    public synchronized void getReady(int track_id, int offset, boolean joiningPlayingParty)throws IOException {
         this.offset = offset;
+        this.joiningPlayingParty = joiningPlayingParty;
         //if(this.isPlaying()) this.pause();
         if (is_prepared && this.track_id == track_id){
-            Log.e("Test1", "already prepared");
-            Log.e("Test1", "changing offset");
-
+            Log.e("DebugMediaPlayer", "false - mp need to prepare");
             this.startAfterSeek = false;
             this.seekTo(offset);
         }
         else if (!preparing || this.track_id != track_id) {
 
-            Log.e("Test1", "inside if in get ready");
+            Log.e("DebugMediaPlayer", "correct");
             setCurrentTrack(track_id);
             preparing = true;
             is_prepared = false;
-            Log.e("Test1", "before calling prepare async");
             this.prepareAsync();
-            Log.e("Test1", "after calling prepare async");
         }
         Log.e("Test1", "finish get ready");
 
     }
 
     public synchronized void play(int track_id, int offset) throws IOException {
-        Log.d("Test1","inside play");
+        Log.d("burger","inside play");
+        if(is_mute == false)
+            this.setVolume(1,1);
 
         if(!isCurTrack())
-            Log.d("Test1","ERROR");
+            Log.d("burger","ERROR");
 
-        if(this.offset == offset)
+        if(this.offset == offset) {
+            Log.d("burger","Play - SameOffset");
             this.start();
+        }
 
         else if(this.offset != offset) {
-            Log.d("Test1","offset ="+offset);
+            Log.d("burger","offset = "+offset);
             this.offset = offset;
             this.startAfterSeek = true;
-            this.seekTo(this.offset);
-        }
-        else /*if (this.track_id != track_id || !is_prepared) */ {
-            Log.d("Test1","Error - playing on wrong media player");
-            setCurrentTrack(track_id);
-            this.prepare();
-            this.is_prepared = true;
-            this.offset = offset;
-            this.startAfterSeek = true;
+            this.joiningPlayingParty = false;
             this.seekTo(this.offset);
         }
     }

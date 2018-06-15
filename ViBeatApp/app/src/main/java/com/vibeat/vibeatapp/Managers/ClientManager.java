@@ -255,8 +255,10 @@ public class ClientManager {
     public void leaveParty(){
         try {
             waiting_for_response = false;
-            if(party != null && party.playlist!= null && party.playlist.is_playing)
-                app.media_manager.stop();
+            if(party != null && party.playlist!= null) {
+                app.media_manager.m1.release();
+                app.media_manager.m2.release();
+            }
             app.media_manager = new MediaPlayerManager(app);
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_leaveParty_Command());

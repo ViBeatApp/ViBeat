@@ -43,17 +43,12 @@ public class ListenerThread extends Thread {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
-        try {
-            offset_from_ntp = TimerManager.getCurrentNetworkTime()-System.currentTimeMillis();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         while (!disconnected && openparty) {
             Command cmd = null;
             try {
-                Log.e("Listener","before listen");
+                //Log.e("Listener","before listen");
                 cmd = getServerCommand();
-                Log.e("Listener","atfer listen");
+                //Log.e("Listener","atfer listen");
                 handlerCommand(cmd);
             }
             catch (InterruptedException e){
@@ -169,29 +164,16 @@ public class ListenerThread extends Thread {
                 Log.d("Test1","get ready in listener");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                app.media_manager.getReady(prep_track_id, prep_offset);
+                boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.WAIT_FOR_TO_SEEK);
+                app.media_manager.getReady(prep_track_id, prep_offset,joiningPlayingParty);
                 break;
 
             case PLAY_SONG:
-                Log.d("Test2","play song in listener");
+                Log.d("Test1","play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
-                    try {
-                        Log.d("Test2", "after checking OFFSET_UPDATE_TIME");
-                        //long time = Instant.now().toEpochMilli();
-                        //long time = System.currentTimeMillis() + offset_from_ntp;
-                        //long offset = cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) - time -600;
-                        //Log.d("Time_difference_moshe", "" + offset);
-                        //play_offset += 150;
-                    } catch (Exception e) {
-                        Log.d("Test2", "Exception!!! OFFSET_UPDATE_TIME");
-                        e.printStackTrace();
-                    }
-                }
-                Log.d("Test2","after checking OFFSET_UPDATE_TIME");
-                app.media_manager.play(play_track_id,play_offset);
+                app.media_manager.play(play_track_id, play_offset);
                 app.gui_manager.play(play_track_id);
                 break;
 

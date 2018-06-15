@@ -14,7 +14,7 @@ public enum jsonKey {
 	CONFIRMED,		//Send to the person that want to join - boolean
 	
 	OFFSET,
-	OFFSET_UPDATE_TIME,
+	TO_SEEK,
 	USERS,
 	ADMINS,
 	REQUESTS,
@@ -40,5 +40,6 @@ public enum jsonKey {
 	USER_ID,
 
 	COMMAND_TYPE,
-	COMMAND_INFO;
+	COMMAND_INFO,
+	WAIT_FOR_TO_SEEK;;
 }
