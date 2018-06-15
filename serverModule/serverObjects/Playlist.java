@@ -85,11 +85,25 @@ public class Playlist {
 				secondIndex = i;
 			}
 		}
+		System.out.println("first index: " + firstIndex + " second index: " + secondIndex);
 		if(firstIndex == -1 || secondIndex == -1) 
 			return 0;
-		Track tmpTrack = songs.get(firstIndex);
-		songs.set(firstIndex, songs.get(secondIndex));
-		songs.set(secondIndex, tmpTrack);
+		if(secondIndex < firstIndex) {
+			Track end = songs.get(firstIndex); 
+			for(int i = firstIndex; i > secondIndex; i--)
+			{
+				songs.set(i,songs.get(i-1)); 
+			}
+			songs.set(secondIndex, end);    
+		}
+		else if(firstIndex < secondIndex) {
+			Track start = songs.get(firstIndex); 
+			for(int i = firstIndex; i < secondIndex; i++)
+			{
+				songs.set(i,songs.get(i+1)); 
+			}
+			songs.set(secondIndex, start);  
+		}
 		return 1;
 	}
 

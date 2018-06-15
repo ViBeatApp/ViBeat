@@ -4,6 +4,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
 import com.vibeat.vibeatapp.Managers.change;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
@@ -180,6 +181,7 @@ public class ListenerThread extends Thread {
             case LEAVE_PARTY:
                 app.client_manager.party = null;
                 app.client_manager.user.is_admin = false;
+                app.media_manager = new MediaPlayerManager(app);
                 break;
 
             case PAUSE:

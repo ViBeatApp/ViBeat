@@ -341,6 +341,8 @@ public class Party_thread implements Runnable {
 		switch(party.status) {
 		case playing:
 			System.out.println("handle-ready - party is playing");
+			if(ready_for_play.contains(user))
+				return;
 			pause_song(Command.create_pause_Command(-1, total_offset));
 			updateTime();
 			startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
@@ -474,7 +476,7 @@ public class Party_thread implements Runnable {
 
 	private void sendPlayToList() throws IOException, JSONException {
 		Command play_command = create_play_command(); // not updating the offset
-		SendCommandToList(play_command, ready_for_play, true);
+		SendCommandToList(play_command, ready_for_play, false);
 	}
 
 
