@@ -130,7 +130,7 @@ public class Party_thread implements Runnable {
 
 		//optimization.
 		if ((party.status == Party.Party_Status.not_started) && touchCurrentSong) {
-			Command get_ready_command = create_get_ready_command();
+			Command get_ready_command = create_get_ready_command(false);
 			SendCommandToAll(get_ready_command);
 		}
 	}
@@ -174,7 +174,7 @@ public class Party_thread implements Runnable {
 //				pause_song(Command.create_pause_Command(party.get_current_track_id(), total_offset));
 //				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
 //			}
-			Command get_ready_command = create_get_ready_command();
+			Command get_ready_command = create_get_ready_command(party.status == Party_Status.playing);
 			SendCommandToUser(user, get_ready_command);
 		}
 	}
@@ -311,26 +311,26 @@ public class Party_thread implements Runnable {
 	/* we wait for half of the party participants to be ready before we actually start playing */
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
 		System.out.println("--- party-thread: party-songs-#: " + party.get_playlist_size());
-
-		if(cmd.getIntAttribute(jsonKey.TRACK_ID) == party.get_current_track_id()) {			
+		int trackId = cmd.getIntAttribute(jsonKey.TRACK_ID);
+		if(trackId == party.get_current_track_id()) {			
 			if(party.status == Party.Party_Status.preparing || (party.status == Party.Party_Status.playing && party.get_playlist_size() != 1)) {
 				return;
 			}	
 		}
-
-		else if (party.status == Party.Party_Status.pause || party.status == Party.Party_Status.not_started) { //next song but there's no need to start playing. 
-			party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));  
+		
+		else if ((party.status == Party.Party_Status.pause || (party.status == Party.Party_Status.not_started && trackId != -1))) { //next song but there's no need to start playing. 
+			party.setCurrentTrack(trackId);  
 			updatePartyToAll();		//for checking if we're at the current track.
 			return;
 		}
-
+		
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
 		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
 		System.out.println("startPlayProtocol thread - currentTrackId: " + party.get_current_track_id());
-		Command get_ready_command = create_get_ready_command(); // not updating the offset
+		Command get_ready_command = create_get_ready_command(false); // not updating the offset
 		updatePartyToAll();		//for checking if we're at the current track.
 		SendCommandToAll(get_ready_command);
 	}
@@ -341,11 +341,9 @@ public class Party_thread implements Runnable {
 		switch(party.status) {
 		case playing:
 			System.out.println("handle-ready - party is playing");
-			//Command play_command = create_play_command(false);
-			//SendCommandToUser(user, play_command);
-			Thread.sleep(2000);
-			Command play_command = create_play_command(true);
-			SendCommandToList(play_command, party.connected, false);
+			pause_song(Command.create_pause_Command(-1, total_offset));
+			updateTime();
+			startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
 			break;
 		case preparing:
 			if(!ready_for_play.contains(user))
@@ -475,7 +473,7 @@ public class Party_thread implements Runnable {
 	}
 
 	private void sendPlayToList() throws IOException, JSONException {
-		Command play_command = create_play_command(false); // not updating the offset
+		Command play_command = create_play_command(); // not updating the offset
 		SendCommandToList(play_command, ready_for_play, true);
 	}
 
@@ -496,34 +494,30 @@ public class Party_thread implements Runnable {
 	}*/
 
 	/* updates the GetReady command */
-	public Command create_get_ready_command() throws JSONException {
+	public Command create_get_ready_command(boolean middleOfPlaying) throws JSONException {
 		Command get_ready_command = new Command(CommandType.GET_READY);
 		if (party.status == Party.Party_Status.playing) {
-			Instant current_time = Instant.now();
-			total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
-			//System.out.println("update_get_ready_command: update total-offset: " + total_offset);
-			last_offset_update_time = current_time;
-			//System.out.println("update_get_ready_command: update current-last_offset_update_time: " + last_offset_update_time.toString());
+			updateTime();
 		}
 		get_ready_command.setAttribute(jsonKey.OFFSET, total_offset);
 		get_ready_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
+		get_ready_command.setAttribute(jsonKey.WAIT_FOR_TO_SEEK, middleOfPlaying);
 		return get_ready_command;
 	}
 
 	/* updates the play command */
-	public Command create_play_command(boolean to_seek) throws JSONException {
+	public Command create_play_command() throws JSONException {
 		System.out.println("create_play_command - before update");
 		Command play_command = new Command(CommandType.PLAY_SONG);
-		if (to_seek) {
-			System.out.println("create_play_command - updating offset");
-			Instant current_time = Instant.now();
-			total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
-			last_offset_update_time = current_time;
-			play_command.setAttribute(jsonKey.TO_SEEK, true);
-		}
 		play_command.setAttribute(jsonKey.OFFSET, total_offset);
 		play_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
 		return play_command;
+	}
+
+	protected void updateTime() {
+		Instant current_time = Instant.now();
+		total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
+		last_offset_update_time = current_time;
 	}
 
 	private static boolean isComeBackUser(List<User> comeBackUser, int id) {

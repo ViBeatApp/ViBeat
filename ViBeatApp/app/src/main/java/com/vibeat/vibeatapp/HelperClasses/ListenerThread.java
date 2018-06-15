@@ -164,7 +164,8 @@ public class ListenerThread extends Thread {
                 Log.d("Test1","get ready in listener");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                app.media_manager.getReady(prep_track_id, prep_offset);
+                boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.WAIT_FOR_TO_SEEK);
+                app.media_manager.getReady(prep_track_id, prep_offset,joiningPlayingParty);
                 break;
 
             case PLAY_SONG:
@@ -172,22 +173,8 @@ public class ListenerThread extends Thread {
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                if (cmd.cmd_info.has(jsonKey.TO_SEEK.name())) {
-                    if(app.media_manager.active_mp == 1) {
-                        //app.media_manager.m1.pause();
-                        app.media_manager.m1.startAfterSeek = true;
-                        app.media_manager.m1.seekTo(play_offset);
-                    }
-                    else if(app.media_manager.active_mp == 2) {
-                        //app.media_manager.m2.pause();
-                        app.media_manager.m2.startAfterSeek = true;
-                        app.media_manager.m2.seekTo(play_offset);
-                    }
-                }
-                else {
-                    app.media_manager.play(play_track_id, play_offset);
-                    app.gui_manager.play(play_track_id);
-                }
+                app.media_manager.play(play_track_id, play_offset);
+                app.gui_manager.play(play_track_id);
                 break;
 
             case LEAVE_PARTY:
