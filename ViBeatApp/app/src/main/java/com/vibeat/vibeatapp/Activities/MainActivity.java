@@ -69,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
             app.semaphore.release();
             try {
-                Log.d("Test8", "before acquire");
                 app.semaphoreSender.acquire();
-                Log.d("Test8", "after acquire");
+                Log.d("Test7", "lock semaphore sender in main activity");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -92,9 +91,8 @@ public class MainActivity extends AppCompatActivity {
                 app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
                 app.semaphore.release();
                 try {
-                    Log.d("Test8", "before acquire");
                     app.semaphoreSender.acquire();
-                    Log.d("Test8", "after acquire");
+                    Log.d("Test7", "lock semaphore sender in main activity");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

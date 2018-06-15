@@ -17,25 +17,31 @@ public class SenderThread extends Thread {
 
     public ReadWriteAux conn;
     public LinkedList<Command> task_queue;
-    public boolean connected;
+    public Boolean connected;
 
     public SenderThread(MyApplication app) {
+        Log.d("Test7", "Sender builder");
         this.task_queue = new LinkedList<Command>();
-        this.connected = true;
+        this.connected = new Boolean(true);
         this.app = app;
     }
 
     @Override
     public void run() {
         try {
-            Log.d("SenderThread", "choose your own IpAddress ");
+            Log.d("Test7", "sender run");
             conn = new ReadWriteAux("52.23.168.179");
             if(conn.socket == null) {
+                Log.d("Test7", "sender conn = null");
                 app.gui_manager.disconnected(false);
                 app.semaphoreSender.release();
+                Log.d("Test7", "release semaphore sender in sender");
                 return;
             }
+            Log.d("Test7", "conn succeed");
+            app.disconnected = false;
             app.semaphoreSender.release();
+            Log.d("Test7", "release semaphore sender in sender");
             Log.d("SenderThread", "after connection ");
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
@@ -52,6 +58,7 @@ public class SenderThread extends Thread {
                                 if (conn.send(cmd) < 0) {
                                     Log.d("SENDER", "got -1");
                                     app.gui_manager.disconnected(false);
+                                    connected = false;
                                 }
 
                             } catch (JSONException e) {

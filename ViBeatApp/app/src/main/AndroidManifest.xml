@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -18,15 +18,16 @@
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Activities.EnterPartyActivity" />
-        <activity android:name=".Activities.CreatePartyActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:fitsSystemWindows="false"/>
-        <activity android:name=".Activities.PlaylistActivity">
-        </activity>
+        <activity
+            android:name=".Activities.CreatePartyActivity"
+            android:fitsSystemWindows="false"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".Activities.PlaylistActivity"></activity>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -35,11 +36,13 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="1300552146744496" />
 
-        <activity android:name=".Activities.ConnectedActivity"
-            android:windowSoftInputMode="adjustPan"
-            android:fitsSystemWindows="false"/>
+        <activity
+            android:name=".Activities.ConnectedActivity"
+            android:fitsSystemWindows="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".Activities.AddMusicActivity" />
         <activity android:name=".Activities.LoadingActivity" />
+        <activity android:name=".Activities.NoConnectionActivity"></activity>
     </application>
 
 </manifest>

@@ -38,6 +38,7 @@ public class ClientManager {
     public ClientManager(User user, MyApplication app){
         app.semaphore = new Semaphore(0);
         app.semaphoreSender = new Semaphore(0);
+        Log.d("Test7", "lock semaphore sender in client manager");
         this.user= user;
         this.party = null;
         app.sender_thread = new SenderThread(app);
@@ -307,21 +308,32 @@ public class ClientManager {
     }*/
 
     public void terminateConnection(boolean fromListener){
+        Log.d("Test7", "terminateConnection");
         if(fromListener && app.sender_thread != null) {
+            Log.d("Test7", "terminateConnection - try to kill sender");
+            synchronized (app.sender_thread.connected) {
+                app.sender_thread.connected = false;
+            }
             app.sender_thread.interrupt();
-            try {
+            /*try {
                 app.sender_thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
+            Log.d("Test7", "terminateConnection - kill sender");
         }
         else if (app.listener_thread != null) {
+            Log.d("Test7", "terminateConnection - try to kill listener");
+                synchronized (app.listener_thread.disconnected) {
+                    app.listener_thread.disconnected = true;
+                }
                 app.listener_thread.interrupt();
-                try {
+                /*try {
                     app.listener_thread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }*/
+            Log.d("Test7", "terminateConnection - kill listener");
         }
         this.app.sender_thread = null;
         this.app.listener_thread = null;

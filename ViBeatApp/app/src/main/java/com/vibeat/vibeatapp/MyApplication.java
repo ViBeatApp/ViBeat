@@ -19,4 +19,6 @@ public class MyApplication extends Application {
     public FBManager fb_manager = null;
     public Semaphore semaphore = null;
     public Semaphore semaphoreSender = null;
+    public Semaphore semaphoreDisconnected = null;
+    public boolean disconnected = true;
 }

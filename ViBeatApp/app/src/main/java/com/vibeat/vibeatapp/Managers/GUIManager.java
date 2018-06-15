@@ -1,14 +1,11 @@
 package com.vibeat.vibeatapp.Managers;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -35,6 +32,7 @@ import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
 import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
 import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
+import com.vibeat.vibeatapp.Activities.NoConnectionActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
@@ -51,6 +49,7 @@ import com.vibeat.vibeatapp.imageLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class GUIManager{
     public Activity act;
@@ -66,7 +65,9 @@ public class GUIManager{
         this.recycler_adapter = null;
         app = (MyApplication) act.getApplication();
         this.cur_changes = new ArrayList<change>();
-        //createTimer();
+        app.semaphoreDisconnected = new Semaphore(0);
+        app.semaphoreDisconnected.release();
+        Log.d("Test7", "gui builder after create lock");
     }
 
     public GUIManager(Activity act, RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> adapter){
@@ -74,7 +75,7 @@ public class GUIManager{
         this.recycler_adapter = adapter;
         this.adapters = null;
         app = (MyApplication) act.getApplication();
-        //createTimer();
+        app.semaphoreDisconnected = new Semaphore(0);
     }
 
     /*public void createTimer(){
@@ -113,21 +114,23 @@ public class GUIManager{
 
     public void login() {
         if(app.sender_thread != null) {
-            app.client_manager.initLocationTracking(act);
-            Intent intent = new Intent(act, EnterPartyActivity.class);
-            act.startActivity(intent);
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    app.client_manager.initLocationTracking(act);
+                }
+            });
+            switchActivity(EnterPartyActivity.class);
         }
     }
 
     public void requestJoin(partyInfo party) {
         app.client_manager.requested_party = party;
-        Intent intent = new Intent(act, LoadingActivity.class);
-        act.startActivity(intent);
+        switchActivity(LoadingActivity.class);
     }
 
     public void completeJoin(){
-        Intent intent = new Intent(act, PlaylistActivity.class);
-        act.startActivity(intent);
+        switchActivity(PlaylistActivity.class);
     }
 
     public void putPartyResults(List<partyInfo> party_list) {
@@ -158,15 +161,14 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(act,
-                            "Sorry, your request was not accepted...",
-                            Toast.LENGTH_LONG).show();
-                    if (!(act instanceof EnterPartyActivity)) {
-                        Intent intent = new Intent(act, EnterPartyActivity.class);
-                        act.startActivity(intent);
-                    }
+                Toast.makeText(act,
+                    "Sorry, your request was not accepted...",
+                    Toast.LENGTH_LONG).show();
                 }
             });
+            if (!(act instanceof EnterPartyActivity)) {
+                switchActivity(EnterPartyActivity.class);
+            }
         }
     }
 
@@ -181,8 +183,7 @@ public class GUIManager{
             Log.d("MediaManager", "prepare 2nd song");
             app.media_manager.prepare2nd(track.track_id);
         }*/
-        Intent intent = new Intent(act, PlaylistActivity.class);
-        act.startActivity(intent);
+        switchActivity(PlaylistActivity.class);
     }
 
     public void play(int play_track_id) {
@@ -254,8 +255,7 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(act, CreatePartyActivity.class);
-                act.startActivity(intent);
+                switchActivity(CreatePartyActivity.class);
             }
         });
 
@@ -275,8 +275,7 @@ public class GUIManager{
             public void onClick(View v) {
                 app.client_manager.logout();
                 //app.client_manager = null;
-                Intent intent = new Intent(act, MainActivity.class);
-                act.startActivity(intent);
+                switchActivity( MainActivity.class);
             }
         });
     }
@@ -291,8 +290,7 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 app.client_manager.leaveParty();
-                Intent intent = new Intent(act, EnterPartyActivity.class);
-                act.startActivity(intent);
+                switchActivity(EnterPartyActivity.class);
             }
         });
     }
@@ -340,8 +338,7 @@ public class GUIManager{
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(act, EnterPartyActivity.class);
-                act.startActivity(intent);
+                switchActivity(EnterPartyActivity.class);
             }
         });
 
@@ -428,8 +425,7 @@ public class GUIManager{
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(act, PlaylistActivity.class);
-                act.startActivity(intent);
+                switchActivity(PlaylistActivity.class);
             }
         });
     }
@@ -460,8 +456,7 @@ public class GUIManager{
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(act, PlaylistActivity.class);
-                act.startActivity(intent);
+                switchActivity(PlaylistActivity.class);
             }
         });
 
@@ -511,16 +506,14 @@ public class GUIManager{
         connected.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(act, ConnectedActivity.class);
-                act.startActivity(intent);
+                switchActivity(ConnectedActivity.class);
             }
         });
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(act, AddMusicActivity.class);
-                act.startActivity(intent);
+                switchActivity(AddMusicActivity.class);
             }
         });
 
@@ -608,8 +601,7 @@ public class GUIManager{
             public void onClick(View v) {
                 app.client_manager.leaveParty();
                 if(!(act instanceof EnterPartyActivity)) {
-                    Intent intent = new Intent(act, EnterPartyActivity.class);
-                    act.startActivity(intent);
+                    switchActivity(EnterPartyActivity.class);
                 }
             }
         });
@@ -692,52 +684,36 @@ public class GUIManager{
             });
         }
         if (act instanceof LoadingActivity) {
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(act, PlaylistActivity.class);
-                    act.startActivity(intent);
-                }
-            });
+            switchActivity(PlaylistActivity.class);
         }
     }
 
     public void disconnected(Boolean fromListener) {
+        Log.d("Test7", "gui disconnected");
+        try {
+            app.semaphoreDisconnected.acquire();
+            Log.d("Test7", "lock semaphore disconnect");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (app.client_manager.party != null) {
             if (app.client_manager.party.playlist.is_playing)
                 app.media_manager.stop();
         }
         app.client_manager.terminateConnection(fromListener);
-        act.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    builder = new AlertDialog.Builder(act, android.R.style.Theme_Material_Dialog_Alert);
-                } else {
-                    builder = new AlertDialog.Builder(act);
-                }
-                builder.setTitle("Connection Error")
-                        .setMessage("Please try to reopen the app :)")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (!(act instanceof MainActivity)) {
-                                    Intent intent = new Intent(act, MainActivity.class);
-                                    act.startActivity(intent);
-                                }
-                                /*Intent homeIntene = new Intent(Intent.ACTION_MAIN);
-                                homeIntene.addCategory(Intent.CATEGORY_HOME);
-                                homeIntene.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                act.startActivity(homeIntene);*/
-                                //android.os.Process.killProcess(android.os.Process.myPid());
-                                //System.exit(0);
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            }
-        });
 
+        if (!(act instanceof  NoConnectionActivity)) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(act, NoConnectionActivity.class);
+                    act.startActivity(intent);
+                }
+            });
+        }
+        app.disconnected = true;
+        app.semaphoreDisconnected.release();
+        Log.d("Test7", "finish gui disconnect");
     }
 
 
@@ -745,35 +721,51 @@ public class GUIManager{
         AsyncTask<String, Integer, Playlist> searchForSongs_thread = new AsyncTask<String, Integer, Playlist>() {
             @Override
             protected Playlist doInBackground(String... strings) {
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        act.findViewById(R.id.dancing_balls).setVisibility(View.VISIBLE);
-                        act.findViewById(R.id.songlist).setVisibility(View.GONE);
-                    }
-                });
+                if(act instanceof CreatePartyActivity || act instanceof AddMusicActivity) {
+                    act.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            act.findViewById(R.id.dancing_balls).setVisibility(View.VISIBLE);
+                            act.findViewById(R.id.songlist).setVisibility(View.GONE);
+                        }
+                    });
+                }
                 Playlist search_res = app.client_manager.searchTracks(strings[0]);
-                /*for (Track track : search_res.tracks) {
-                    Glide.with(act)
-                            .load(track.img_path)
-                            .downloadOnly(400,400);
-                }*/
                 return search_res;
             }
 
             protected void onPostExecute(final Playlist search_res) {
-                Log.d("DB","post execute");
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        act.findViewById(R.id.dancing_balls).setVisibility(View.GONE);
-                        act.findViewById(R.id.songlist).setVisibility(View.VISIBLE);
+                if(act instanceof CreatePartyActivity || act instanceof AddMusicActivity) {
+                    Log.d("DB", "post execute");
+                    act.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            act.findViewById(R.id.dancing_balls).setVisibility(View.GONE);
+                            act.findViewById(R.id.songlist).setVisibility(View.VISIBLE);
 
-                        ((PlaylistList) ((CostumeListAdapter) adapters.get(0)).list_obj).playlist = search_res;
-                        ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
-                    }
-                });
+                            ((PlaylistList) ((CostumeListAdapter) adapters.get(0)).list_obj).playlist = search_res;
+                            ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
+                        }
+                    });
+                }
             }
         }.execute(query);
+    }
+
+    public void switchActivity(final Class to_act){
+        act.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(act, to_act);
+                try {
+                    app.semaphoreDisconnected.acquire();
+                    if (!app.disconnected)
+                        act.startActivity(intent);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                app.semaphoreDisconnected.release();
+            }
+        });
     }
 }
