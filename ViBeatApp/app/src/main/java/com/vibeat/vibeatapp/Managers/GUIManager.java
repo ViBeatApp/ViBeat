@@ -100,13 +100,13 @@ public class GUIManager{
     public void changeActivity(Activity act, List<Adapter> adapters){
         this.act = act;
         this.adapters = adapters;
-        this.recycler_adapter = null;
+        //this.recycler_adapter = null;
         app = (MyApplication) act.getApplication();
     }
 
     public void changeActivity(Activity act, RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> adapter){
         this.act = act;
-        this.adapters = null;
+        //this.adapters = null;
         this.recycler_adapter = adapter;
         app = (MyApplication) act.getApplication();
     }
@@ -704,8 +704,10 @@ public class GUIManager{
 
     public void disconnected(Boolean fromListener) {
         if (app.client_manager.party != null) {
-            if (app.client_manager.party.playlist.is_playing)
-                app.media_manager.stop();
+            if(app.media_manager != null) {
+                app.media_manager.m1.release();
+                app.media_manager.m2.release();
+            }
         }
         app.client_manager.terminateConnection(fromListener);
         act.runOnUiThread(new Runnable() {

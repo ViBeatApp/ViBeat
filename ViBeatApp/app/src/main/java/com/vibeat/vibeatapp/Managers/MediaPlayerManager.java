@@ -14,17 +14,13 @@ public class MediaPlayerManager {
     public MyMediaPlayer m[];
     public MyMediaPlayer m1;
     public MyMediaPlayer m2;
-    int active_mp = 0;
+    public int active_mp = 0;
 
     public MediaPlayerManager(MyApplication app) {
         this.app = app;
         m = new MyMediaPlayer[2];
         m1 = new MyMediaPlayer(app, 1);
         m2 = new MyMediaPlayer(app, 2);
-    }
-
-    public void newGetReady(int track_id, int offset){
-
     }
 
     public void getReady(int track_id, int offset){
@@ -51,6 +47,7 @@ public class MediaPlayerManager {
                     active_mp = 2;
                 }
                 else{
+                    Log.d("Test3","getReady() - first get-ready");
                     m1.getReady(track_id, offset);
                     m2.reset();
                     active_mp = 1;
@@ -175,9 +172,9 @@ public class MediaPlayerManager {
     public void stop() {
         Log.d("Test1","stop");
         if(active_mp == 2)
-            m2.pause();
+            m2.reset();
         else
-            m1.pause();
+            m1.reset();
     }
 
     //optimizations in the future

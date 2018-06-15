@@ -43,17 +43,12 @@ public class ListenerThread extends Thread {
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void run() {
-        try {
-            offset_from_ntp = TimerManager.getCurrentNetworkTime()-System.currentTimeMillis();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         while (!disconnected && openparty) {
             Command cmd = null;
             try {
-                Log.e("Listener","before listen");
+                //Log.e("Listener","before listen");
                 cmd = getServerCommand();
-                Log.e("Listener","atfer listen");
+                //Log.e("Listener","atfer listen");
                 handlerCommand(cmd);
             }
             catch (InterruptedException e){
@@ -173,26 +168,26 @@ public class ListenerThread extends Thread {
                 break;
 
             case PLAY_SONG:
-                Log.d("Test2","play song in listener");
+                Log.d("Test1","play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                if (cmd.cmd_info.has(jsonKey.OFFSET_UPDATE_TIME.name())) {
-                    try {
-                        Log.d("Test2", "after checking OFFSET_UPDATE_TIME");
-                        //long time = Instant.now().toEpochMilli();
-                        //long time = System.currentTimeMillis() + offset_from_ntp;
-                        //long offset = cmd.getLongAttribute(jsonKey.OFFSET_UPDATE_TIME) - time -600;
-                        //Log.d("Time_difference_moshe", "" + offset);
-                        //play_offset += 150;
-                    } catch (Exception e) {
-                        Log.d("Test2", "Exception!!! OFFSET_UPDATE_TIME");
-                        e.printStackTrace();
+                if (cmd.cmd_info.has(jsonKey.TO_SEEK.name())) {
+                    if(app.media_manager.active_mp == 1) {
+                        //app.media_manager.m1.pause();
+                        app.media_manager.m1.startAfterSeek = true;
+                        app.media_manager.m1.seekTo(play_offset);
+                    }
+                    else if(app.media_manager.active_mp == 2) {
+                        //app.media_manager.m2.pause();
+                        app.media_manager.m2.startAfterSeek = true;
+                        app.media_manager.m2.seekTo(play_offset);
                     }
                 }
-                Log.d("Test2","after checking OFFSET_UPDATE_TIME");
-                app.media_manager.play(play_track_id,play_offset);
-                app.gui_manager.play(play_track_id);
+                else {
+                    app.media_manager.play(play_track_id, play_offset);
+                    app.gui_manager.play(play_track_id);
+                }
                 break;
 
             case LEAVE_PARTY:

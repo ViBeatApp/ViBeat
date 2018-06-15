@@ -329,20 +329,23 @@ public class Party_thread implements Runnable {
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
 		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
-		System.out.println("startPlayProtocol thread - currentTrackId: " + cmd.getIntAttribute(jsonKey.TRACK_ID));
+		System.out.println("startPlayProtocol thread - currentTrackId: " + party.get_current_track_id());
 		Command get_ready_command = create_get_ready_command(); // not updating the offset
 		updatePartyToAll();		//for checking if we're at the current track.
 		SendCommandToAll(get_ready_command);
 	}
 
-	public void handleReady(Command cmd, User user) throws IOException, JSONException {
+	public void handleReady(Command cmd, User user) throws IOException, JSONException, InterruptedException {
 		if(party.get_current_track_id() != cmd.getIntAttribute(jsonKey.TRACK_ID))
 			return;
 		switch(party.status) {
 		case playing:
 			System.out.println("handle-ready - party is playing");
+			//Command play_command = create_play_command(false);
+			//SendCommandToUser(user, play_command);
+			Thread.sleep(2000);
 			Command play_command = create_play_command(true);
-			SendCommandToUser(user, play_command);
+			SendCommandToList(play_command, party.connected, false);
 			break;
 		case preparing:
 			if(!ready_for_play.contains(user))
@@ -508,18 +511,15 @@ public class Party_thread implements Runnable {
 	}
 
 	/* updates the play command */
-	public Command create_play_command(boolean updateOffset) throws JSONException {
+	public Command create_play_command(boolean to_seek) throws JSONException {
 		System.out.println("create_play_command - before update");
 		Command play_command = new Command(CommandType.PLAY_SONG);
-		if (updateOffset) {
+		if (to_seek) {
 			System.out.println("create_play_command - updating offset");
 			Instant current_time = Instant.now();
-			play_command.setAttribute(jsonKey.OFFSET_UPDATE_TIME, current_time.toEpochMilli());
-			//System.out.println("update-play-command: offset_update " + current_time.toString());
 			total_offset += Duration.between(last_offset_update_time, current_time).toMillis();
 			last_offset_update_time = current_time;
-			//System.out.println("update-play-command: update current-last_offset_update_time: " + last_offset_update_time.toString());
-			//System.out.println("------update-play-command: update total-offset: " + total_offset);
+			play_command.setAttribute(jsonKey.TO_SEEK, true);
 		}
 		play_command.setAttribute(jsonKey.OFFSET, total_offset);
 		play_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
