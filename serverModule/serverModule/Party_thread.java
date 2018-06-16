@@ -330,6 +330,12 @@ public class Party_thread implements Runnable {
 			}
 			break;
 		case ON_COMPLETION:
+			if(party.get_playlist_size() == 1){
+				if(party.status == Party_Status.preparing)
+					return;
+			}
+			else if(trackId == party.get_current_track_id())
+				return;
 			break;
 		}
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);

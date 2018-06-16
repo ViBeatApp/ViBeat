@@ -41,5 +41,6 @@ public enum jsonKey {
     COMMAND_TYPE,
     COMMAND_INFO,
     PARTY_PLAYING, 
-    USER_INTENTION;
+    USER_INTENTION,
+    DELETED_SONGS;
 }

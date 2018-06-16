@@ -65,14 +65,13 @@ public class Playlist {
 					int nextIndex = (index+1) % get_list_size();
 					currentTrack = songs.get(nextIndex).trackId;
 					iter.remove();
-					System.out.println("deleteSong - new current-track: " + currentTrack);
 					return 1;
 				}
 				iter.remove();
 				return 0;
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	public int changeSongsOrder(int trackID_1, int trackID_2){

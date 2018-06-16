@@ -146,7 +146,13 @@ public class Party {
 	
 	public int deleteSong(int trackID) throws JSONException{
 		int deleteCurrentSong = playlist.deleteSong(trackID);
-		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
+		if(deleteCurrentSong == -1)
+			return -1;
+		if(this.update_party.cmd_info.has(jsonKey.DELETED_SONGS.name())) {
+			update_party.cmd_info.getJSONArray(jsonKey.DELETED_SONGS.name()).put(trackID);
+		}
+		else
+			this.addToJSONArray(jsonKey.DELETED_SONGS,new JSONArray().put(trackID));
 		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 		return deleteCurrentSong;
 	}
