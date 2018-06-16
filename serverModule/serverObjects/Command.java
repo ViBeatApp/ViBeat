@@ -191,8 +191,9 @@ public class Command {
 		return cmd;
 	}
 	
-	public static Command create_syncParty_Command(JSONObject partyInfo) throws JSONException {
+	public static Command create_syncParty_Command(JSONObject partyInfo, boolean partyIsPlaying) throws JSONException {
 		Command cmd = new Command(CommandType.SYNC_PARTY,partyInfo);
+		cmd.setAttribute(jsonKey.PARTY_PLAYING, new JSONArray().put(partyIsPlaying));
 		return cmd;
 	}
 	

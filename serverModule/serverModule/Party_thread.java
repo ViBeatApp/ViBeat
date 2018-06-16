@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import serverObjects.Command;
 import serverObjects.CommandType;
 import serverObjects.Location;
@@ -167,7 +166,7 @@ public class Party_thread implements Runnable {
 		party.addClient(user);
 		if(makeAdmin)
 			party.makeAdmin(user);
-		Command sync_command = Command.create_syncParty_Command(party.getFullJson());
+		Command sync_command = Command.create_syncParty_Command(party.getFullJson(), party.status == Party_Status.playing);
 		SendCommandToUser(user, sync_command);
 		if (party.nonEmptyPlaylist()) {
 //			if (party.status == Party_Status.playing) {
@@ -341,8 +340,10 @@ public class Party_thread implements Runnable {
 		switch(party.status) {
 		case playing:
 			System.out.println("handle-ready - party is playing");
-			if(ready_for_play.contains(user))
+			if(ready_for_play.contains(user)){
 				return;
+			}
+			ready_for_play.add(user);
 			pause_song(Command.create_pause_Command(-1, total_offset));
 			updateTime();
 			startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
@@ -484,6 +485,7 @@ public class Party_thread implements Runnable {
 		if(party.update_party.cmd_info.length() == 0) {
 			return;
 		}
+		party.update_party.cmd_info.put(jsonKey.PARTY_PLAYING.name(), new JSONArray().put(party.status == Party_Status.playing));
 		SendCommandToAll(party.update_party);
 		party.update_party = new Command(CommandType.SYNC_PARTY);
 		//syncPartyToAll();
@@ -503,7 +505,7 @@ public class Party_thread implements Runnable {
 		}
 		get_ready_command.setAttribute(jsonKey.OFFSET, total_offset);
 		get_ready_command.setAttribute(jsonKey.TRACK_ID, party.get_current_track_id());
-		get_ready_command.setAttribute(jsonKey.WAIT_FOR_TO_SEEK, middleOfPlaying);
+		get_ready_command.setAttribute(jsonKey.PARTY_PLAYING, middleOfPlaying);
 		return get_ready_command;
 	}
 

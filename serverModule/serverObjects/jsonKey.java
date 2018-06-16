@@ -40,5 +40,5 @@ public enum jsonKey {
 
 	COMMAND_TYPE,
 	COMMAND_INFO, 
-	WAIT_FOR_TO_SEEK;
+	PARTY_PLAYING;
 }

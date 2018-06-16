@@ -82,7 +82,7 @@ public class ListenerThread extends Thread {
             return;
 
         Log.e("Listener",cmd.cmd_type.name());
-
+        Log.e("LOADING_CHANGE",cmd.cmd_type.name());
         switch (cmd.cmd_type) {
 
             case SYNC_PARTY:
@@ -96,6 +96,7 @@ public class ListenerThread extends Thread {
                 JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.NAME);
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.IS_PRIVATE);
                 JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.CURRENT_TRACK_ID);
+                boolean isPlaying = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.PARTY_PLAYING).getBoolean(0);
                 boolean move = false;
 
                 //Trying to modify app.client_manager before the client_manager's constructor finish to run.
@@ -149,9 +150,9 @@ public class ListenerThread extends Thread {
                     }
                 }
                 if (move)
-                    app.gui_manager.completeJoin();
+                    app.gui_manager.completeJoin(isPlaying);
                 else
-                    app.gui_manager.syncParty(old_cur_track);
+                    app.gui_manager.syncParty(old_cur_track,isPlaying);
 
                 break;
 
@@ -165,7 +166,7 @@ public class ListenerThread extends Thread {
                 Log.d("Test1","get ready in listener");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-                boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.WAIT_FOR_TO_SEEK);
+                boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.PARTY_PLAYING);
                 app.media_manager.getReady(prep_track_id, prep_offset,joiningPlayingParty);
                 break;
 

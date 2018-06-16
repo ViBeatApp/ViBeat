@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -57,6 +58,7 @@ public class GUIManager{
     MyApplication app;
     RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> recycler_adapter;
     public List<change> cur_changes;
+    public Boolean leaveParty = false;
 
 
     public GUIManager(Activity act, List<Adapter> adapters){
@@ -129,8 +131,25 @@ public class GUIManager{
         switchActivity(LoadingActivity.class);
     }
 
-    public void completeJoin(){
-        switchActivity(PlaylistActivity.class);
+    public void completeJoin(boolean joiningInTheMiddle){
+        if(joiningInTheMiddle) {
+            if(!(act instanceof LoadingActivity)){
+                switchActivity(LoadingActivity.class);
+            }
+            Log.d("PING-PONG", "completeJoin: timer ");
+            leaveParty = false;
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            if(!leaveParty)
+                                switchActivity(PlaylistActivity.class);
+                        }
+                    },
+                    4500);
+        }
+        else
+            switchActivity(PlaylistActivity.class);
     }
 
     public void putPartyResults(List<partyInfo> party_list) {
@@ -289,6 +308,9 @@ public class GUIManager{
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                synchronized (leaveParty) {
+                    leaveParty = true;
+                }
                 app.client_manager.leaveParty();
                 switchActivity(EnterPartyActivity.class);
             }
@@ -607,8 +629,9 @@ public class GUIManager{
         });
     }
 
-    public void syncParty(final int old_cur_track) {
+    public void syncParty(final int old_cur_track, final boolean isPlaying) {
         if (act instanceof ConnectedActivity) {
+            Log.d("LOADING_CHANGE", "ConnectedActivity");
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -646,6 +669,7 @@ public class GUIManager{
             });
         }
         if (act instanceof PlaylistActivity) {
+            Log.d("LOADING_CHANGE", "PlaylistActivity");
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -683,9 +707,11 @@ public class GUIManager{
                 }
             });
         }
-        if (act instanceof LoadingActivity) {
+        if (act instanceof LoadingActivity && !isPlaying) {
+            Log.d("LOADING_CHANGE", "LoadingActivity");
             switchActivity(PlaylistActivity.class);
         }
+        Log.d("LOADING_CHANGE", "after sync");
     }
 
     public void disconnected(Boolean fromListener) {

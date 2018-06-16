@@ -55,6 +55,9 @@ public class CommandClientAux {
 			case CURRENT_TRACK_ID:
 				result = cmd.getSyncPartyAttribute(jsonKey.CURRENT_TRACK_ID);
 				break;
+			case PARTY_PLAYING:
+				result = cmd.getSyncPartyAttribute(jsonKey.PARTY_PLAYING);
+				break;
 			default:
 				break;
 		}
