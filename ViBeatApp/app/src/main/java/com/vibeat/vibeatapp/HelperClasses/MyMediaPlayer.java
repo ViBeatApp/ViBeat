@@ -73,12 +73,7 @@ public class MyMediaPlayer extends MediaPlayer {
                     if(joiningPlayingParty){
                         start();
                         mp.setVolume(0,0);
-                        try {
-                            sleep(4500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                       }
-                        /*new java.util.Timer().schedule(
+                        new java.util.Timer().schedule(
                                 new java.util.TimerTask() {
                                     @Override
                                     public void run() {
@@ -86,10 +81,12 @@ public class MyMediaPlayer extends MediaPlayer {
                                         app.client_manager.sendReady(track_id);
                                     }
                                 },
-                                4500);*/
+                                4500);
                     }
-                    Log.e("DebugMediaPlayer", "before sending I'm ready");
-                    app.client_manager.sendReady(track_id);
+                    else {
+                        Log.e("DebugMediaPlayer", "before sending I'm ready");
+                        app.client_manager.sendReady(track_id);
+                    }
                 }
             }
         });
@@ -172,10 +169,6 @@ public class MyMediaPlayer extends MediaPlayer {
     }
 
     public boolean isCurTrack(){
-        Log.d("Test1","isCurTrack");
-        Log.d("Test1","this track id = "+this.track_id);
-        Log.d("Test1","this pos = "+app.client_manager.getTrackPosFromId(this.track_id));
-        Log.d("Test1","cur track pos = "+app.client_manager.party.playlist.cur_track);
         return app.client_manager.getTrackPosFromId(this.track_id) == app.client_manager.party.playlist.cur_track;
     }
 
