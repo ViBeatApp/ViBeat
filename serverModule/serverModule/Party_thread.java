@@ -160,7 +160,7 @@ public class Party_thread implements Runnable {
 			else { 
 				party.addRequest(user);	
 			} 
-
+			System.out.println("handle_new_clients: " + user.name);
 			iter.remove();
 		}
 	}
@@ -308,15 +308,19 @@ public class Party_thread implements Runnable {
 	}
 
 	/* we wait for half of the party participants to be ready before we actually start playing */
-	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
+	public void startPlayProtocol(Command cmd) throws IOException, JSONException{
 		int trackId = cmd.getIntAttribute(jsonKey.TRACK_ID);
 		userIntention userIntent = userIntention.getEnum(cmd.getIntAttribute(jsonKey.USER_INTENTION));
+		boolean sleep = true;
+		System.out.println("userIntent = " + userIntent.name() + " trackId == party.get_current_track_id() is " + (trackId == party.get_current_track_id()));
+		System.out.println("party status is: " + party.status.name());
 		switch(userIntent){
 		case PLAY_BUTTON:
 			if(trackId == party.get_current_track_id()){
 				if(party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing) {
 					return;
 				}	
+				//sleep = false;
 			}
 			else if(trackId == -1){
 				trackId = party.get_current_track_id();
@@ -345,6 +349,14 @@ public class Party_thread implements Runnable {
 		Command get_ready_command = create_get_ready_command(false); // not updating the offset
 		updatePartyToAll();		//for checking if we're at the current track.
 		SendCommandToAll(get_ready_command);
+		if(sleep){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void handleReady(Command cmd, User user) throws IOException, JSONException, InterruptedException {
