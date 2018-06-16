@@ -369,7 +369,7 @@ public class ClientManager {
                 int pos = party.playlist.cur_track;
                 int id = party.playlist.tracks.get(pos).track_id;
                 if (app.sender_thread != null) {
-                    app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
+                    app.sender_thread.addCmd(Command.create_playSong_Command(id, 0,NEXT_BUTTON));
                     if(party.playlist.is_playing)
                         waiting_for_response = true;
                 }
