@@ -142,8 +142,11 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    int track_id = -1;
                     int position = getAdapterPosition();
-                    if(app.client_manager.isAdmin()) {
+                    if(app.client_manager.party.playlist.tracks.size() > position && position >= 0)
+                        track_id = app.client_manager.party.playlist.tracks.get(getAdapterPosition()).track_id;
+                    if(app.client_manager.isAdmin() && track_id != -1) {
                         setCurTrackBackground(app.client_manager.party.playlist.cur_track, position);
                         app.client_manager.party.playlist.cur_track = position;
                         app.gui_manager.playChosen();
