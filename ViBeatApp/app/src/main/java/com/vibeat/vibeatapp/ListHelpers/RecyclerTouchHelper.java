@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
@@ -41,15 +42,16 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     }
 
     @Override
-    public boolean isItemViewSwipeEnabled() {
-        return true;
-    }
+    public boolean isItemViewSwipeEnabled() { return true; }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-        if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder)
-            if(!(app.client_manager.party.playlist.tracks.size() == 1))
+        int track_id = app.client_manager.party.playlist.tracks.get(viewHolder.getAdapterPosition()).track_id;
+        if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
+            Log.d("Delet", "second track id = "+track_id);
+            if ( (!(app.client_manager.party.playlist.tracks.size() == 1)) && track_id != -1)
                 adapter.onItemDismiss(viewHolder.getAdapterPosition());
+        }
     }
 
     @Override
@@ -79,8 +81,12 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
     @Override
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        if(app.client_manager.party.playlist.tracks.size()>1) {
-            View itemView = viewHolder.itemView;
+        int track_id = -1;
+        if(app.client_manager.party.playlist.tracks.size() > viewHolder.getAdapterPosition() &&
+                viewHolder.getAdapterPosition() >= 0)
+            track_id = app.client_manager.party.playlist.tracks.get(viewHolder.getAdapterPosition()).track_id;
+        if(app.client_manager.party.playlist.tracks.size()>1 && track_id != -1) {
+           View itemView = viewHolder.itemView;
 
             if (actionState == ACTION_STATE_SWIPE) {
                 int xMarkMargin = 30;
@@ -125,6 +131,8 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     @SuppressLint("ResourceAsColor")
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        super.clearView(recyclerView, viewHolder);
+
         viewHolder.itemView.setAlpha(ALPHA_FULL);
         viewHolder.itemView.setBackgroundColor(0);
 
@@ -142,7 +150,5 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
             PlaylistRecyclerView.playlistViewHolder itemViewHolder = (PlaylistRecyclerView.playlistViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }
-        super.clearView(recyclerView, viewHolder);
     }
-
 }

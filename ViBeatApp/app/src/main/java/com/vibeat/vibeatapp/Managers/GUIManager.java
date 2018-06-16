@@ -222,7 +222,6 @@ public class GUIManager{
                 }
             });
         }
-
     }
 
     public void pause(){
@@ -795,5 +794,18 @@ public class GUIManager{
                 app.semaphoreDisconnected.release();
             }
         });
+    }
+
+    public void playChosen(){
+        if(app.client_manager.party.playlist.is_playing) {
+            ProgressBar b = act.findViewById(R.id.loading_music);
+            //b.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            b.getIndeterminateDrawable()
+                    .setColorFilter(ContextCompat.getColor(act, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+            act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
+            act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+            //recycler_adapter.notifyDataSetChanged();
+        }
+        app.client_manager.playSongChosen();
     }
 }

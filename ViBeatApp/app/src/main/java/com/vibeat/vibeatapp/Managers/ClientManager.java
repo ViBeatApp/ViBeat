@@ -358,4 +358,21 @@ public class ClientManager {
         }
         return -1;
     }
+
+    public void playSongChosen() {
+        if(isAdmin()) {
+            try {
+                app.media_manager.pause();
+                int pos = party.playlist.cur_track;
+                int id = party.playlist.tracks.get(pos).track_id;
+                if (app.sender_thread != null) {
+                    app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
+                    if(party.playlist.is_playing)
+                        waiting_for_response = true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

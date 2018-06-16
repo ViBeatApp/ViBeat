@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.vibeat.vibeatapp.MyApplication;
@@ -35,6 +37,23 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         this.playlist = playlist;
         this.app = (MyApplication) (((Activity) context).getApplication());
         this.recyclerView = recyclerView;
+
+        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
     }
 
     @Override
@@ -46,23 +65,29 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(final playlistViewHolder holder, int position) {
-        Track track = this.playlist.tracks.get(position);
-        holder.title.setText(track.title);
-        holder.artist.setText(track.artist);
+        if(this.playlist.tracks.size() > position && position >= 0) {
+            Track track = this.playlist.tracks.get(position);
+            holder.title.setText(track.title);
+            holder.artist.setText(track.artist);
 
-        List<String> img_paths = new ArrayList<String>();
-        List<ImageView> views = new ArrayList<ImageView>();
-        img_paths.add(track.img_path);
-        views.add(holder.img);
-        Log.d("ImagePath","berore");
-        imageLoader.loadImageSquare((Activity)context, img_paths, views);
-        Log.d("ImagePath","after");
+            List<String> img_paths = new ArrayList<String>();
+            List<ImageView> views = new ArrayList<ImageView>();
+            img_paths.add(track.img_path);
+            views.add(holder.img);
+            Log.d("ImagePath", "berore");
+            imageLoader.loadImageSquare((Activity) context, img_paths, views);
+            Log.d("ImagePath", "after");
 
-        if(this.playlist.cur_track == position)
-            holder.background.setBackgroundColor(R.color.colorPrimaryDark);
-        else
-            holder.background.setBackgroundColor(Color.TRANSPARENT);
+            if (this.playlist.cur_track == position)
+                holder.background.setBackgroundColor(R.color.colorPrimaryDark);
+            else
+                holder.background.setBackgroundColor(Color.TRANSPARENT);
 
+            if (this.playlist.tracks.get(position).track_id == -1) {
+                holder.load.setVisibility(View.VISIBLE);
+            } else
+                holder.load.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -104,6 +129,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         public TextView title, artist;
         public ImageView img;
         public LinearLayout background;
+        public ProgressBar load;
 
         public playlistViewHolder(View v){
             super(v);
@@ -111,11 +137,25 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
             this.title = (TextView) v.findViewById(R.id.title);
             this.artist = (TextView) v.findViewById(R.id.artist);
             this.background = (LinearLayout) v.findViewById(R.id.background);
+            this.load = (ProgressBar)v.findViewById(R.id.loading_music);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if(app.client_manager.isAdmin()) {
+                        setCurTrackBackground(app.client_manager.party.playlist.cur_track, position);
+                        app.client_manager.party.playlist.cur_track = position;
+                        app.gui_manager.playChosen();
+                    }
+                }
+            });
         }
 
         @SuppressLint("ResourceAsColor")
         public void onItemClear() {
             itemView.setBackgroundColor(Color.TRANSPARENT);
+            bindViewHolder(this, getAdapterPosition());
         }
 
     }

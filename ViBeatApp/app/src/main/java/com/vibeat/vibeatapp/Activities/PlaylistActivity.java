@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelper;
@@ -16,7 +17,7 @@ import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelperListener;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 
-public class PlaylistActivity extends AppCompatActivity implements RecyclerTouchHelperListener {
+public class PlaylistActivity extends AppCompatActivity implements RecyclerTouchHelperListener{
 
     private MyApplication app;
     private RecyclerView recyclerView;
@@ -47,13 +48,17 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        itemTouchHelper.startSwipe(viewHolder);
+        int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
+        Log.d("Delet", "first track id = "+track_id);
+        if(track_id != -1)
+            itemTouchHelper.startSwipe(viewHolder);
     }
 
     @SuppressLint("ResourceAsColor")
     @Override
     public void onDrag(RecyclerView.ViewHolder viewHolder) {
-        if(viewHolder.getAdapterPosition() != app.client_manager.party.playlist.cur_track)
+        int position = viewHolder.getAdapterPosition();
+        if(app.client_manager.party.playlist.tracks.get(position).track_id != -1)
             itemTouchHelper.startDrag(viewHolder);
     }
 
