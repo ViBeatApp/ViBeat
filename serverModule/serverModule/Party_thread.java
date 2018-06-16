@@ -348,7 +348,6 @@ public class Party_thread implements Runnable {
 		party.status = Party.Party_Status.preparing;
 		Command get_ready_command = create_get_ready_command(false); // not updating the offset
 		updatePartyToAll();		//for checking if we're at the current track.
-		SendCommandToAll(get_ready_command);
 		if(sleep){
 			try {
 				Thread.sleep(100);
@@ -357,6 +356,7 @@ public class Party_thread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		SendCommandToAll(get_ready_command);
 	}
 
 	public void handleReady(Command cmd, User user) throws IOException, JSONException, InterruptedException {
