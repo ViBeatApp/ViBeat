@@ -19,12 +19,16 @@
 
         <include layout="@layout/change_name"></include>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"/>
+
         <TextView
             android:id="@+id/connected"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_weight="10"
+            android:layout_weight="7"
             android:text="Connected to your party"
             android:layout_marginLeft="20dp"
             android:textColor="@color/colorPrimary"
@@ -35,7 +39,7 @@
             android:id="@+id/connected_list"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="40"
+            android:layout_weight="43"
             android:divider="#00ff0000"
             android:dividerHeight="1dp">
 
@@ -51,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            android:layout_weight="10"
+            android:layout_weight="7"
             android:text="Pending requests"
             android:layout_marginLeft="20dp"
             android:textColor="@color/colorPrimary"
@@ -62,7 +66,7 @@
             android:id="@+id/waiting_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="17"
+            android:layout_weight="20"
             android:divider="#00ff0000"
             android:dividerHeight="1dp"/>
 

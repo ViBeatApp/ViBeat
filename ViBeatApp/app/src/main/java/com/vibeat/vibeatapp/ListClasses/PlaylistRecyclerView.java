@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -37,23 +36,6 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         this.playlist = playlist;
         this.app = (MyApplication) (((Activity) context).getApplication());
         this.recyclerView = recyclerView;
-
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
     }
 
     @Override
@@ -97,31 +79,40 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
 
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(playlist.tracks, fromPosition, toPosition);
-        //app.client_manager.swapTrack(fromPosition,toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
 
     }
 
     public void onItemDismiss(int position) {
-        /*if(app.client_manager.party.playlist.cur_track == position)
-            app.client_manager.nextSong();*/
-        app.client_manager.removeTrack(position);
-        playlist.tracks.remove(position);
+        int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
+        app.client_manager.party.playlist.tracks.remove(position);
         notifyItemRemoved(position);
+        app.client_manager.removeTrack(track_id);
+
     }
 
     @SuppressLint("ResourceAsColor")
     public void setCurTrackBackground(int position_old, int position_new){
-        PlaylistRecyclerView.playlistViewHolder viewHolder_new, viewHolder_old;
-        if (position_old != -1){
-            viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
-            viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
-            notifyItemChanged(position_old);
+        Log.d("DebugAll", "position_old = "+position_old+" position_new = "+position_new);
+        Log.d("DebugAll", "playlist size = "+ app.client_manager.party.playlist.tracks.size());
+        if(playlist.tracks.size() > position_new && 0 <= position_new &&
+                playlist.tracks.size() > position_old && 0 <= position_old) {
+            PlaylistRecyclerView.playlistViewHolder viewHolder_new, viewHolder_old;
+            if (position_old != -1) {
+                viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
+                if(viewHolder_old != null) {
+                    Log.d("Not null", "setCurTrackBackground: ");
+                    viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
+                    notifyItemChanged(position_old);
+                }
+            }
+            viewHolder_new = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_new);
+            if(viewHolder_new != null) {
+                viewHolder_new.background.setBackgroundColor(R.color.colorPrimaryDark);
+                notifyItemChanged(position_new);
+            }
         }
-        viewHolder_new = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_new);
-        viewHolder_new.background.setBackgroundColor(R.color.colorPrimaryDark);
-        notifyItemChanged(position_new);
     }
 
     public class playlistViewHolder extends RecyclerView.ViewHolder{

@@ -122,10 +122,11 @@ public class ClientManager {
         }
     }
 
-    public void removeTrack(int pos){
+    public void removeTrack(int track_id){
         try {
-            int track_id = party.playlist.tracks.get(pos).track_id;
-            app.media_manager.stop();
+            int pos = app.client_manager.party.playlist.searchTrack(track_id);
+            if(pos == app.client_manager.party.playlist.cur_track)
+                app.media_manager.stop();
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id));
         } catch (JSONException e) {

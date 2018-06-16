@@ -146,7 +146,7 @@ public class GUIManager{
                                 switchActivity(PlaylistActivity.class);
                         }
                     },
-                    4500);
+                    4100);
         }
         else
             switchActivity(PlaylistActivity.class);
@@ -629,88 +629,97 @@ public class GUIManager{
     }
 
     public void syncParty(final int old_cur_track, final boolean isPlaying) {
-        if (act instanceof ConnectedActivity) {
-            Log.d("LOADING_CHANGE", "ConnectedActivity");
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Iterator<change> iter = cur_changes.iterator();
-                    while (iter.hasNext()) {
-                        change c = iter.next();
-                        switch (c) {
-                            case users:
-                                ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
-                                act.findViewById(R.id.connected_list).refreshDrawableState();
-                                break;
-                            case requests:
-                                ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
-                                act.findViewById(R.id.waiting_list).refreshDrawableState();
-                                break;
-                            case is_private:
+        synchronized (cur_changes) {
+            if (act instanceof ConnectedActivity) {
+                Log.d("LOADING_CHANGE", "ConnectedActivity");
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Iterator<change> iter = cur_changes.iterator();
+                        while (iter.hasNext()) {
+                            change c = iter.next();
+                            switch (c) {
+                                case users:
+                                    ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
+                                    act.findViewById(R.id.connected_list).refreshDrawableState();
+                                    break;
+                                case requests:
+                                    ((BaseAdapter) adapters.get(1)).notifyDataSetChanged();
+                                    act.findViewById(R.id.waiting_list).refreshDrawableState();
+                                    break;
+                                case is_private:
 
-                                ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
-                                if (!app.client_manager.party.is_private)
-                                    isPrivate.setImageResource(R.drawable.ic_unlock_blue);
-                                else
-                                    isPrivate.setImageResource(R.drawable.ic_lock_blue);
-                                act.findViewById(R.id.change_name).refreshDrawableState();
-                                break;
-                            case party_name:
-                                EditText partyName = (EditText) act.findViewById(R.id.editText);
-                                partyName.setText(app.client_manager.party.party_name);
-                                partyName.clearFocus();
-                                act.findViewById(R.id.change_name).refreshDrawableState();
-                                break;
-                        }
-                        iter.remove();
-                    }
-                }
-            });
-        }
-        if (act instanceof PlaylistActivity) {
-            Log.d("LOADING_CHANGE", "PlaylistActivity");
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Iterator<change> iter = cur_changes.iterator();
-                    while (iter.hasNext()) {
-                        change c = iter.next();
-                        switch (c) {
-                            case songs:
-                                recycler_adapter.notifyDataSetChanged();
-                                act.findViewById(R.id.playlist).refreshDrawableState();
-                                break;
-                            case party_name:
-                                TextView party_name = (TextView) act.findViewById(R.id.party_name);
-                                TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
-                                party_name.setText(app.client_manager.party.party_name);
-                                party_name_conn.setText(app.client_manager.party.party_name);
-                                act.findViewById(R.id.admin_toolbar).refreshDrawableState();
-                                act.findViewById(R.id.connected_toolbar).refreshDrawableState();
-                                break;
-                            case admin:
-                                act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
-                                act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
-                                act.findViewById(R.id.admin_toolbar).refreshDrawableState();
-                                break;
-                            case cur_track:
-                                if(cur_changes.indexOf(change.songs) == -1){
-                                    // assume that the previous current track is cur_trak - 1.
-                                    ((PlaylistRecyclerView)recycler_adapter).setCurTrackBackground(
-                                            old_cur_track,app.client_manager.party.playlist.cur_track);
-                                }
-                                break;
+                                    ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
+                                    if (!app.client_manager.party.is_private)
+                                        isPrivate.setImageResource(R.drawable.ic_unlock_blue);
+                                    else
+                                        isPrivate.setImageResource(R.drawable.ic_lock_blue);
+                                    act.findViewById(R.id.change_name).refreshDrawableState();
+                                    break;
+                                case party_name:
+                                    EditText partyName = (EditText) act.findViewById(R.id.editText);
+                                    partyName.setText(app.client_manager.party.party_name);
+                                    partyName.clearFocus();
+                                    act.findViewById(R.id.change_name).refreshDrawableState();
+                                    break;
+                            }
+                            iter.remove();
                         }
                     }
-                    cur_changes.clear();
-                }
-            });
+                });
+            }
+            if (act instanceof PlaylistActivity) {
+                Log.d("LOADING_CHANGE", "PlaylistActivity");
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Iterator<change> iter = cur_changes.iterator();
+                        while (iter.hasNext()) {
+                            change c = iter.next();
+                            Log.d("DebugAll", c.name());
+                            switch (c) {
+                                case songs:
+                                    recycler_adapter.notifyDataSetChanged();
+                                    break;
+                                case party_name:
+                                    TextView party_name = (TextView) act.findViewById(R.id.party_name);
+                                    TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
+                                    party_name.setText(app.client_manager.party.party_name);
+                                    party_name_conn.setText(app.client_manager.party.party_name);
+                                    act.findViewById(R.id.admin_toolbar).refreshDrawableState();
+                                    act.findViewById(R.id.connected_toolbar).refreshDrawableState();
+                                    break;
+                                case admin:
+                                    act.findViewById(R.id.admin_toolbar).setVisibility(View.VISIBLE);
+                                    act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
+                                    act.findViewById(R.id.admin_toolbar).refreshDrawableState();
+                                    break;
+                                case cur_track:
+                                    if (cur_changes.indexOf(change.songs) == -1) {
+                                        Log.d("DebugAll", "old = " + old_cur_track + " new = " + app.client_manager.party.playlist.cur_track);
+                                        Log.d("DebugAll", "playlist size = " + app.client_manager.party.playlist.tracks.size());
+                                        //if(old_cur_track != app.client_manager.party.playlist.cur_track)
+                                        ((PlaylistRecyclerView) recycler_adapter).setCurTrackBackground(
+                                                old_cur_track, app.client_manager.party.playlist.cur_track);
+                                    }
+                                    break;
+                                case delete_songs:
+                                    if (cur_changes.indexOf(change.songs) == -1) {
+                                        recycler_adapter.notifyDataSetChanged();
+                                    }
+                                    break;
+                            }
+                        }
+                        cur_changes.clear();
+                    }
+                });
+            }
+            if (act instanceof LoadingActivity && !isPlaying) {
+                Log.d("LOADING_CHANGE", "LoadingActivity");
+                switchActivity(PlaylistActivity.class);
+            }
+            Log.d("LOADING_CHANGE", "after sync");
         }
-        if (act instanceof LoadingActivity && !isPlaying) {
-            Log.d("LOADING_CHANGE", "LoadingActivity");
-            switchActivity(PlaylistActivity.class);
-        }
-        Log.d("LOADING_CHANGE", "after sync");
     }
 
     public void disconnected(Boolean fromListener) {

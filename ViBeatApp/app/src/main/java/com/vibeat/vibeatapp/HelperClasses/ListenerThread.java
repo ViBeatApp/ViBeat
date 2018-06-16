@@ -96,6 +96,7 @@ public class ListenerThread extends Thread {
                 JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.NAME);
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.IS_PRIVATE);
                 JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.CURRENT_TRACK_ID);
+                JSONArray deleted_songs = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.DELETED_SONGS);
                 boolean isPlaying = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.PARTY_PLAYING).getBoolean(0);
                 boolean move = false;
 
@@ -142,6 +143,13 @@ public class ListenerThread extends Thread {
 
                         } else
                             app.client_manager.party.playlist = new Playlist(new_tracks, false, 0);
+                    }
+                    else if (deleted_songs != null){
+                        Log.d("delete", "inside delete");
+                        List<Integer> delete_tracks = getTrackIDListFromJSON(deleted_songs);
+                        Log.d("delete", "deleted pos = "+delete_tracks.get(0));
+                        deleteSongsForPlaylist(delete_tracks);
+                        app.gui_manager.cur_changes.add(change.delete_songs);
                     }
                     if(cur_track != null) {
                         old_cur_track = app.client_manager.party.playlist.cur_track;
@@ -203,6 +211,15 @@ public class ListenerThread extends Thread {
         }
     }
 
+    private List<Integer> getTrackIDListFromJSON(JSONArray deleted_songs) throws JSONException {
+        List<Integer> tracks = new ArrayList<Integer>();
+        for (int i = 0; i < deleted_songs.length(); i++ ){
+            int s = deleted_songs.getInt(i);
+            tracks.add(s);
+        }
+        return tracks;
+    }
+
 
     private List<Track> getTrackListFromJSON(JSONArray arr) throws JSONException{
         List<Track> tracks = new ArrayList<Track>();
@@ -258,5 +275,14 @@ public class ListenerThread extends Thread {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    private void deleteSongsForPlaylist(List<Integer> delete_songs){
+        for(Integer id : delete_songs){
+            int pos = app.client_manager.party.playlist.searchTrack(id);
+            Log.d("delete", "track pos = "+pos);
+            if(pos != -1)
+                app.client_manager.party.playlist.tracks.remove(pos);
+        }
     }
 }

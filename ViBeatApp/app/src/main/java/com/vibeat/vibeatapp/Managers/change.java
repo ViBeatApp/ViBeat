@@ -7,5 +7,6 @@ public enum change{
     party_name,
     is_private,
     cur_track,
-    admin
+    admin,
+    delete_songs
 }

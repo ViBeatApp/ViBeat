@@ -38,18 +38,26 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
     @Override
     public boolean isLongPressDragEnabled() {
-        return true;
+        if(app.client_manager.isAdmin())
+            return true;
+        else
+            return false;
     }
 
     @Override
-    public boolean isItemViewSwipeEnabled() { return true; }
+    public boolean isItemViewSwipeEnabled() {
+        if(app.client_manager.isAdmin())
+            return true;
+        else
+            return false;
+    }
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
         int track_id = app.client_manager.party.playlist.tracks.get(viewHolder.getAdapterPosition()).track_id;
         if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
             Log.d("Delet", "second track id = "+track_id);
-            if ( (!(app.client_manager.party.playlist.tracks.size() == 1)) && track_id != -1)
+            if ( (!(app.client_manager.party.playlist.tracks.size() == 1)) && track_id != -1 && app.client_manager.isAdmin())
                 adapter.onItemDismiss(viewHolder.getAdapterPosition());
         }
     }
@@ -66,7 +74,7 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder source,
                           RecyclerView.ViewHolder target) {
-        if (source.getItemViewType() != target.getItemViewType()) {
+        if (source.getItemViewType() != target.getItemViewType() || !app.client_manager.isAdmin()) {
             return false;
         }
         if(mFrom == null)
@@ -85,7 +93,7 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         if(app.client_manager.party.playlist.tracks.size() > viewHolder.getAdapterPosition() &&
                 viewHolder.getAdapterPosition() >= 0)
             track_id = app.client_manager.party.playlist.tracks.get(viewHolder.getAdapterPosition()).track_id;
-        if(app.client_manager.party.playlist.tracks.size()>1 && track_id != -1) {
+        if(app.client_manager.party.playlist.tracks.size()>1 && track_id != -1 && app.client_manager.isAdmin()) {
            View itemView = viewHolder.itemView;
 
             if (actionState == ACTION_STATE_SWIPE) {

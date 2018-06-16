@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vibeat.vibeatapp.HelperClasses.MyTransformation;
 
 import java.util.List;
@@ -67,8 +68,9 @@ public class imageLoader {
                                 Glide.with(act)
                                         .load(img_paths.get(index))
                                         //.centerCrop()
-                                        .override(views.get(index).getMeasuredWidth(),views.get(index).getMeasuredHeight())
+                                        .override(400,400)
                                         .error(R.drawable.cardib)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .placeholder(R.drawable.blank)
                                         .dontAnimate()
                                         .into(views.get(index));
