@@ -110,10 +110,13 @@ public class ClientManager {
         if (party.playlist.cur_track == pos1 || party.playlist.cur_track == pos2)
             party.playlist.cur_track = pos1 + pos2 - party.playlist.cur_track;
         try {
-            int track1_id = party.playlist.tracks.get(pos1).track_id;
-            int track2_id = party.playlist.tracks.get(pos2).track_id;
-            if (app.sender_thread != null)
-                app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id,track2_id));
+            if(pos1 >= 0 && pos1 < party.playlist.tracks.size() &&
+                    pos2 >= 0 && pos2 < party.playlist.tracks.size()) {
+                int track1_id = party.playlist.tracks.get(pos1).track_id;
+                int track2_id = party.playlist.tracks.get(pos2).track_id;
+                if (app.sender_thread != null)
+                    app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id, track2_id));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
