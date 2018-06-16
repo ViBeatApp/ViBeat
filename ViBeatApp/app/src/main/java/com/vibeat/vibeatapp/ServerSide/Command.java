@@ -142,10 +142,11 @@ public class Command {
 		cmd.setAttribute(jsonKey.TRACK_ID_2, trackId_2);
 		return cmd;
 	}
-	public static Command create_playSong_Command(int trackId,int offset) throws JSONException {
+	public static Command create_playSong_Command(int trackId,int offset,userIntention userIntention_enum) throws JSONException {
 		Command cmd = new Command(CommandType.PLAY_SONG);
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		cmd.setAttribute(jsonKey.OFFSET, offset);
+		cmd.setAttribute(jsonKey.USER_INTENTION, userIntention_enum.getInt());
 		return cmd;
 	}
 	public static Command create_imReady_Command(int trackId) throws JSONException {

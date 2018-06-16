@@ -40,5 +40,6 @@ public enum jsonKey {
 
     COMMAND_TYPE,
     COMMAND_INFO,
-    PARTY_PLAYING;
+    PARTY_PLAYING,
+    USER_INTENTION;
 }

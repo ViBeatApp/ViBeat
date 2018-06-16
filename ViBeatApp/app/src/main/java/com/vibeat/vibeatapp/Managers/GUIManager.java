@@ -45,6 +45,7 @@ import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
+import com.vibeat.vibeatapp.ServerSide.userIntention;
 import com.vibeat.vibeatapp.imageLoader;
 
 import java.util.ArrayList;
@@ -573,7 +574,7 @@ public class GUIManager{
                     act.findViewById(R.id.play_pause).setVisibility(View.GONE);
                     //recycler_adapter.notifyDataSetChanged();
                 }
-                app.client_manager.nextSong();
+                app.client_manager.nextSong(userIntention.NEXT_BUTTON);
             }
         });
 

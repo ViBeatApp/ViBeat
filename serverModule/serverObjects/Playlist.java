@@ -26,13 +26,7 @@ public class Playlist {
 	}
 
 	public void setCurrentTrack(int trackID) {
-		for(int i = 0;i < get_list_size(); ++i){
-			Track track = songs.get(i);
-			if(track.trackId == trackID) {
-				currentTrack = trackID;
-				return;
-			}
-		}
+		
 		if(trackID == -1){
 			for(int i = 0; i < songs.size(); ++i){
 				if(songs.get(i).trackId == currentTrack){
@@ -42,7 +36,14 @@ public class Playlist {
 				}
 			}
 		}
-
+		
+		for(int i = 0;i < get_list_size(); ++i){
+			Track track = songs.get(i);
+			if(track.trackId == trackID) {
+				currentTrack = trackID;
+				return;
+			}
+		}
 	}
 
 	public int get_current_track_id() {

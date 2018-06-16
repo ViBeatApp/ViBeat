@@ -20,11 +20,14 @@ import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
 import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
+import com.vibeat.vibeatapp.ServerSide.userIntention;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
+
+import static com.vibeat.vibeatapp.ServerSide.userIntention.*;
 
 public class ClientManager {
 
@@ -85,7 +88,7 @@ public class ClientManager {
         }
     }
 
-    public void nextSong(){
+    public void nextSong(userIntention userIntent){
         Log.d("GET_READY","next song");
         if(isAdmin()) {
             try {
@@ -93,7 +96,7 @@ public class ClientManager {
                 int pos = (party.playlist.cur_track + 1) % party.playlist.tracks.size();
                 int id = party.playlist.tracks.get(pos).track_id;
                 if (app.sender_thread != null) {
-                    app.sender_thread.addCmd(Command.create_playSong_Command(id, 0));
+                    app.sender_thread.addCmd(Command.create_playSong_Command(id, 0, NEXT_BUTTON));
                     if(party.playlist.is_playing)
                         waiting_for_response = true;
                 }
@@ -210,7 +213,7 @@ public class ClientManager {
         try {
             if (this.party.playlist.is_playing && app.sender_thread != null) {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
-                app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.media_manager.getOffset(track_id)));
+                app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.media_manager.getOffset(track_id),PLAY_BUTTON));
                 waiting_for_response = true;
             } else {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;

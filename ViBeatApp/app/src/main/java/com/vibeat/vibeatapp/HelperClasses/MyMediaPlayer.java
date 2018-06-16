@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.MyApplication;
+import com.vibeat.vibeatapp.ServerSide.userIntention;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -44,7 +45,7 @@ public class MyMediaPlayer extends MediaPlayer {
                 Log.e("Test1", "on complete : track id = "+app.client_manager.party.playlist.tracks.get(
                         app.client_manager.party.playlist.cur_track).track_id);
                 if(isCurTrack())
-                    app.client_manager.nextSong();
+                    app.client_manager.nextSong(userIntention.ON_COMPLETION);
             }
         });
 

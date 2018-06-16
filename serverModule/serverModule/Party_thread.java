@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import javax.management.ObjectName;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import serverObjects.Command;
@@ -22,6 +24,7 @@ import serverObjects.ReadWriteAux;
 //import serverObjects.Track;
 import serverObjects.User;
 import serverObjects.jsonKey;
+import serverObjects.userIntention;
 
 
 public class Party_thread implements Runnable {
@@ -81,6 +84,7 @@ public class Party_thread implements Runnable {
 			register_for_selection(user);
 			boolean isAdmin = user.is_admin;
 			party.removeClient(user, false);
+			ready_for_play.remove(user);
 			addClientToParty(user,isAdmin);
 			iter.remove();
 		}
@@ -169,10 +173,6 @@ public class Party_thread implements Runnable {
 		Command sync_command = Command.create_syncParty_Command(party.getFullJson(), party.status == Party_Status.playing);
 		SendCommandToUser(user, sync_command);
 		if (party.nonEmptyPlaylist()) {
-//			if (party.status == Party_Status.playing) {
-//				pause_song(Command.create_pause_Command(party.get_current_track_id(), total_offset));
-//				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
-//			}
 			Command get_ready_command = create_get_ready_command(party.status == Party_Status.playing);
 			SendCommandToUser(user, get_ready_command);
 		}
@@ -309,26 +309,33 @@ public class Party_thread implements Runnable {
 
 	/* we wait for half of the party participants to be ready before we actually start playing */
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException {
-		System.out.println("--- party-thread: party-songs-#: " + party.get_playlist_size());
 		int trackId = cmd.getIntAttribute(jsonKey.TRACK_ID);
-		if(trackId == party.get_current_track_id()) {			
-			if(party.status == Party.Party_Status.preparing || (party.status == Party.Party_Status.playing && party.get_playlist_size() != 1)) {
+		userIntention userIntent = userIntention.getEnum(cmd.getIntAttribute(jsonKey.USER_INTENTION));
+		switch(userIntent){
+		case PLAY_BUTTON:
+			if(trackId == party.get_current_track_id()){
+				if(party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing) {
+					return;
+				}	
+			}
+			else if(trackId == -1){
+				trackId = party.get_current_track_id();
+			}
+			break;
+		case NEXT_BUTTON:
+			if (party.status == Party.Party_Status.pause || party.status == Party_Status.not_started){
+				party.setCurrentTrack(trackId);  
+				updatePartyToAll();		//for checking if we're at the current track.
 				return;
-			}	
+			}
+			break;
+		case ON_COMPLETION:
+			break;
 		}
-		
-		else if ((party.status == Party.Party_Status.pause || (party.status == Party.Party_Status.not_started && trackId != -1))) { //next song but there's no need to start playing. 
-			party.setCurrentTrack(trackId);  
-			updatePartyToAll();		//for checking if we're at the current track.
-			return;
-		}
-		
 		total_offset = cmd.getIntAttribute(jsonKey.OFFSET);
-		party.setCurrentTrack(cmd.getIntAttribute(jsonKey.TRACK_ID));
+		party.setCurrentTrack(trackId);
 		ready_for_play = new ArrayList<>();
 		party.status = Party.Party_Status.preparing;
-		System.out.println("party-thread: startPlayProtocol: update total offset = " + total_offset);
-		System.out.println("startPlayProtocol thread - currentTrackId: " + party.get_current_track_id());
 		Command get_ready_command = create_get_ready_command(false); // not updating the offset
 		updatePartyToAll();		//for checking if we're at the current track.
 		SendCommandToAll(get_ready_command);
@@ -346,7 +353,7 @@ public class Party_thread implements Runnable {
 			ready_for_play.add(user);
 			pause_song(Command.create_pause_Command(-1, total_offset));
 			updateTime();
-			startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset));
+			startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), total_offset,userIntention.PLAY_BUTTON));
 			break;
 		case preparing:
 			if(!ready_for_play.contains(user))
@@ -383,7 +390,7 @@ public class Party_thread implements Runnable {
 			touchCurrentSong = true;
 			if(party.status == Party_Status.playing || party.status == Party_Status.preparing){
 				party.status = Party_Status.not_started;
-				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), 0));
+				startPlayProtocol(Command.create_playSong_Command(party.get_current_track_id(), 0,userIntention.PLAY_BUTTON));
 			}
 		}
 	}
