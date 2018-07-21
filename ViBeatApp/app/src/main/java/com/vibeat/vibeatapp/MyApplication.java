@@ -2,6 +2,7 @@ package com.vibeat.vibeatapp;
 
 import android.app.Application;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.vibeat.vibeatapp.Managers.ClientManager;
 import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
 import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
@@ -21,4 +22,5 @@ public class MyApplication extends Application {
     public Semaphore semaphoreSender = null;
     public Semaphore semaphoreDisconnected = null;
     public boolean disconnected = true;
+    public GoogleSignInClient mGoogleSignInClient = null;
 }

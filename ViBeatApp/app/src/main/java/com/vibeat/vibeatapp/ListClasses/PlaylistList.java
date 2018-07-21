@@ -56,7 +56,7 @@ public class PlaylistList implements ListAdapterable {
         Log.d("ImagePath","after");
 
         title.setText(track.title);
-        artist.setText(track.artist);
+        artist.setText(track.artist+"  ");
 
         return v;
     }

@@ -50,7 +50,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
         if(this.playlist.tracks.size() > position && position >= 0) {
             Track track = this.playlist.tracks.get(position);
             holder.title.setText(track.title);
-            holder.artist.setText(track.artist);
+            holder.artist.setText(track.artist+"  ");
 
             List<String> img_paths = new ArrayList<String>();
             List<ImageView> views = new ArrayList<ImageView>();

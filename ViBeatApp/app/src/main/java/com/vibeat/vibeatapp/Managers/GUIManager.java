@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -26,6 +27,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.vibeat.vibeatapp.Activities.AddMusicActivity;
 import com.vibeat.vibeatapp.Activities.ConnectedActivity;
 import com.vibeat.vibeatapp.Activities.CreatePartyActivity;
@@ -230,6 +233,9 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    act.findViewById(R.id.loading_music).setVisibility(View.GONE);
+                    act.findViewById(R.id.play_pause).setVisibility(View.VISIBLE);
+
                     ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
                     play_pause.setImageResource(R.drawable.ic_play_blue);
                 }
@@ -292,8 +298,13 @@ public class GUIManager{
             @Override
             public void onClick(View v) {
                 app.client_manager.logout();
-                //app.client_manager = null;
-                switchActivity( MainActivity.class);
+                app.mGoogleSignInClient.signOut()
+                    .addOnCompleteListener(act, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            switchActivity( MainActivity.class);
+                        }
+                    });
             }
         });
     }
@@ -648,12 +659,18 @@ public class GUIManager{
                                     act.findViewById(R.id.waiting_list).refreshDrawableState();
                                     break;
                                 case is_private:
-
+                                    TextView req_title = (TextView) act.findViewById(R.id.connected2);
                                     ImageView isPrivate = (ImageView) act.findViewById(R.id.isPrivate);
-                                    if (!app.client_manager.party.is_private)
+                                    if (!app.client_manager.party.is_private) {
                                         isPrivate.setImageResource(R.drawable.ic_unlock_blue);
-                                    else
+                                        req_title.setVisibility(View.GONE);
+                                        ((ConnectedActivity)act).request_list.setVisibility(View.GONE);
+                                    }
+                                    else{
                                         isPrivate.setImageResource(R.drawable.ic_lock_blue);
+                                        req_title.setVisibility(View.VISIBLE);
+                                        ((ConnectedActivity)act).request_list.setVisibility(View.VISIBLE);
+                                    }
                                     act.findViewById(R.id.change_name).refreshDrawableState();
                                     break;
                                 case party_name:

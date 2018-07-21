@@ -115,7 +115,7 @@ public class ListenerThread extends Thread {
                     }
                     if (name != null) {
                         app.client_manager.party.party_name = name.getString(0);
-                        app.gui_manager.cur_changes.add(change.is_private);
+                        app.gui_manager.cur_changes.add(change.party_name);
                     }
                     if(users != null){
                         boolean was_admin = app.client_manager.isAdmin();
@@ -194,6 +194,8 @@ public class ListenerThread extends Thread {
                 break;
 
             case PAUSE:
+                Log.d("Test1","pause song in listener");
+                app.client_manager.waiting_for_response = false;
                 app.media_manager.pause();
                 app.gui_manager.pause();
                 break;

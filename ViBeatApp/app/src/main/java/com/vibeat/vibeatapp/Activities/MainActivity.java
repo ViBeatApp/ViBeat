@@ -11,14 +11,12 @@ import android.widget.Adapter;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.vibeat.vibeatapp.Managers.AuthenticationManager;
 import com.vibeat.vibeatapp.Managers.ClientManager;
-import com.vibeat.vibeatapp.Managers.DBManager;
 import com.vibeat.vibeatapp.Managers.GUIManager;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     public MyApplication app;
 
     GoogleSignInOptions gso;
-    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,18 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         app = (MyApplication) this.getApplication();
 
-        DBManager.startDBManager();
         app.gui_manager = new GUIManager(MainActivity.this, (List<Adapter>) null);
 
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.ACCESS_FINE_LOCATION},
-                0);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        app.mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // Check if a user has already signed in with google
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -60,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                Intent signInIntent = app.mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, 123);
                 }
                 });
