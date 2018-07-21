@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -55,14 +56,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class GUIManager{
+public class GUIManager implements Runnable{
     public Activity act;
     List<Adapter> adapters;
     MyApplication app;
     RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> recycler_adapter;
     public List<change> cur_changes;
     public Boolean leaveParty = false;
-
+    public MediaPlayer mediaPlayer;
+    public int curProgress = 0;
 
     public GUIManager(Activity act, List<Adapter> adapters){
         this.act = act;
@@ -498,6 +500,10 @@ public class GUIManager{
     public void initPlaylistActivity(){
         initToolBar();
 
+        ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
+        progressBar.getProgressDrawable().setColorFilter(
+                Color.parseColor("#00faf1"), android.graphics.PorterDuff.Mode.SRC_IN);
+        progressBar.setProgress(curProgress);
         final ImageButton mute = (ImageButton) act.findViewById(R.id.mute);
         final ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
         ImageButton next = (ImageButton) act.findViewById(R.id.next);
@@ -833,5 +839,40 @@ public class GUIManager{
             //recycler_adapter.notifyDataSetChanged();
         }
         app.client_manager.playSongChosen();
+    }
+
+    public void startProgressBar(final MediaPlayer mediaPlayer, int curPosition) {
+        Log.d("Progress Bar", "inside start progress bar");
+        this.mediaPlayer = mediaPlayer;
+        this.curProgress = curPosition;
+        run();
+    }
+
+    @Override
+    public void run() {
+        if (act instanceof PlaylistActivity) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
+                    progressBar.setProgress(0);
+                    progressBar.setMax(mediaPlayer.getDuration());
+
+                    Log.d("Progress Bar", "inside runnable");
+                    int total = mediaPlayer.getDuration();
+                    while (mediaPlayer != null && curProgress < total && mediaPlayer.isPlaying()) {
+                        try {
+                            Thread.sleep(100);
+                            curProgress = mediaPlayer.getCurrentPosition();
+                        } catch (InterruptedException e) {
+                            return;
+                        } catch (Exception e) {
+                            return;
+                        }
+                        progressBar.setProgress(curProgress);
+                    }
+                }
+            });
+        }
     }
 }
