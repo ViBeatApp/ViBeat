@@ -463,7 +463,7 @@ public class Party_thread implements Runnable {
 	}
 
 	private void destroyParty() throws IOException, JSONException {
-		synchronized (party.waitingClients) {
+		synchronized (party.waitingClients) { // what if the party is private
 			if(party.waitingClients.size() != 0){
 				System.out.println("destroy party shouldn't happen.");
 				return;

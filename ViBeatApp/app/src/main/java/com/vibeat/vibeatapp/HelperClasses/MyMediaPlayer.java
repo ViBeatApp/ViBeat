@@ -22,14 +22,14 @@ public class MyMediaPlayer extends MediaPlayer {
     public boolean preparing = false;
     public boolean is_prepared = false;
     public int offset = 0;
-    public int index;
+    //public int index;
     public boolean startAfterSeek = false;
     public boolean joiningPlayingParty = false;
 
     public MyMediaPlayer(final MyApplication app, final int index){
         super();
         this.app = app;
-        this.index = index;
+       // this.index = index;
 
         this.setOnPreparedListener(new OnPreparedListener() {
             @Override
@@ -117,13 +117,15 @@ public class MyMediaPlayer extends MediaPlayer {
     }
 
     public synchronized void getReady(int track_id, int offset, boolean joiningPlayingParty)throws IOException {
+        int old_offset = this.offset;
         this.offset = offset;
         this.joiningPlayingParty = joiningPlayingParty;
         //if(this.isPlaying()) this.pause();
         if (is_prepared && this.track_id == track_id){
-            Log.e("DebugMediaPlayer", "false - mp need to prepare");
-            this.startAfterSeek = false;
-            this.seekTo(offset);
+            Log.e("DebugMediaPlayer", "internal-offset: " + old_offset + " new-offset: " + offset);
+                Log.e("DebugMediaPlayer", "false - mp need to prepare");
+                this.startAfterSeek = false;
+                this.seekTo(offset);
         }
         else if (!preparing || this.track_id != track_id) {
 

@@ -205,8 +205,12 @@ public class ClientManager {
 
     public void getPartiesNearby(){
         try {
-            if (app.sender_thread != null)
-                app.sender_thread.addCmd(Command.create_nearbyParties_Command(location.getLongitude() ,location.getLatitude(),location.getAltitude()));
+            if (app.sender_thread != null) {
+                if (location != null)
+                    app.sender_thread.addCmd(Command.create_nearbyParties_Command(location.getLongitude(), location.getLatitude(), location.getAltitude()));
+                else
+                    app.sender_thread.addCmd(Command.create_nearbyParties_Command(0, 0, 0));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -263,8 +267,7 @@ public class ClientManager {
         try {
             waiting_for_response = false;
             if(party != null && party.playlist!= null) {
-                app.media_manager.m1.release();
-                app.media_manager.m2.release();
+                app.media_manager.release_all();
             }
             app.media_manager = new MediaPlayerManager(app);
             if (app.sender_thread != null)
