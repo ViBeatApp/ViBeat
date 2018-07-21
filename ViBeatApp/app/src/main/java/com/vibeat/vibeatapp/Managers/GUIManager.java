@@ -56,7 +56,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class GUIManager implements Runnable{
+public class GUIManager{
     public Activity act;
     List<Adapter> adapters;
     MyApplication app;
@@ -845,11 +845,6 @@ public class GUIManager implements Runnable{
         Log.d("Progress Bar", "inside start progress bar");
         this.mediaPlayer = mediaPlayer;
         this.curProgress = curPosition;
-        run();
-    }
-
-    @Override
-    public void run() {
         if (act instanceof PlaylistActivity) {
             act.runOnUiThread(new Runnable() {
                 @Override
@@ -857,20 +852,24 @@ public class GUIManager implements Runnable{
                     final ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
                     progressBar.setProgress(0);
                     progressBar.setMax(mediaPlayer.getDuration());
-
-                    Log.d("Progress Bar", "inside runnable");
-                    int total = mediaPlayer.getDuration();
-                    while (mediaPlayer != null && curProgress < total && mediaPlayer.isPlaying()) {
-                        try {
-                            Thread.sleep(100);
-                            curProgress = mediaPlayer.getCurrentPosition();
-                        } catch (InterruptedException e) {
-                            return;
-                        } catch (Exception e) {
-                            return;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("Progress Bar", "inside runnable");
+                            int total = mediaPlayer.getDuration();
+                            while (mediaPlayer != null && curProgress < total && mediaPlayer.isPlaying()) {
+                                try {
+                                    Thread.sleep(100);
+                                    curProgress = mediaPlayer.getCurrentPosition();
+                                } catch (InterruptedException e) {
+                                    return;
+                                } catch (Exception e) {
+                                    return;
+                                }
+                                progressBar.setProgress(curProgress);
+                            }
                         }
-                        progressBar.setProgress(curProgress);
-                    }
+                    }).start();
                 }
             });
         }

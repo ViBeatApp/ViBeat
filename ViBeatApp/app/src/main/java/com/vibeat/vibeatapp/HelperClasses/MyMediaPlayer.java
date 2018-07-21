@@ -8,11 +8,6 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.ServerSide.userIntention;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Handler;
-
-import static java.lang.Thread.sleep;
 
 public class MyMediaPlayer extends MediaPlayer {
 
@@ -150,6 +145,7 @@ public class MyMediaPlayer extends MediaPlayer {
         if(this.offset == offset) {
             Log.d("burger","Play - SameOffset");
             this.start();
+            app.gui_manager.startProgressBar(this, this.offset);
         }
 
         else if(this.offset != offset) {
