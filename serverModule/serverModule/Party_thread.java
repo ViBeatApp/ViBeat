@@ -148,16 +148,19 @@ public class Party_thread implements Runnable {
 	public void handle_new_clients() throws Exception {
 		getNewClients();
 		Iterator<User> iter = unHandledClients.iterator();
+		Boolean addAll = party.connected.isEmpty();
+		if(addAll) {
+			addingAllRequests();
+		}
 		while (iter.hasNext()){
 			User user = iter.next();
 			register_for_selection(user);
 
 			if(user.currentPartyId != party.party_id && user.currentPartyId != -1)
 				System.out.println("error !!! handler_new_clients");
-
-			if(party.connected.isEmpty()){					//last client exits and new client has just arrived. nasty bug.
+			
+			if(addAll)											//last client exits and new client has just arrived. nasty bug.
 				addClientToParty(user,true);
-			}
 
 			else if(!party.is_private || user.currentPartyId == party.party_id) { 
 				addClientToParty(user,user.is_admin);
@@ -201,7 +204,7 @@ public class Party_thread implements Runnable {
 			handleReady(cmd, user);
 			return;
 		case CONFIRM_REQUEST:
-			confirmRequest(key,cmd);							
+			confirmRequest(cmd);							
 			break;												//adding_and_removing_from_updateParty_json();
 			//add to lists.
 		case SWAP_SONGS:
@@ -260,7 +263,7 @@ public class Party_thread implements Runnable {
 		party.makeAdmin(user);	
 	}
 
-	private void confirmRequest(SelectionKey key, Command cmd) throws JSONException, IOException {
+	private void confirmRequest(Command cmd) throws JSONException, IOException {
 		User confirmed_user = find_user(cmd.getIntAttribute(jsonKey.USER_ID),party.request);
 		if(confirmed_user == null) 
 			return;				//no such user / other admin confirmed.
@@ -464,14 +467,24 @@ public class Party_thread implements Runnable {
 
 	private void destroyParty() throws IOException, JSONException {
 		synchronized (party.waitingClients) { // what if the party is private
-			if(party.waitingClients.size() != 0){
-				System.out.println("destroy party shouldn't happen.");
+			if(party.waitingClients.size() + party.request.size() != 0){
+				System.out.println("destroy party shouldn't happen. Confirming all the requests");
 				return;
 			}
 			party.keep_on = false;
 			ServerModule.deleteParty(party);		
 		}
 
+	}
+
+	private void addingAllRequests() throws JSONException, IOException {
+		List<User> new_Users = new ArrayList<>();
+		clone_User_list(party.request, new_Users,false);
+		for (User user : new_Users){
+			party.removeRequest(user);
+			addClientToParty(user, true);
+		}
+		
 	}
 
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
