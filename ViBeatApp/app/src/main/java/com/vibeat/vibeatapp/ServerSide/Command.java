@@ -126,20 +126,23 @@ public class Command {
 		return cmd;
 	}
 
-	public static Command create_addSons_Command(String database_id) throws JSONException {
+	public static Command create_addSong_Command(String database_id,int changeId) throws JSONException {
 		Command cmd = new Command(CommandType.ADD_SONG);
 		cmd.setAttribute(jsonKey.DB_ID, database_id);
+		cmd.setAttribute(jsonKey.CHANGE_ID, changeId);
 		return cmd;
 	}
-	public static Command create_deleteSong_Command(int trackId) throws JSONException {
+	public static Command create_deleteSong_Command(int trackId,int changeId) throws JSONException {
 		Command cmd = new Command(CommandType.DELETE_SONG);
 		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		cmd.setAttribute(jsonKey.CHANGE_ID, changeId);
 		return cmd;
 	}
-	public static Command create_swapSongs_Command(int trackId_1,int trackId_2) throws JSONException {
+	public static Command create_swapSongs_Command(int trackId_1,int trackId_2,int changeId) throws JSONException {
 		Command cmd = new Command(CommandType.SWAP_SONGS);
 		cmd.setAttribute(jsonKey.TRACK_ID_1, trackId_1);
 		cmd.setAttribute(jsonKey.TRACK_ID_2, trackId_2);
+		cmd.setAttribute(jsonKey.CHANGE_ID, changeId);
 		return cmd;
 	}
 	public static Command create_playSong_Command(int trackId,int offset,userIntention userIntention_enum) throws JSONException {

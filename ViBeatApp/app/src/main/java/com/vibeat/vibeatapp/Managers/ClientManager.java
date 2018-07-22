@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.vibeat.vibeatapp.AddChange;
+import com.vibeat.vibeatapp.DeleteChange;
 import com.vibeat.vibeatapp.FBManager;
 import com.vibeat.vibeatapp.HelperClasses.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
@@ -18,13 +20,16 @@ import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
+import com.vibeat.vibeatapp.PlaylistChange;
 import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
 import com.vibeat.vibeatapp.ServerSide.userIntention;
+import com.vibeat.vibeatapp.SwapChange;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import static com.vibeat.vibeatapp.ServerSide.userIntention.*;
@@ -37,6 +42,7 @@ public class ClientManager {
     public Location location;
     public partyInfo requested_party = null;
     public boolean waiting_for_response = false;
+    public List<PlaylistChange> local_changes;
 
     public ClientManager(User user, MyApplication app){
         app.semaphore = new Semaphore(0);
@@ -44,6 +50,7 @@ public class ClientManager {
         Log.d("Test7", "lock semaphore sender in client manager");
         this.user= user;
         this.party = null;
+        this.local_changes = new ArrayList<PlaylistChange>();
         app.sender_thread = new SenderThread(app);
 
         app.sender_thread.start();
@@ -80,9 +87,11 @@ public class ClientManager {
 
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
+        PlaylistChange change = new AddChange(track);
+        this.local_changes.add(change);
         try {
             if (app.sender_thread != null)
-                app.sender_thread.addCmd(Command.create_addSons_Command(track.db_id));
+                app.sender_thread.addCmd(Command.create_addSong_Command(track.db_id,change.change_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -114,8 +123,10 @@ public class ClientManager {
                     pos2 >= 0 && pos2 < party.playlist.tracks.size()) {
                 int track1_id = party.playlist.tracks.get(pos1).track_id;
                 int track2_id = party.playlist.tracks.get(pos2).track_id;
+                PlaylistChange change = new SwapChange(track1_id,track2_id);
+                this.local_changes.add(change);
                 if (app.sender_thread != null)
-                    app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id, track2_id));
+                    app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id, track2_id,change.change_id));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -127,8 +138,10 @@ public class ClientManager {
             int pos = app.client_manager.party.playlist.searchTrack(track_id);
             if(pos == app.client_manager.party.playlist.cur_track)
                 app.media_manager.stop();
+            PlaylistChange change = new DeleteChange(track_id);
+            this.local_changes.add(change);
             if (app.sender_thread != null)
-                app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id));
+                app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id,change.change_id));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -15,6 +15,7 @@ public enum jsonKey {
     OFFSET,
     TO_SEEK,
     USERS,
+    CHANGES,
     ADMINS,
     REQUESTS,
     SONGS,
@@ -37,10 +38,11 @@ public enum jsonKey {
     TRACK_ID,
     PARTY_ID,
     USER_ID,
+    CHANGE_ID,
 
     COMMAND_TYPE,
     COMMAND_INFO,
-    PARTY_PLAYING,
+    PARTY_PLAYING, 
     USER_INTENTION,
     DELETED_SONGS;
 }

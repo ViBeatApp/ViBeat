@@ -12,6 +12,7 @@ import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
+import com.vibeat.vibeatapp.PlaylistChange;
 import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.CommandClientAux;
 import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
@@ -91,6 +92,7 @@ public class ListenerThread extends Thread {
                 int old_cur_track = -1;
 
                 // Getting changes from server. If nothing was changed, get Null.
+                JSONArray playlist_changes = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.CHANGES);
                 JSONArray users = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.USERS);
                 JSONArray requests = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.REQUESTS);
                 JSONArray songs = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.SONGS);
@@ -141,16 +143,18 @@ public class ListenerThread extends Thread {
                                         (app.client_manager.party.playlist.cur_track + 1) %
                                                 app.client_manager.party.playlist.tracks.size()).track_id);
                             }
-
+                            //apply local changes
+                            for(Integer c :getChangesListFromJSON(playlist_changes)){
+                                for(PlaylistChange p : app.client_manager.local_changes){
+                                    if(p.change_id == c)
+                                        app.client_manager.local_changes.remove(p);
+                                }
+                            }
+                            for(PlaylistChange p : app.client_manager.local_changes){
+                                p.applyChange(app.client_manager.party.playlist);
+                            }
                         } else
                             app.client_manager.party.playlist = new Playlist(new_tracks, false, 0);
-                    }
-                    else if (deleted_songs != null){
-                        Log.d("delete", "inside delete");
-                        List<Integer> delete_tracks = getTrackIDListFromJSON(deleted_songs);
-                        Log.d("delete", "deleted pos = "+delete_tracks.get(0));
-                        deleteSongsForPlaylist(delete_tracks);
-                        app.gui_manager.cur_changes.add(GUIChange.delete_songs);
                     }
                     if(cur_track != null) {
                         old_cur_track = app.client_manager.party.playlist.cur_track;
@@ -246,6 +250,15 @@ public class ListenerThread extends Thread {
             users.add(u);
         }
         return users;
+    }
+
+    private List<Integer> getChangesListFromJSON(JSONArray arr) throws JSONException{
+        List<Integer> changes = new ArrayList<Integer>();
+        for (int i = 0; i < arr.length(); i++ ){
+            Integer c = (Integer)arr.get(i);
+            changes.add(c);
+        }
+        return changes;
     }
 
     private List<partyInfo> getPartyListFromJSON(JSONArray arr) throws JSONException{
