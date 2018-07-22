@@ -150,7 +150,7 @@ public class Party_thread implements Runnable {
 		Iterator<User> iter = unHandledClients.iterator();
 		Boolean addAll = party.connected.isEmpty();
 		if(addAll) {
-			addingAllRequests();
+			System.out.println("errorrrrrrrrrrrrrrr!!!!!!!!!!!!!!!!!!");
 		}
 		while (iter.hasNext()){
 			User user = iter.next();
@@ -158,9 +158,6 @@ public class Party_thread implements Runnable {
 
 			if(user.currentPartyId != party.party_id && user.currentPartyId != -1)
 				System.out.println("error !!! handler_new_clients");
-			
-			if(addAll)											//last client exits and new client has just arrived. nasty bug.
-				addClientToParty(user,true);
 
 			else if(!party.is_private || user.currentPartyId == party.party_id) { 
 				addClientToParty(user,user.is_admin);
@@ -466,13 +463,23 @@ public class Party_thread implements Runnable {
 	}
 
 	private void destroyParty() throws IOException, JSONException {
-		synchronized (party.waitingClients) { // what if the party is private
-			if(party.waitingClients.size() + party.request.size() != 0){
-				System.out.println("destroy party shouldn't happen. Confirming all the requests");
-				return;
-			}
+		synchronized (party.waitingClients) { // what if the party is private			
 			party.keep_on = false;
-			ServerModule.deleteParty(party);		
+			ServerModule.deleteParty(party);	
+			if(party.waitingClients.size() + party.request.size() == 0) return;
+			List<User> requestClone = new ArrayList<>();
+			List<User> waitingClone = new ArrayList<>();
+			clone_User_list(party.request, requestClone,false);		
+			clone_User_list(party.request, waitingClone,false);
+
+			for(User user : requestClone){
+				SendCommandToUser(user, Command.create_leaveParty_Command());
+				returnToServerModule(user, false);
+			}
+			for(User user : waitingClone){
+				SendCommandToUser(user, Command.create_leaveParty_Command());
+				returnToServerModule(user, false);
+			}
 		}
 
 	}
