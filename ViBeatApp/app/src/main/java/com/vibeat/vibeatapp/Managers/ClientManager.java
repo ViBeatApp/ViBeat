@@ -398,4 +398,11 @@ public class ClientManager {
             }
         }
     }
+    public void searchParty(String query) {
+        try {
+            app.sender_thread.addCmd(Command.create_searchParty_Command(query));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
