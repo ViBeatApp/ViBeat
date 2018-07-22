@@ -225,6 +225,8 @@ public class ServerModule {
 		double lon2 = loc2.longitude;
 		double el1 = loc1.altitude;
 		double el2 = loc2.altitude;
+		if((lat1 == -1 && lon1 == -1 && el1 == -1) ||
+				(lat2 == -1 && lon2 == -1 && el2 == -1)) return 0;
 		final int R = 6371; // Radius of the earth
 
 		double latDistance = Math.toRadians(lat2 - lat1);
