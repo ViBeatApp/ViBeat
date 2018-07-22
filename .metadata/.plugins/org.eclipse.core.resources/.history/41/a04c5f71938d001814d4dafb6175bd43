@@ -157,6 +157,13 @@ public class Party {
 		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
 		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 		
+		if(this.update_party.cmd_info.has(jsonKey.DELETED_SONGS.name()))
+			update_party.cmd_info.getJSONArray(jsonKey.DELETED_SONGS.name()).put(trackID);
+		else
+			this.addToJSONArray(jsonKey.DELETED_SONGS,new JSONArray().put(trackID));
+		
+		
+		
 		return deleteCurrentSong;
 	}
 
