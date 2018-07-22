@@ -133,7 +133,6 @@ public class MediaPlayerManager {
     }
 
     public void play(int track_id, int offset){
-        Log.d("play","internal-offset:" +  players[active_mp].offset);
         try {
             if (players[active_mp].track_id != track_id) {
                 active_mp = 1 - active_mp;
@@ -155,6 +154,7 @@ public class MediaPlayerManager {
     public void release_all() {
         players[0].release();
         players[1].release();
+
     }
 
     //optimizations in the future

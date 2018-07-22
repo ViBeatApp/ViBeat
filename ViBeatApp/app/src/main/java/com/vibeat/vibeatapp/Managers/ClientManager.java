@@ -234,7 +234,8 @@ public class ClientManager {
         try {
             if (this.party.playlist.is_playing && app.sender_thread != null) {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
-                app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.media_manager.getOffset(track_id),PLAY_BUTTON));
+                Log.d("playPause", "commandPlayPause: " + app.gui_manager.curProgress);
+                app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.gui_manager.curProgress,PLAY_BUTTON));
                 waiting_for_response = true;
             } else {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
@@ -407,10 +408,15 @@ public class ClientManager {
     }
 
     public void seekMusic(int id, int offset) {
+        boolean is_pause = false;
         try {
             if (app.sender_thread != null){
+                if(!app.client_manager.party.playlist.is_playing)
+                    is_pause = true;
                 app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
                 app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
+                if (is_pause)
+                    app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
             }
 
         } catch (JSONException e) {

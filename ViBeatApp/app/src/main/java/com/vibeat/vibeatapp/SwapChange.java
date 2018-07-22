@@ -3,7 +3,6 @@ package com.vibeat.vibeatapp;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 
-import java.util.Collections;
 import java.util.List;
 
 public class SwapChange extends PlaylistChange  {

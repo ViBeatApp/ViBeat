@@ -32,18 +32,25 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
         app = (MyApplication) this.getApplication();
 
         recyclerView = (RecyclerView)findViewById(R.id.playlist);
-        adapter = new PlaylistRecyclerView(PlaylistActivity.this, app.client_manager.party.playlist, recyclerView);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager (this);
-        recyclerView.setLayoutManager (mLayoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(adapter);
+        if (app.client_manager.party != null && app.client_manager.party.playlist!= null){
+            adapter = new PlaylistRecyclerView(PlaylistActivity.this, app.client_manager.party.playlist, recyclerView);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager (this);
+            recyclerView.setLayoutManager (mLayoutManager);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(adapter);
 
-        ItemTouchHelper.Callback callback = new RecyclerTouchHelper(adapter, PlaylistActivity.this, app);
-        itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+            ItemTouchHelper.Callback callback = new RecyclerTouchHelper(adapter, PlaylistActivity.this, app);
+            itemTouchHelper = new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        app.gui_manager.changeActivity(PlaylistActivity.this,adapter);
-        app.gui_manager.initPlaylistActivity();
+            app.gui_manager.changeActivity(PlaylistActivity.this,adapter);
+            app.gui_manager.initPlaylistActivity();
+        }
+        else {
+            app.gui_manager.changeActivity(PlaylistActivity.this, (RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder>) null);
+            app.gui_manager.switchActivity(EnterPartyActivity.class);
+        }
+
     }
 
     @Override

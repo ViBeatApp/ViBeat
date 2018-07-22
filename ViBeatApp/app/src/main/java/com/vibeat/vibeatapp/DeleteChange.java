@@ -12,7 +12,9 @@ public class DeleteChange extends PlaylistChange{
 
     @Override
     public void applyChange(Playlist playlist) {
-        playlist.tracks.remove(playlist.searchTrack(id));
+        int pos = playlist.searchTrack(id);
+        if(pos>=0 && pos < playlist.tracks.size())
+            playlist.tracks.remove(playlist.searchTrack(id));
     }
 
 }
