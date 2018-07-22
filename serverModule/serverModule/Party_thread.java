@@ -68,6 +68,7 @@ public class Party_thread implements Runnable {
 			}
 			touchCurrentSong = false;
 			party.update_party = new Command(CommandType.SYNC_PARTY);
+			party.update_party.cmd_info.put(jsonKey.CHANGES.name(), new JSONArray());
 			handle_comeBack_clients();
 			handle_new_clients();
 			handle_current_clients();
@@ -399,8 +400,8 @@ public class Party_thread implements Runnable {
 
 	public void DeleteSong(Command cmd) throws JSONException, IOException {
 		int trackID = cmd.getIntAttribute(jsonKey.TRACK_ID);
-
-		int deleteCurrentSong = party.deleteSong(trackID);
+		int changeID = cmd.getIntAttribute(jsonKey.CHANGE_ID);
+		int deleteCurrentSong = party.deleteSong(trackID,changeID);
 
 		if(deleteCurrentSong == 1){
 			touchCurrentSong = true;
@@ -414,13 +415,16 @@ public class Party_thread implements Runnable {
 	public void SwapSongs(Command cmd) throws JSONException {
 		int trackID_1 = cmd.getIntAttribute(jsonKey.TRACK_ID_1);
 		int trackID_2 = cmd.getIntAttribute(jsonKey.TRACK_ID_2);
-		party.changeSongsOrder(trackID_1,trackID_2);
+		int changeID = cmd.getIntAttribute(jsonKey.CHANGE_ID);
+		party.changeSongsOrder(trackID_1,trackID_2,changeID);
 	}
 
 	public void AddSong(Command cmd) throws JSONException {
 		if(!party.nonEmptyPlaylist())
 			touchCurrentSong = true;
-		party.addSong(cmd.getStringAttribute(jsonKey.DB_ID));
+		String DB_ID = cmd.getStringAttribute(jsonKey.DB_ID);
+		int changeID = cmd.getIntAttribute(jsonKey.CHANGE_ID);
+		party.addSong(DB_ID,changeID);
 	}
 
 	public void returnToServerModule(final User user, boolean disconnected) throws IOException, JSONException {

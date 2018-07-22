@@ -10,11 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Party {
-	
+
 	public enum Party_Status {
 		not_started, preparing, playing, pause,
 	}
-	
+
 	public String party_name;
 	public int party_id;
 	public Location location;
@@ -29,7 +29,7 @@ public class Party {
 	public boolean is_private;
 	public boolean keep_on;
 	public Command update_party;
-	
+
 	public Party(String party_name, int party_id, User admin, boolean is_private) throws IOException, JSONException {
 		super();
 		this.party_name = party_name;
@@ -60,13 +60,13 @@ public class Party {
 			this.location = location;
 		}
 	}
-	
+
 	public Location get_Location(){ 
 		synchronized(this.location) {
 			return this.location;
 		}
 	}
-	
+
 	public User getAdmin() {
 		if (this.connected.size() > 0)
 			return this.connected.get(0);
@@ -81,7 +81,7 @@ public class Party {
 		}	
 		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
 	}
-	
+
 	public void disableAdmin(User user,boolean disconnected){
 		if(user.is_admin) {
 			if(!disconnected)
@@ -89,31 +89,33 @@ public class Party {
 			--numOfAdmins;
 		}	
 	}
-	
+
 	public boolean nonEmptyPlaylist(){
 		return this.get_current_track_id() != -1;
 	}
-	
+
 	public void addClient(User user) throws JSONException{
 		user.currentPartyId = this.party_id;
 		connected.add(user);
 		user.is_admin = false;
 		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
 	}
-	
+
 	public void removeClient(User user, boolean disconnected) throws JSONException{
-		boolean changeImage = user.id == connected.get(0).id;
+		if(this.connected.size() == 0)
+			return;
+		boolean changeImage = (user.id == connected.get(0).id);
 		if(!disconnected) {
 			user.currentPartyId = -1;
 		}
-		
+
 		disableAdmin(user,disconnected);
 		connected.remove(user);
-		
+
 		if(numOfAdmins == 0 && numOfClients() != 0) {
 			makeAdmin(connected.get(0));
 		}
-		
+
 		this.addToJSONArray(jsonKey.USERS,User.getUserArray(connected));
 		if(changeImage)
 			this.addToJSONArray(jsonKey.IMAGE,new JSONArray().put(this.getPartyImage()));
@@ -128,50 +130,58 @@ public class Party {
 		if(request.remove(user))
 			this.addToJSONArray(jsonKey.REQUESTS, User.getUserArray(request));
 	}
-	
+
 	// new_clients is a synchronized object
 	public void addWaitingClient(User user) {
 		waitingClients.add(user);
 	}
-	
+
 	public int numOfClients() {
 		return connected.size();
 	}
 
-	public void addSong(String DB_ID) throws JSONException{ 		
+	public void addSong(String DB_ID,int changeId) throws JSONException{ 		
 		playlist.addSong(DB_ID);
+		this.update_party.cmd_info.getJSONArray(jsonKey.CHANGES.name()).put(changeId);
 		this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
 		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
 	}
-	
-	public int deleteSong(int trackID) throws JSONException{
+
+	public int deleteSong(int trackID,int changeId) throws JSONException{
+		
+		this.update_party.cmd_info.getJSONArray(jsonKey.CHANGES.name()).put(changeId);
 		int deleteCurrentSong = playlist.deleteSong(trackID);
 		if(deleteCurrentSong == -1)
 			return -1;
-		if(this.update_party.cmd_info.has(jsonKey.DELETED_SONGS.name())) {
+		
+		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
+		
+		if(this.update_party.cmd_info.has(jsonKey.DELETED_SONGS.name()))
 			update_party.cmd_info.getJSONArray(jsonKey.DELETED_SONGS.name()).put(trackID);
-		}
 		else
 			this.addToJSONArray(jsonKey.DELETED_SONGS,new JSONArray().put(trackID));
-		this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
+		
+		
+		
 		return deleteCurrentSong;
 	}
-	
-	public void changeSongsOrder(int trackID_1, int trackID_2) throws JSONException{	
+
+	public void changeSongsOrder(int trackID_1, int trackID_2,int changeId) throws JSONException{	
+		this.update_party.cmd_info.getJSONArray(jsonKey.CHANGES.name()).put(changeId);
 		int changeHappened = playlist.changeSongsOrder(trackID_1,trackID_2);
 		if(changeHappened == 1) {
 			this.addToJSONArray(jsonKey.SONGS,this.playlist.getTrackArray());
-			this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));
+			this.addToJSONArray(jsonKey.CURRENT_TRACK_ID,new JSONArray().put(get_current_track_id()));		
 		}
 		else{
 			System.out.println("error mother fucker - changeSongsOrder");
 		}
 	}
-	
+
 	public int get_playlist_size() {
 		return playlist.get_list_size();
 	}
-	
+
 	public int get_current_track_id() {
 		return playlist.get_current_track_id();
 	}
@@ -190,7 +200,7 @@ public class Party {
 		publicJson.put(jsonKey.IMAGE.name(), new String(this.getPartyImage()));
 		return publicJson;
 	}
-	
+
 	public JSONObject getFullJson() throws JSONException{
 		JSONObject fullJson = new JSONObject();
 		fullJson.put(jsonKey.NAME.name(), new JSONArray().put(party_name));
@@ -202,7 +212,7 @@ public class Party {
 		fullJson.put(jsonKey.CURRENT_TRACK_ID.name(), new JSONArray().put(this.get_current_track_id()));
 		return fullJson;
 	}
-	
+
 	public void addComeBackUsers(User existingUser) throws IOException {
 		synchronized (comeBackUsers) {	
 			for(User comeBackUser : comeBackUsers){
@@ -213,11 +223,12 @@ public class Party {
 			comeBackUsers.add(existingUser);
 		}
 	}
-	
+
 	public void addToJSONArray(jsonKey classifier, JSONArray jsonArray) throws JSONException {
 		update_party.cmd_info.remove(classifier.name());
 		update_party.cmd_info.put(classifier.name(), jsonArray);
 	}
+	
 
 	public void setName(String name) throws JSONException {
 		this.party_name = name;
@@ -230,6 +241,6 @@ public class Party {
 	}
 
 
-	
+
 
 }

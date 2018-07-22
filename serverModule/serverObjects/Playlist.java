@@ -61,7 +61,7 @@ public class Playlist {
 			if(track.trackId == trackID) {
 				int index = songs.indexOf(track);
 				if(trackID == currentTrack){
-					System.out.println("You need to send playNextSong before deleting the current song!!!!!!!!!!!!!!!");
+					System.out.println("deleting current song");
 					int nextIndex = (index+1) % get_list_size();
 					currentTrack = songs.get(nextIndex).trackId;
 					iter.remove();
