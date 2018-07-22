@@ -116,8 +116,7 @@ public class ClientManager {
     }
 
     public void swapTrack(int pos1, int pos2){
-        if (party.playlist.cur_track == pos1 || party.playlist.cur_track == pos2)
-            party.playlist.cur_track = pos1 + pos2 - party.playlist.cur_track;
+
         try {
             if(pos1 >= 0 && pos1 < party.playlist.tracks.size() &&
                     pos2 >= 0 && pos2 < party.playlist.tracks.size()) {

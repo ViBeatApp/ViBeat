@@ -157,7 +157,10 @@ public class Party_thread implements Runnable {
 			User user = iter.next();
 			register_for_selection(user);
 
-			if(!party.is_private || user.currentPartyId == party.party_id) { 
+			if(user.currentPartyId != party.party_id && user.currentPartyId != -1)
+				System.out.println("error !!! handler_new_clients");
+
+			else if(!party.is_private || user.currentPartyId == party.party_id) { 
 				addClientToParty(user,user.is_admin);
 			}
 

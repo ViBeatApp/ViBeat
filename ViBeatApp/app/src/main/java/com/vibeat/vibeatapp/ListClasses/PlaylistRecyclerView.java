@@ -78,6 +78,9 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {
+        if(playlist.cur_track == fromPosition || playlist.cur_track == toPosition){
+            playlist.cur_track = fromPosition + toPosition - playlist.cur_track;
+        }
         Collections.swap(playlist.tracks, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
