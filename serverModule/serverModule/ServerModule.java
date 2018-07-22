@@ -188,7 +188,7 @@ public class ServerModule {
 
 		synchronized (current_parties) {
 			for (Party party : current_parties){
-				if (party.party_name.contains(name)) {
+				if (party.party_name.toLowerCase().contains(name.toLowerCase())) {
 					resultArray.put(party.getPublicJson());
 				}
 			}		
@@ -200,13 +200,17 @@ public class ServerModule {
 	public static void send_nearby_parties(User user,Command cmd) throws JSONException {
 		Location location = new Location(cmd);
 		if(user == null) {
-			System.out.println("error send nearbyParties.!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("error send nearbyParties!!!!!!!!!!!!!!!!!!!!!!!!");
 			return;
 		}
+		if(!checkValidLocation(location))
+			return;
 		user.setLocation(location);
 		JSONArray partyArray = new JSONArray();
 		for (Party party : current_parties){
-			if(distance(party.get_Location(), location) < 100000000) {
+			if(!checkValidLocation(party.get_Location()))
+				continue;
+			if(distance(party.get_Location(), location) < 10000) {
 				partyArray.put(party.getPublicJson());
 				System.out.println(party.getPublicJson());
 			}
@@ -218,6 +222,14 @@ public class ServerModule {
 		ReadWriteAux.writeSocket(user.get_channel(), result);
 	}
 
+	private static boolean checkValidLocation(Location location) {
+		double lat = location.latitude; 
+		double lon = location.longitude;
+		double el = location.altitude;
+		if(lat == 0 && lon == 0 && el == 0) return false;
+		return true;
+	}
+
 	public static double distance(Location loc1, Location loc2) {
 		double lat1 = loc1.latitude; 
 		double lat2 = loc2.latitude;
@@ -225,8 +237,6 @@ public class ServerModule {
 		double lon2 = loc2.longitude;
 		double el1 = loc1.altitude;
 		double el2 = loc2.altitude;
-		if((lat1 == -1 && lon1 == -1 && el1 == -1) ||
-				(lat2 == -1 && lon2 == -1 && el2 == -1)) return 0;
 		final int R = 6371; // Radius of the earth
 
 		double latDistance = Math.toRadians(lat2 - lat1);

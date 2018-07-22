@@ -318,6 +318,7 @@ public class Party_thread implements Runnable {
 	public void startPlayProtocol(Command cmd) throws IOException, JSONException{
 		int trackId = cmd.getIntAttribute(jsonKey.TRACK_ID);
 		userIntention userIntent = userIntention.getEnum(cmd.getIntAttribute(jsonKey.USER_INTENTION));
+		//boolean sleep = true;
 		System.out.println("userIntent = " + userIntent.name() + " trackId == party.get_current_track_id() is " + (trackId == party.get_current_track_id()));
 		System.out.println("party status is: " + party.status.name());
 		switch(userIntent){
@@ -326,6 +327,7 @@ public class Party_thread implements Runnable {
 				if(party.status == Party.Party_Status.preparing || party.status == Party.Party_Status.playing) {
 					return;
 				}	
+				//sleep = false;
 			}
 			else if(trackId == -1){
 				trackId = party.get_current_track_id();

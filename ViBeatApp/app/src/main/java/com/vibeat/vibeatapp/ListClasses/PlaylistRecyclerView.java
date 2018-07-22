@@ -87,7 +87,10 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     public void onItemDismiss(int position) {
         int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
         app.client_manager.party.playlist.tracks.remove(position);
+        if(position >= app.client_manager.party.playlist.tracks.size())
+            app.client_manager.party.playlist.cur_track = 0;
         notifyItemRemoved(position);
+        notifyItemChanged(app.client_manager.party.playlist.cur_track);
         app.client_manager.removeTrack(track_id);
 
     }
