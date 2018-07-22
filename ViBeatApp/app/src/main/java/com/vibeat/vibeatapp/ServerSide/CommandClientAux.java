@@ -58,8 +58,8 @@ public class CommandClientAux {
 			case PARTY_PLAYING:
 				result = cmd.getSyncPartyAttribute(jsonKey.PARTY_PLAYING);
 				break;
-			case DELETED_SONGS:
-				result = cmd.getSyncPartyAttribute(jsonKey.DELETED_SONGS);
+			case CHANGES:
+				result = cmd.getSyncPartyAttribute(jsonKey.CHANGES);
 				break;
 			default:
 				break;

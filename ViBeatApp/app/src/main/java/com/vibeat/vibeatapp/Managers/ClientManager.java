@@ -193,7 +193,10 @@ public class ClientManager {
 
                             if( user.is_admin && app.sender_thread != null) {
                                 try {
-                                    app.sender_thread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
+                                    if( location != null )
+                                        app.sender_thread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
+                                    else
+                                        app.sender_thread.addCmd(Command.create_updateLocation_Command(0,0,0));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

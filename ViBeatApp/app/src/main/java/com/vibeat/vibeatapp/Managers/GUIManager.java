@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -522,9 +523,29 @@ public class GUIManager{
         initToolBar();
         isPlaylistOnTop = true;
 
-        ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
-        progressBar.getProgressDrawable().setColorFilter(
+        SeekBar seekBar = (SeekBar) act.findViewById(R.id.seekBar_music);
+        seekBar.getProgressDrawable().setColorFilter(
                 Color.parseColor("#00faf1"), android.graphics.PorterDuff.Mode.SRC_IN);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(mediaPlayer != null && fromUser){
+                    seekBar.setProgress(progress);
+                    
+                }
+            }
+        });
         Log.d("iniy playlist", "mediaPlayer null = "+ (mediaPlayer == null));
         if (mediaPlayer != null) {
 
@@ -532,8 +553,6 @@ public class GUIManager{
             Log.d("Progress Bar", "curProgress = " +curProgress);
             Log.d("Progress Bar", "total = " +mediaPlayer.getDuration());
             startProgressBar(mediaPlayer,curProgress);
-            //progressBar.setProgress(curProgress);
-            //progressBar.setMax(mediaPlayer.getDuration());
         }
         final ImageButton mute = (ImageButton) act.findViewById(R.id.mute);
         final ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
@@ -882,9 +901,9 @@ public class GUIManager{
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    final ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
-                    progressBar.setProgress(0);
-                    progressBar.setMax(mediaPlayer.getDuration());
+                    final SeekBar seekBar = (SeekBar) act.findViewById(R.id.progressBar_music);
+                    seekBar.setProgress(0);
+                    seekBar.setMax(mediaPlayer.getDuration());
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -899,7 +918,7 @@ public class GUIManager{
                                 } catch (Exception e) {
                                     return;
                                 }
-                                progressBar.setProgress(curProgress);
+                                seekBar.setProgress(curProgress);
                                 Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
                                 Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
                                 Log.d("Progress Bar", "curProgress = " +curProgress);

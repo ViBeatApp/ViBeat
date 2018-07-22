@@ -25,6 +25,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -145,9 +146,11 @@ public class ListenerThread extends Thread {
                             }
                             //apply local changes
                             for(Integer c :getChangesListFromJSON(playlist_changes)){
-                                for(PlaylistChange p : app.client_manager.local_changes){
+                                Iterator<PlaylistChange> iter = app.client_manager.local_changes.iterator();
+                                while(iter.hasNext()){
+                                    PlaylistChange p = iter.next();
                                     if(p.change_id == c)
-                                        app.client_manager.local_changes.remove(p);
+                                        iter.remove();
                                 }
                             }
                             for(PlaylistChange p : app.client_manager.local_changes){
