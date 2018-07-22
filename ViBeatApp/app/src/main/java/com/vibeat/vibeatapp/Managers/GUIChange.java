@@ -1,6 +1,6 @@
 package com.vibeat.vibeatapp.Managers;
 
-public enum change{
+public enum GUIChange{
     users,
     requests,
     songs,

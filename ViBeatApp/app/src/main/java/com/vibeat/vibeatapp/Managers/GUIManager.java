@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +37,7 @@ import com.vibeat.vibeatapp.Activities.LoadingActivity;
 import com.vibeat.vibeatapp.Activities.MainActivity;
 import com.vibeat.vibeatapp.Activities.NoConnectionActivity;
 import com.vibeat.vibeatapp.Activities.PlaylistActivity;
+import com.vibeat.vibeatapp.HelperClasses.MyMediaPlayer;
 import com.vibeat.vibeatapp.ListClasses.PartiesList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistList;
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
@@ -61,17 +61,19 @@ public class GUIManager{
     List<Adapter> adapters;
     MyApplication app;
     RecyclerView.Adapter<PlaylistRecyclerView.playlistViewHolder> recycler_adapter;
-    public List<change> cur_changes;
+    public List<GUIChange> cur_changes;
     public Boolean leaveParty = false;
-    public MediaPlayer mediaPlayer;
+
+    public MyMediaPlayer mediaPlayer;
     public int curProgress = 0;
+    public boolean isPlaylistOnTop = true;
 
     public GUIManager(Activity act, List<Adapter> adapters){
         this.act = act;
         this.adapters = adapters;
         this.recycler_adapter = null;
         app = (MyApplication) act.getApplication();
-        this.cur_changes = new ArrayList<change>();
+        this.cur_changes = new ArrayList<GUIChange>();
         app.semaphoreDisconnected = new Semaphore(0);
         app.semaphoreDisconnected.release();
         Log.d("Test7", "gui builder after create lock");
@@ -518,11 +520,21 @@ public class GUIManager{
 
     public void initPlaylistActivity(){
         initToolBar();
+        isPlaylistOnTop = true;
 
         ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
         progressBar.getProgressDrawable().setColorFilter(
                 Color.parseColor("#00faf1"), android.graphics.PorterDuff.Mode.SRC_IN);
-        progressBar.setProgress(curProgress);
+        Log.d("iniy playlist", "mediaPlayer null = "+ (mediaPlayer == null));
+        if (mediaPlayer != null) {
+
+            Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
+            Log.d("Progress Bar", "curProgress = " +curProgress);
+            Log.d("Progress Bar", "total = " +mediaPlayer.getDuration());
+            startProgressBar(mediaPlayer,curProgress);
+            //progressBar.setProgress(curProgress);
+            //progressBar.setMax(mediaPlayer.getDuration());
+        }
         final ImageButton mute = (ImageButton) act.findViewById(R.id.mute);
         final ImageButton play_pause = (ImageButton) act.findViewById(R.id.play_pause);
         ImageButton next = (ImageButton) act.findViewById(R.id.next);
@@ -671,9 +683,9 @@ public class GUIManager{
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Iterator<change> iter = cur_changes.iterator();
+                        Iterator<GUIChange> iter = cur_changes.iterator();
                         while (iter.hasNext()) {
-                            change c = iter.next();
+                            GUIChange c = iter.next();
                             switch (c) {
                                 case users:
                                     ((BaseAdapter) adapters.get(0)).notifyDataSetChanged();
@@ -715,9 +727,9 @@ public class GUIManager{
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Iterator<change> iter = cur_changes.iterator();
+                        Iterator<GUIChange> iter = cur_changes.iterator();
                         while (iter.hasNext()) {
-                            change c = iter.next();
+                            GUIChange c = iter.next();
                             Log.d("DebugAll", c.name());
                             switch (c) {
                                 case songs:
@@ -737,7 +749,7 @@ public class GUIManager{
                                     act.findViewById(R.id.admin_toolbar).refreshDrawableState();
                                     break;
                                 case cur_track:
-                                    if (cur_changes.indexOf(change.songs) == -1) {
+                                    if (cur_changes.indexOf(GUIChange.songs) == -1) {
                                         Log.d("DebugAll", "old = " + old_cur_track + " new = " + app.client_manager.party.playlist.cur_track);
                                         Log.d("DebugAll", "playlist size = " + app.client_manager.party.playlist.tracks.size());
                                         //if(old_cur_track != app.client_manager.party.playlist.cur_track)
@@ -746,7 +758,7 @@ public class GUIManager{
                                     }
                                     break;
                                 case delete_songs:
-                                    if (cur_changes.indexOf(change.songs) == -1) {
+                                    if (cur_changes.indexOf(GUIChange.songs) == -1) {
                                         recycler_adapter.notifyDataSetChanged();
                                     }
                                     break;
@@ -831,6 +843,8 @@ public class GUIManager{
     }
 
     public void switchActivity(final Class to_act){
+        if( act instanceof PlaylistActivity )
+            isPlaylistOnTop = false;
         act.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -860,7 +874,7 @@ public class GUIManager{
         app.client_manager.playSongChosen();
     }
 
-    public void startProgressBar(final MediaPlayer mediaPlayer, int curPosition) {
+    public void startProgressBar(final MyMediaPlayer mediaPlayer, int curPosition) {
         Log.d("Progress Bar", "inside start progress bar");
         this.mediaPlayer = mediaPlayer;
         this.curProgress = curPosition;
@@ -874,9 +888,9 @@ public class GUIManager{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("Progress Bar", "inside runnable");
                             int total = mediaPlayer.getDuration();
-                            while (mediaPlayer != null && curProgress < total && mediaPlayer.isPlaying()) {
+                            Log.d("Progress Bar", "inside runnable");
+                            while (isPlaylistOnTop && mediaPlayer != null && curProgress < total && mediaPlayer.isPlaying()) {
                                 try {
                                     Thread.sleep(100);
                                     curProgress = mediaPlayer.getCurrentPosition();
@@ -886,7 +900,15 @@ public class GUIManager{
                                     return;
                                 }
                                 progressBar.setProgress(curProgress);
+                                Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
+                                Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
+                                Log.d("Progress Bar", "curProgress = " +curProgress);
+                                Log.d("Progress Bar", "total = " +total);
                             }
+                            Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
+                            Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
+                            Log.d("Progress Bar", "curProgress = " +curProgress);
+                            Log.d("Progress Bar", "total = " +total);
                         }
                     }).start();
                 }

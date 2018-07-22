@@ -4,8 +4,9 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
 import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
-import com.vibeat.vibeatapp.Managers.change;
+import com.vibeat.vibeatapp.Managers.GUIChange;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
@@ -111,26 +112,26 @@ public class ListenerThread extends Thread {
                 synchronized (app.gui_manager.cur_changes) {
                     if (is_private != null) {
                         app.client_manager.party.is_private = is_private.getBoolean(0);
-                        app.gui_manager.cur_changes.add(change.is_private);
+                        app.gui_manager.cur_changes.add(GUIChange.is_private);
                     }
                     if (name != null) {
                         app.client_manager.party.party_name = name.getString(0);
-                        app.gui_manager.cur_changes.add(change.party_name);
+                        app.gui_manager.cur_changes.add(GUIChange.party_name);
                     }
                     if(users != null){
                         boolean was_admin = app.client_manager.isAdmin();
                         updateUserList(getUserListFromJSON(users), app.client_manager.party);
-                        app.gui_manager.cur_changes.add(change.users);
+                        app.gui_manager.cur_changes.add(GUIChange.users);
                         if(!was_admin && app.client_manager.isAdmin())
-                            app.gui_manager.cur_changes.add(change.admin);
+                            app.gui_manager.cur_changes.add(GUIChange.admin);
                     }
                     if(requests != null){
                         app.client_manager.party.request = getUserListFromJSON(requests);
-                        app.gui_manager.cur_changes.add(change.requests);
+                        app.gui_manager.cur_changes.add(GUIChange.requests);
                     }
                     if(songs != null){
                         List<Track> new_tracks = getTrackListFromJSON(songs);
-                        app.gui_manager.cur_changes.add(change.songs);
+                        app.gui_manager.cur_changes.add(GUIChange.songs);
 
                         if (app.client_manager.party.playlist != null) {
                             int prev_size = app.client_manager.party.playlist.tracks.size();
@@ -149,12 +150,12 @@ public class ListenerThread extends Thread {
                         List<Integer> delete_tracks = getTrackIDListFromJSON(deleted_songs);
                         Log.d("delete", "deleted pos = "+delete_tracks.get(0));
                         deleteSongsForPlaylist(delete_tracks);
-                        app.gui_manager.cur_changes.add(change.delete_songs);
+                        app.gui_manager.cur_changes.add(GUIChange.delete_songs);
                     }
                     if(cur_track != null) {
                         old_cur_track = app.client_manager.party.playlist.cur_track;
                         app.client_manager.party.playlist.cur_track = posFromTrackId(cur_track);
-                        app.gui_manager.cur_changes.add(change.cur_track);
+                        app.gui_manager.cur_changes.add(GUIChange.cur_track);
                     }
                 }
                 if (move)
@@ -191,6 +192,9 @@ public class ListenerThread extends Thread {
                 app.client_manager.party = null;
                 app.client_manager.user.is_admin = false;
                 app.media_manager = new MediaPlayerManager(app);
+                if(!(app.gui_manager.act instanceof EnterPartyActivity)) {
+                    app.gui_manager.switchActivity(EnterPartyActivity.class);
+                }
                 break;
 
             case PAUSE:
