@@ -151,6 +151,7 @@ public class ServerModule {
 		case SEARCH_PARTY:
 			Command answer = getPartiesByName(cmd.getStringAttribute(jsonKey.NAME));
 			ReadWriteAux.writeSocket(((User)key.attachment()).get_channel(), answer);
+			break;
 		default:
 			System.out.println("error cmdType not join/create/disconnected.");
 			break;

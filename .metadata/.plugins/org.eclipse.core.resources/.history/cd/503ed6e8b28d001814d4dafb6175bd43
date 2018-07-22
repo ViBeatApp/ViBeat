@@ -127,7 +127,7 @@ public class Party_thread implements Runnable {
 		if (play_condition()) { /* we start playing the song */
 			party.status = Party.Party_Status.playing;
 			try {
-				Thread.sleep(700);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -151,7 +151,7 @@ public class Party_thread implements Runnable {
 		Iterator<User> iter = unHandledClients.iterator();
 		Boolean addAll = party.connected.isEmpty();
 		if(addAll) {
-			System.out.println("error --------------------------- handle_new_clients!");
+			System.out.println("error handle_new_clients!");
 		}
 		while (iter.hasNext()){
 			User user = iter.next();
@@ -316,6 +316,7 @@ public class Party_thread implements Runnable {
 		int trackId = cmd.getIntAttribute(jsonKey.TRACK_ID);
 		userIntention userIntent = userIntention.getEnum(cmd.getIntAttribute(jsonKey.USER_INTENTION));
 		System.out.println("userIntent = " + userIntent.name() + " trackId == party.get_current_track_id() is " + (trackId == party.get_current_track_id()));
+		System.out.println("party status is: " + party.status.name());
 		switch(userIntent){
 		case PLAY_BUTTON:
 			if(trackId == party.get_current_track_id()){
