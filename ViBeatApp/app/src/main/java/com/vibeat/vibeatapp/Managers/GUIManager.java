@@ -66,7 +66,7 @@ public class GUIManager{
     public Boolean leaveParty = false;
 
     public MyMediaPlayer mediaPlayer;
-    public int curProgress = 0;
+    public Integer curProgress = 0;
     public boolean isPlaylistOnTop = true;
 
     public GUIManager(Activity act, List<Adapter> adapters){
@@ -150,7 +150,7 @@ public class GUIManager{
                     new java.util.TimerTask() {
                         @Override
                         public void run() {
-                            if(!leaveParty)
+                            if(!leaveParty && !(act instanceof PlaylistActivity))
                                 switchActivity(PlaylistActivity.class);
                         }
                     },
@@ -278,7 +278,7 @@ public class GUIManager{
     public void initEnterPartyActivity() {
 
         initToolBar();
-
+        app.gui_manager.curProgress = 0;
         Button create = (Button) act.findViewById(R.id.create);
         final SearchView search_parties = act.findViewById(R.id.search_parties_bar);
 
@@ -523,6 +523,10 @@ public class GUIManager{
         initToolBar();
         isPlaylistOnTop = true;
 
+        if(mediaPlayer == null && app.media_manager.active_mp != -1){
+            mediaPlayer = app.media_manager.players[app.media_manager.active_mp];
+        }
+
         ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
         progressBar.getProgressDrawable().setColorFilter(
                 Color.parseColor("#00faf1"), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -535,33 +539,53 @@ public class GUIManager{
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                seekBar.setProgress(curProgress);
+                if(mediaPlayer != null) {
+                    try{
+                        if(seekBar.getMax() <= 100) {
+                            curProgress = (curProgress * mediaPlayer.getDuration()) / 100;
+                            seekBar.setMax(mediaPlayer.getDuration());
+                        }
+                        Log.d("ProgressBar", "after get duration");
+                        app.media_manager.pause();
+                        int id = app.client_manager.party.playlist.tracks.get(app.client_manager.party.playlist.cur_track).track_id;
+                        app.client_manager.seekMusic(id, curProgress);
+                    }
+                    catch (Exception e){
+                        seekBar.setProgress(0);
+                        curProgress = 0;
+                    }
+                }
+                else{
+                    seekBar.setProgress(0);
+                    curProgress = 0;
+                }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(mediaPlayer != null && fromUser){
-                    app.media_manager.pause();
-                    isPlaylistOnTop = false;
+                if(fromUser){
                     seekBar.setProgress(progress);
-                    app.client_manager.seekMusic(mediaPlayer.track_id, progress);
-                    isPlaylistOnTop = true;
+                    synchronized (curProgress) {
+                        curProgress = progress;
+                    }
                 }
             }
         });
 
         if(app.client_manager.isAdmin()){
             seekBar.setVisibility(View.VISIBLE);
+            seekBar.setProgress(curProgress);
             progressBar.setVisibility(View.GONE);
         }
         else{
             seekBar.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(curProgress);
         }
 
         Log.d("iniy playlist", "mediaPlayer null = "+ (mediaPlayer == null));
@@ -648,6 +672,7 @@ public class GUIManager{
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateOffset(0);
                 if(app.client_manager.party.playlist.is_playing) {
                     ProgressBar b = act.findViewById(R.id.loading_music);
                     //b.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -713,12 +738,12 @@ public class GUIManager{
     }
 
     public void syncParty(final int old_cur_track, final boolean isPlaying) {
-        synchronized (cur_changes) {
-            if (act instanceof ConnectedActivity) {
-                Log.d("LOADING_CHANGE", "ConnectedActivity");
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+        if (act instanceof ConnectedActivity) {
+            Log.d("LOADING_CHANGE", "ConnectedActivity");
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (cur_changes) {
                         Iterator<GUIChange> iter = cur_changes.iterator();
                         while (iter.hasNext()) {
                             GUIChange c = iter.next();
@@ -737,12 +762,11 @@ public class GUIManager{
                                     if (!app.client_manager.party.is_private) {
                                         isPrivate.setImageResource(R.drawable.ic_unlock_blue);
                                         req_title.setVisibility(View.GONE);
-                                        ((ConnectedActivity)act).request_list.setVisibility(View.GONE);
-                                    }
-                                    else{
+                                        ((ConnectedActivity) act).request_list.setVisibility(View.GONE);
+                                    } else {
                                         isPrivate.setImageResource(R.drawable.ic_lock_blue);
                                         req_title.setVisibility(View.VISIBLE);
-                                        ((ConnectedActivity)act).request_list.setVisibility(View.VISIBLE);
+                                        ((ConnectedActivity) act).request_list.setVisibility(View.VISIBLE);
                                     }
                                     act.findViewById(R.id.change_name).refreshDrawableState();
                                     break;
@@ -756,13 +780,15 @@ public class GUIManager{
                             iter.remove();
                         }
                     }
-                });
-            }
-            if (act instanceof PlaylistActivity) {
-                Log.d("LOADING_CHANGE", "PlaylistActivity");
-                act.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                }
+            });
+        }
+        if (act instanceof PlaylistActivity) {
+            Log.d("LOADING_CHANGE", "PlaylistActivity");
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (cur_changes) {
                         Iterator<GUIChange> iter = cur_changes.iterator();
                         while (iter.hasNext()) {
                             GUIChange c = iter.next();
@@ -784,18 +810,11 @@ public class GUIManager{
                                     act.findViewById(R.id.connected_toolbar).setVisibility(View.GONE);
                                     act.findViewById(R.id.progressBar_music).setVisibility(View.GONE);
                                     act.findViewById(R.id.seekBar_music).setVisibility(View.VISIBLE);
-                                    startSeekBar(mediaPlayer,curProgress);
+                                    if (mediaPlayer != null)
+                                        startSeekBar(mediaPlayer, curProgress);
                                     act.findViewById(R.id.admin_toolbar).refreshDrawableState();
                                     break;
-                                case cur_track:
-                                    if (cur_changes.indexOf(GUIChange.songs) == -1) {
-                                        Log.d("DebugAll", "old = " + old_cur_track + " new = " + app.client_manager.party.playlist.cur_track);
-                                        Log.d("DebugAll", "playlist size = " + app.client_manager.party.playlist.tracks.size());
-                                        //if(old_cur_track != app.client_manager.party.playlist.cur_track)
-                                        ((PlaylistRecyclerView) recycler_adapter).setCurTrackBackground(
-                                                old_cur_track, app.client_manager.party.playlist.cur_track);
-                                    }
-                                    break;
+
                                 case delete_songs:
                                     if (cur_changes.indexOf(GUIChange.songs) == -1) {
                                         recycler_adapter.notifyDataSetChanged();
@@ -803,16 +822,23 @@ public class GUIManager{
                                     break;
                             }
                         }
+                        if (cur_changes.indexOf(GUIChange.cur_track) != -1) {
+                            Log.d("DebugAll", "old = " + old_cur_track + " new = " + app.client_manager.party.playlist.cur_track);
+                            Log.d("DebugAll", "playlist size = " + app.client_manager.party.playlist.tracks.size());
+                            //if(old_cur_track != app.client_manager.party.playlist.cur_track)
+                            ((PlaylistRecyclerView) recycler_adapter).setCurTrackBackground(
+                                    old_cur_track, app.client_manager.party.playlist.cur_track);
+                        }
                         cur_changes.clear();
                     }
-                });
-            }
-            if (act instanceof LoadingActivity && !isPlaying) {
-                Log.d("LOADING_CHANGE", "LoadingActivity");
-                switchActivity(PlaylistActivity.class);
-            }
-            Log.d("LOADING_CHANGE", "after sync");
+                }
+            });
         }
+        if (act instanceof LoadingActivity && !isPlaying) {
+            Log.d("LOADING_CHANGE", "LoadingActivity");
+            switchActivity(PlaylistActivity.class);
+        }
+        Log.d("LOADING_CHANGE", "after sync");
     }
 
     public void disconnected(Boolean fromListener) {
@@ -884,6 +910,7 @@ public class GUIManager{
     public void switchActivity(final Class to_act){
         if( act instanceof PlaylistActivity )
             isPlaylistOnTop = false;
+
         act.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -901,6 +928,7 @@ public class GUIManager{
     }
 
     public void playChosen(){
+        updateOffset(0);
         if(app.client_manager.party.playlist.is_playing) {
             ProgressBar b = act.findViewById(R.id.loading_music);
             //b.getProgressDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
@@ -913,7 +941,7 @@ public class GUIManager{
         app.client_manager.playSongChosen();
     }
 
-    public void startProgressBar(final MyMediaPlayer mediaPlayer, int curPosition) {
+    public void startProgressBar(final MyMediaPlayer mediaPlayer, final int curPosition) {
         Log.d("Progress Bar", "inside start progress bar");
         this.mediaPlayer = mediaPlayer;
         this.curProgress = curPosition;
@@ -922,8 +950,13 @@ public class GUIManager{
                 @Override
                 public void run() {
                     final ProgressBar progressBar = (ProgressBar) act.findViewById(R.id.progressBar_music);
-                    progressBar.setProgress(0);
-                    progressBar.setMax(mediaPlayer.getDuration());
+                    progressBar.setProgress(curProgress);
+                    try {
+                        progressBar.setMax(mediaPlayer.getDuration());
+                    }
+                    catch (Exception e){
+                        return;
+                    }
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -933,22 +966,18 @@ public class GUIManager{
                                     && mediaPlayer.isPlaying() && !app.client_manager.isAdmin()) {
                                 try {
                                     Thread.sleep(500);
-                                    curProgress = mediaPlayer.getCurrentPosition();
+                                    synchronized (curProgress) {
+                                        curProgress = mediaPlayer.getCurrentPosition();
+                                    }
+                                    progressBar.setProgress(curProgress);
                                 } catch (InterruptedException e) {
                                     return;
                                 } catch (Exception e) {
                                     return;
                                 }
-                                progressBar.setProgress(curProgress);
-                                Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
-                                Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
-                                Log.d("Progress Bar", "curProgress = " +curProgress);
-                                Log.d("Progress Bar", "total = " +total);
+
+                                Log.d("Progress Bar", "progress = " + curProgress);
                             }
-                            Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
-                            Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
-                            Log.d("Progress Bar", "curProgress = " +curProgress);
-                            Log.d("Progress Bar", "total = " +total);
                         }
                     }).start();
                 }
@@ -965,8 +994,13 @@ public class GUIManager{
                 @Override
                 public void run() {
                     final SeekBar seekBar = (SeekBar) act.findViewById(R.id.seekBar_music);
-                    seekBar.setProgress(0);
-                    seekBar.setMax(mediaPlayer.getDuration());
+                    seekBar.setProgress(curProgress);
+                    try {
+                        seekBar.setMax(mediaPlayer.getDuration());
+                    }
+                    catch (Exception e){
+                        return;
+                    }
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -976,26 +1010,44 @@ public class GUIManager{
                                     && mediaPlayer.isPlaying() && app.client_manager.isAdmin()) {
                                 try {
                                     Thread.sleep(500);
-                                    curProgress = mediaPlayer.getCurrentPosition();
+                                    synchronized (curProgress) {
+                                        curProgress = mediaPlayer.getCurrentPosition();
+                                    }
+                                    seekBar.setProgress(curProgress);
                                 } catch (InterruptedException e) {
                                     return;
                                 } catch (Exception e) {
                                     return;
                                 }
-                                seekBar.setProgress(curProgress);
-                                Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
-                                Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
-                                Log.d("Progress Bar", "curProgress = " +curProgress);
-                                Log.d("Progress Bar", "total = " +total);
+
+                                Log.d("Progress Bar", "progress = " + curProgress);
                             }
-                            Log.d("Progress Bar", "mediaPlayer null = "+ (mediaPlayer == null));
-                            Log.d("Progress Bar", "mediaPlayer isPlaying = "+ (mediaPlayer.isPlaying()));
-                            Log.d("Progress Bar", "curProgress = " +curProgress);
-                            Log.d("Progress Bar", "total = " +total);
                         }
                     }).start();
                 }
             });
         }
     }
+
+    public void updateOffset(final int offset) {
+        synchronized (curProgress) {
+            curProgress = offset;
+        }
+        if (act instanceof PlaylistActivity) {
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (app.client_manager.isAdmin()) {
+                        ((SeekBar)act.findViewById(R.id.seekBar_music)).setProgress(offset);
+                    }
+                    else{
+                        ((ProgressBar)act.findViewById(R.id.progressBar_music)).setProgress(offset);
+                    }
+                }
+            });
+        }
+    }
+
+
+
 }

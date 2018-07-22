@@ -184,6 +184,7 @@ public class ListenerThread extends Thread {
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.PARTY_PLAYING);
                 app.media_manager.getReady(prep_track_id, prep_offset,joiningPlayingParty);
+                app.gui_manager.updateOffset(prep_offset);
                 break;
 
             case PLAY_SONG:
