@@ -488,6 +488,16 @@ public class Party_thread implements Runnable {
 
 	}
 
+	private void addingAllRequests() throws JSONException, IOException {
+		List<User> new_Users = new ArrayList<>();
+		clone_User_list(party.request, new_Users,false);
+		for (User user : new_Users){
+			party.removeRequest(user);
+			addClientToParty(user, true);
+		}
+		
+	}
+
 	public void SendCommandToAll(Command cmd) throws IOException, JSONException {
 		SendCommandToList(cmd, party.connected, false);
 	}

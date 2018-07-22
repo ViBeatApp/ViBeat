@@ -277,6 +277,25 @@ public class GUIManager{
         initToolBar();
 
         Button create = (Button) act.findViewById(R.id.create);
+        final SearchView search_parties = act.findViewById(R.id.search_parties_bar);
+
+        search_parties.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                search_parties.clearFocus();
+                app.client_manager.searchParty(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                EditText searchEditText = (EditText) search_parties.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+                searchEditText.setTextColor(Color.WHITE);
+                searchEditText.setHintTextColor(Color.WHITE);
+                return false;
+            }
+        });
+
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
