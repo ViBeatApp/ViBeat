@@ -58,8 +58,10 @@ public class MyMediaPlayer extends MediaPlayer {
                 Log.e("Tomer", "after seek");
                 if(startAfterSeek) {
                     Log.e("DebugMediaPlayer", "startAfterSeek");
-                    if(!mp.isPlaying())
+                    if(!mp.isPlaying()) {
                         start();
+                        musicBar();
+                    }
                     startAfterSeek = false;
                     return;
                 }
@@ -68,6 +70,7 @@ public class MyMediaPlayer extends MediaPlayer {
                     Log.e("DebugMediaPlayer", "not !!!! startAfterSeek");
                     if(joiningPlayingParty){
                         start();
+                        musicBar();
                         mp.setVolume(0,0);
                         new java.util.Timer().schedule(
                                 new java.util.TimerTask() {
@@ -145,7 +148,7 @@ public class MyMediaPlayer extends MediaPlayer {
         if(this.offset == offset) {
             Log.d("burger","Play - SameOffset");
             this.start();
-            app.gui_manager.startProgressBar(this, this.offset);
+            musicBar();
         }
 
         else if(this.offset != offset) {
@@ -169,6 +172,13 @@ public class MyMediaPlayer extends MediaPlayer {
 
     public boolean isCurTrack(){
         return app.client_manager.getTrackPosFromId(this.track_id) == app.client_manager.party.playlist.cur_track;
+    }
+
+    public void musicBar(){
+        if(app.client_manager.isAdmin())
+            app.gui_manager.startSeekBar(this, this.offset);
+        else
+            app.gui_manager.startProgressBar(this, this.offset);
     }
 
 }

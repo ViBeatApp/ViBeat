@@ -195,9 +195,7 @@ public class ClientManager {
                                 try {
                                     if( location != null )
                                         app.sender_thread.addCmd(Command.create_updateLocation_Command(location.getLongitude(),location.getLatitude(),location.getAltitude()));
-                                    else
-                                        app.sender_thread.addCmd(Command.create_updateLocation_Command(0,0,0));
-                                } catch (JSONException e) {
+                                    } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -404,6 +402,18 @@ public class ClientManager {
     public void searchParty(String query) {
         try {
             app.sender_thread.addCmd(Command.create_searchParty_Command(query));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void seekMusic(int id, int offset) {
+        try {
+            if (app.sender_thread != null){
+                app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
+                app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
