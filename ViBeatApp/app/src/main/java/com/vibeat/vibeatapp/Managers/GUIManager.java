@@ -603,6 +603,7 @@ public class GUIManager{
         TextView party_name = (TextView) act.findViewById(R.id.party_name);
         TextView party_name_conn = (TextView) act.findViewById(R.id.party_name_conn);
         final ImageButton mute_conn = (ImageButton) act.findViewById(R.id.mute_conn);
+        final ImageButton sync_music = (ImageButton) act.findViewById(R.id.sync_music);
 
         party_name.setText(app.client_manager.party.party_name);
         party_name_conn.setText(app.client_manager.party.party_name);
@@ -724,6 +725,28 @@ public class GUIManager{
             act.findViewById(R.id.admin_toolbar).setVisibility(View.GONE);
             act.findViewById(R.id.connected_toolbar).setVisibility(View.VISIBLE);
         }
+
+        sync_music.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(app.client_manager.party.playlist.is_playing && act instanceof PlaylistActivity){
+                    app.media_manager.pause();
+                    app.sync_music = true;
+                    act.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("Sync","Here");
+                            act.findViewById(R.id.loading_music).setVisibility(View.VISIBLE);
+                            act.findViewById(R.id.play_pause).setVisibility(View.GONE);
+
+                        }
+                    });
+                    app.client_manager.syncMusic();
+                }
+
+            }
+        });
 
         TextView leave_party = (TextView) act.findViewById(R.id.leave);
         leave_party.setOnClickListener(new View.OnClickListener() {

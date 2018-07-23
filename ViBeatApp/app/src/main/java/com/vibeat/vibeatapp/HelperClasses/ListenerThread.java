@@ -193,7 +193,8 @@ public class ListenerThread extends Thread {
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.media_manager.play(play_track_id, play_offset);
-                app.gui_manager.play(play_track_id);
+                if(!app.sync_music)
+                    app.gui_manager.play(play_track_id);
                 break;
 
             case LEAVE_PARTY:
@@ -209,7 +210,8 @@ public class ListenerThread extends Thread {
                 Log.d("Test1","pause song in listener");
                 app.client_manager.waiting_for_response = false;
                 app.media_manager.pause();
-                app.gui_manager.pause();
+                if(!app.sync_music)
+                    app.gui_manager.pause();
                 break;
 
             case REJECTED:

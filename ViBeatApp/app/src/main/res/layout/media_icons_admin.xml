@@ -102,11 +102,18 @@
         android:layout_height="0dp"
         android:layout_weight="20"/>
 
-    <TextView
-        android:id="@+id/party_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="40"
+        android:orientation="horizontal"
+        android:weightSum="100">
+
+    <TextView
+        android:id="@+id/party_name"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="80"
         android:layout_gravity="center_vertical"
         android:text="Party name"
         android:fontFamily="@font/josefin_sans"
@@ -114,5 +121,15 @@
         android:layout_marginLeft="10dp"
         android:textSize="30dp"
         android:textColor="@color/colorPrimary"/>
+
+    <ImageButton
+        android:id="@+id/sync_music"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="20"
+        android:layout_gravity="right"
+        android:background="@color/background"
+        android:src="@drawable/ic_sync"/>
+    </LinearLayout>
 
 </LinearLayout>

@@ -423,4 +423,21 @@ public class ClientManager {
             e.printStackTrace();
         }
     }
+
+    public void syncMusic() {
+        try {
+            if (app.sender_thread != null){
+                int id = party.playlist.tracks.get(party.playlist.cur_track).track_id;
+                int offset = app.media_manager.getOffset(id);
+                app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
+                Thread.sleep(1000);
+                app.sync_music = false;
+                app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

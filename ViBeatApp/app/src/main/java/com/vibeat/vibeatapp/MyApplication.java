@@ -23,4 +23,5 @@ public class MyApplication extends Application {
     public Semaphore semaphoreDisconnected = null;
     public boolean disconnected = true;
     public GoogleSignInClient mGoogleSignInClient = null;
+    public boolean sync_music = false;
 }
