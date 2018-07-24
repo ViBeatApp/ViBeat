@@ -17,7 +17,8 @@ public class ReadWriteAux {
 	public ReadWriteAux(String ipAddress) throws IOException {
 		Log.d("ReadWriteAux", "before creating socket ");
 		try {
-			socket = SocketChannel.open(new InetSocketAddress(ipAddress, 2000));
+			socket = SocketChannel.open();
+			socket.socket().connect(new InetSocketAddress(ipAddress, 2000),500);
 		}catch (Exception e){
 			e.printStackTrace();
 			socket = null;

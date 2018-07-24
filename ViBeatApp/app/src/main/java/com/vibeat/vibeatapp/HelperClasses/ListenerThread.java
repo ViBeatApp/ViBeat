@@ -260,6 +260,7 @@ public class ListenerThread extends Thread {
 
     private List<Integer> getChangesListFromJSON(JSONArray arr) throws JSONException{
         List<Integer> changes = new ArrayList<Integer>();
+        if(arr == null) return changes;
         for (int i = 0; i < arr.length(); i++ ){
             Integer c = (Integer)arr.get(i);
             changes.add(c);
