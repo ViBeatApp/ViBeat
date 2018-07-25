@@ -116,8 +116,10 @@ public class MediaPlayerManager {
 
     public void pause() {
         Log.d("Test1", "before pause");
-        if(players[active_mp].isPlaying())
-            players[active_mp].pause();
+        if (active_mp != -1) {
+            if(players[active_mp].isPlaying())
+                players[active_mp].pause();
+        }
         Log.d("Test1", "after pause");
     }
 
@@ -129,15 +131,21 @@ public class MediaPlayerManager {
 
     public void stop() {
         //Log.d("Test1","stop");
-        players[active_mp].reset();
+        if (active_mp != -1) {
+            players[active_mp].reset();
+        }
     }
 
     public void play(int track_id, int offset){
         try {
-            if (players[active_mp].track_id != track_id) {
-                active_mp = 1 - active_mp;
+            if (active_mp != -1) {
+                if (players[active_mp].track_id != track_id) {
+                    active_mp = 1 - active_mp;
+                }
+                players[active_mp].play(track_id, offset);
+            } else {
+                Log.d("Play", "----------- error: trying to play without media player -------------");
             }
-            players[active_mp].play(track_id, offset);
         }
         catch (IOException e){
             e.printStackTrace();
