@@ -127,7 +127,7 @@ public class Party_thread implements Runnable {
 		if (play_condition()) { /* we start playing the song */
 			party.status = Party.Party_Status.playing;
 			try {
-				Thread.sleep(700);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
