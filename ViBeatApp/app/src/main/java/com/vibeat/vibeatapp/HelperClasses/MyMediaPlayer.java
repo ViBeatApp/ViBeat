@@ -56,22 +56,12 @@ public class MyMediaPlayer extends MediaPlayer {
             @Override
             public void onSeekComplete(MediaPlayer mp) {
                 Log.e("Tomer", "after seek");
-                if(startAfterSeek) {
-                    Log.e("DebugMediaPlayer", "startAfterSeek");
-                    if(!mp.isPlaying()) {
-                        start();
-                        musicBar();
-                    }
-                    startAfterSeek = false;
-                    return;
-                }
 
                 if (isCurTrack()) {
-                    Log.e("DebugMediaPlayer", "not !!!! startAfterSeek");
                     if(joiningPlayingParty){
+                        mp.setVolume(0,0);
                         start();
                         musicBar();
-                        mp.setVolume(0,0);
                         new java.util.Timer().schedule(
                                 new java.util.TimerTask() {
                                     @Override
@@ -84,7 +74,18 @@ public class MyMediaPlayer extends MediaPlayer {
                     }
                     else {
                         Log.e("DebugMediaPlayer", "before sending I'm ready");
-                        app.client_manager.sendReady(track_id);
+                        mp.setVolume(0,0);
+                        start();
+                        new java.util.Timer().schedule(
+                                new java.util.TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        Log.e("DebugMediaPlayer", "waitingTimer");
+                                        app.client_manager.sendReady(track_id);
+                                        pause();
+                                    }
+                                },
+                                500);
                     }
                 }
             }
@@ -142,8 +143,7 @@ public class MyMediaPlayer extends MediaPlayer {
         if(is_mute == false)
             this.setVolume(1,1);
 
-        if(!isCurTrack())
-            Log.d("burger","ERROR");
+        assert (this.offset == offset && isCurTrack());
 
         if(this.offset == offset) {
             Log.d("burger","Play - SameOffset");
@@ -151,13 +151,13 @@ public class MyMediaPlayer extends MediaPlayer {
             musicBar();
         }
 
-        else if(this.offset != offset) {
+        /*else if(this.offset != offset) {
             Log.d("burger","offset = "+offset);
             this.offset = offset;
             this.startAfterSeek = true;
             this.joiningPlayingParty = false;
             this.seekTo(this.offset);
-        }
+        }*/
     }
 
     public void mute(){

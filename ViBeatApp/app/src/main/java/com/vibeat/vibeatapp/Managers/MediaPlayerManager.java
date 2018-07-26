@@ -88,6 +88,7 @@ public class MediaPlayerManager {
     }
 
     public void prepare2nd(int next_track) {
+        if(active_mp == -1) return;
         try {
             players[1 - active_mp].getReady(next_track, 0, false);
         }

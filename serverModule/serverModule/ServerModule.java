@@ -134,7 +134,9 @@ public class ServerModule {
 
 		case JOIN:
 			int partyID = cmd.getIntAttribute(jsonKey.PARTY_ID);
-			join_party((User)key.attachment(),partyID);
+			if(!join_party((User)key.attachment(),partyID)) {
+				ReadWriteAux.writeSocket(((User)key.attachment()).get_channel(), Command.create_leaveParty_Command());
+			}
 			break;
 
 		case CREATE:

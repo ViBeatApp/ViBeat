@@ -134,8 +134,10 @@ public class FBManager {
     }
 
     public Track getTrackByDBid(String db_id, final int track_id) {
+        Log.d("DB", "searching for " + db_id + " " + track_id);
         final Semaphore semaphore = new Semaphore(0);
         final List<Track> track = new ArrayList<>();
+
         DocumentReference docRef = db.collection(pathNames.DB_tracks.name()).document(db_id);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -143,7 +145,7 @@ public class FBManager {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d("DB", "DocumentSnapshot data: " + document.getData());
+                        Log.d("DB", "DocumentSnapshot data: " + document.getId());
                         String db_id = document.getId();
                         String title = (String) document.getData().get(DB_Title.name());
                         String artist = (String) document.getData().get(pathNames.DB_Artist.name());
@@ -158,12 +160,20 @@ public class FBManager {
                     Log.d("DB", "get failed with ", task.getException());
                 }
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("DB", "get failed with ");
+                e.printStackTrace();
+            }
         });
+        Log.d("DB", "trying to catch " + db_id + " " + track_id);
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        Log.d("DB", "catch " + db_id + " " + track_id);
         return track.get(0);
     }
 

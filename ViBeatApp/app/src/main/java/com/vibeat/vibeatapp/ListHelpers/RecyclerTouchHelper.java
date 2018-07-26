@@ -26,8 +26,8 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     private PlaylistRecyclerView adapter;
     private Context context;
     private MyApplication app;
-    private RecyclerView.ViewHolder mFrom = null;
-    private RecyclerView.ViewHolder mTo = null;
+    public int mFrom = -1;
+    private int mTo = -1;
 
     public RecyclerTouchHelper(PlaylistRecyclerView adapter, Context context, MyApplication app) {
 
@@ -80,10 +80,10 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
         if (source.getItemViewType() != target.getItemViewType() || !app.client_manager.isAdmin()) {
             return false;
         }
-        if(mFrom == null)
-            mFrom = source;
-        mTo = target;
-
+        if(mFrom == -1)
+            mFrom = app.client_manager.party.playlist.tracks.get(source.getAdapterPosition()).track_id;
+       
+        mTo = app.client_manager.party.playlist.tracks.get(target.getAdapterPosition()).track_id;
         source.itemView.setBackgroundColor(colorAccentlight);
         adapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         return true;
@@ -143,7 +143,6 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-
         viewHolder.itemView.setAlpha(ALPHA_FULL);
         viewHolder.itemView.setBackgroundColor(0);
 
@@ -154,10 +153,11 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
 
         if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
             // Tell the view holder it's time to restore the idle state
-            if(mFrom != null && mTo != null && mTo != mFrom)
-                app.client_manager.swapTrack(mFrom.getAdapterPosition(),mTo.getAdapterPosition());
-            mFrom = null;
-            mTo = null;
+            if (mFrom != -1 && mTo != -1 && mTo != mFrom) {
+                app.client_manager.swapTrack(app.client_manager.party.playlist.searchTrack(mFrom), app.client_manager.party.playlist.searchTrack(mTo));
+            }
+            mFrom = -1;
+            mTo = -1;
             PlaylistRecyclerView.playlistViewHolder itemViewHolder = (PlaylistRecyclerView.playlistViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }

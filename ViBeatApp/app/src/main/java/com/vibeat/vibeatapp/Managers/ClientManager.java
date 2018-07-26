@@ -29,6 +29,7 @@ import com.vibeat.vibeatapp.SwapChange;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -50,7 +51,7 @@ public class ClientManager {
         Log.d("Test7", "lock semaphore sender in client manager");
         this.user= user;
         this.party = null;
-        this.local_changes = new ArrayList<PlaylistChange>();
+        this.local_changes = Collections.synchronizedList(new ArrayList<PlaylistChange>());
         app.sender_thread = new SenderThread(app);
 
         app.sender_thread.start();
@@ -88,7 +89,9 @@ public class ClientManager {
     public void addTrack(Track track){
         this.party.playlist.addTrack(track);
         PlaylistChange change = new AddChange(track);
-        this.local_changes.add(change);
+        synchronized (app.client_manager.local_changes) {
+            this.local_changes.add(change);
+        }
         try {
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_addSong_Command(track.db_id,change.change_id));
@@ -123,7 +126,9 @@ public class ClientManager {
                 int track1_id = party.playlist.tracks.get(pos1).track_id;
                 int track2_id = party.playlist.tracks.get(pos2).track_id;
                 PlaylistChange change = new SwapChange(track1_id,track2_id);
-                this.local_changes.add(change);
+                synchronized (app.client_manager.local_changes) {
+                    this.local_changes.add(change);
+                }
                 if (app.sender_thread != null)
                     app.sender_thread.addCmd(Command.create_swapSongs_Command(track1_id, track2_id,change.change_id));
             }
@@ -138,7 +143,9 @@ public class ClientManager {
             if(pos == app.client_manager.party.playlist.cur_track)
                 app.media_manager.stop();
             PlaylistChange change = new DeleteChange(track_id);
-            this.local_changes.add(change);
+            synchronized (app.client_manager.local_changes) {
+                this.local_changes.add(change);
+            }
             if (app.sender_thread != null)
                 app.sender_thread.addCmd(Command.create_deleteSong_Command(track_id,change.change_id));
         } catch (JSONException e) {
@@ -430,7 +437,7 @@ public class ClientManager {
                 int id = party.playlist.tracks.get(party.playlist.cur_track).track_id;
                 int offset = app.media_manager.getOffset(id);
                 app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
-                Thread.sleep(1000);
+                Thread.sleep(250);
                 app.sync_music = false;
                 app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
             }

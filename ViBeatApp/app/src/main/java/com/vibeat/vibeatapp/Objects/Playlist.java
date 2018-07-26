@@ -1,6 +1,7 @@
 package com.vibeat.vibeatapp.Objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Playlist{
@@ -12,7 +13,7 @@ public class Playlist{
     public Playlist(){
         is_playing = false;
         cur_track = -1;
-        tracks = new ArrayList<Track>();
+        tracks = Collections.synchronizedList(new ArrayList<Track>());
     }
 
     public Playlist(List<Track> tracks, boolean is_playing, int cur_track){
