@@ -246,7 +246,9 @@ public class ListenerThread extends Thread {
         Log.e("Listener-sam", "num of songs is " + arr.length());
         for (int i = 0; i < arr.length(); i++ ){
             trackInfo s = (trackInfo)arr.get(i);
-            int searchTrack = app.client_manager.party.playlist.searchTrack(s.track_id);
+            int searchTrack = -1;
+            if (app.client_manager.party.playlist != null)
+                searchTrack = app.client_manager.party.playlist.searchTrack(s.track_id);
             Track track = (searchTrack != -1) ? app.client_manager.party.playlist.tracks.get(searchTrack) : app.fb_manager.getTrackByDBid(s.db_id, s.track_id);
             tracks.add(track);
         }

@@ -18,7 +18,6 @@ public class MyMediaPlayer extends MediaPlayer {
     public boolean is_prepared = false;
     public int offset = 0;
     //public int index;
-    public boolean startAfterSeek = false;
     public boolean joiningPlayingParty = false;
 
     public MyMediaPlayer(final MyApplication app, final int index){
@@ -55,8 +54,6 @@ public class MyMediaPlayer extends MediaPlayer {
         this.setOnSeekCompleteListener(new OnSeekCompleteListener() {
             @Override
             public void onSeekComplete(MediaPlayer mp) {
-                Log.e("Tomer", "after seek");
-
                 if (isCurTrack()) {
                     if(joiningPlayingParty){
                         mp.setVolume(0,0);
@@ -70,22 +67,21 @@ public class MyMediaPlayer extends MediaPlayer {
                                         app.client_manager.sendReady(track_id);
                                     }
                                 },
-                                4500);
+                                3500);
                     }
                     else {
                         Log.e("DebugMediaPlayer", "before sending I'm ready");
-                        mp.setVolume(0,0);
                         start();
+                        pause();
                         new java.util.Timer().schedule(
                                 new java.util.TimerTask() {
                                     @Override
                                     public void run() {
                                         Log.e("DebugMediaPlayer", "waitingTimer");
                                         app.client_manager.sendReady(track_id);
-                                        pause();
                                     }
                                 },
-                                500);
+                                700);
                     }
                 }
             }
@@ -97,12 +93,9 @@ public class MyMediaPlayer extends MediaPlayer {
     private synchronized void whenPrepared() {
         Log.e("Test1", "inside when prepared");
         if(app.client_manager.party != null) {
+            this.seekTo(this.offset);
             this.is_prepared = true;
             this.preparing = false;
-            this.startAfterSeek = false;
-            this.start();
-            this.pause();
-            this.seekTo(this.offset);
         }
     }
 
@@ -123,7 +116,6 @@ public class MyMediaPlayer extends MediaPlayer {
         if (is_prepared && this.track_id == track_id){
             Log.e("DebugMediaPlayer", "internal-offset: " + old_offset + " new-offset: " + offset);
                 Log.e("DebugMediaPlayer", "false - mp need to prepare");
-                this.startAfterSeek = false;
                 this.seekTo(offset);
         }
         else if (!preparing || this.track_id != track_id) {
