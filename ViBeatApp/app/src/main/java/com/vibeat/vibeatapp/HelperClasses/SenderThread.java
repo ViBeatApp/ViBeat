@@ -30,7 +30,8 @@ public class SenderThread extends Thread {
     public void run() {
         try {
             Log.d("Test7", "sender run");
-            conn = new ReadWriteAux("10.0.0.15");
+            // conn = new ReadWriteAux("10.0.0.15"); - for locally running the server
+            conn = new ReadWriteAux("52.23.168.179");
             if(conn.socket == null) {
                 Log.d("Test7", "sender conn = null");
                 app.gui_manager.disconnected(false);
