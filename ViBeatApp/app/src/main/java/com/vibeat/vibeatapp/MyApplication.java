@@ -4,9 +4,10 @@ import android.app.Application;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.vibeat.vibeatapp.Managers.ClientManager;
-import com.vibeat.vibeatapp.HelperClasses.ListenerThread;
+import com.vibeat.vibeatapp.Managers.FBManager;
+import com.vibeat.vibeatapp.ServerConnection.ListenerThread;
 import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
-import com.vibeat.vibeatapp.HelperClasses.SenderThread;
+import com.vibeat.vibeatapp.ServerConnection.SenderThread;
 import com.vibeat.vibeatapp.Managers.GUIManager;
 
 import java.util.concurrent.Semaphore;

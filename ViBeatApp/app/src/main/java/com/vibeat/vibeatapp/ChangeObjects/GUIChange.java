@@ -1,4 +1,4 @@
-package com.vibeat.vibeatapp.Managers;
+package com.vibeat.vibeatapp.ChangeObjects;
 
 public enum GUIChange{
     users,

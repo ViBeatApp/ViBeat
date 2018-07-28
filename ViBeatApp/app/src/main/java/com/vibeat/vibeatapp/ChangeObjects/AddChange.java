@@ -1,4 +1,4 @@
-package com.vibeat.vibeatapp;
+package com.vibeat.vibeatapp.ChangeObjects;
 
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;

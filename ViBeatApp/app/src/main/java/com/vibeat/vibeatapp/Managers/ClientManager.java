@@ -11,20 +11,19 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.vibeat.vibeatapp.AddChange;
-import com.vibeat.vibeatapp.DeleteChange;
-import com.vibeat.vibeatapp.FBManager;
-import com.vibeat.vibeatapp.HelperClasses.SenderThread;
+import com.vibeat.vibeatapp.ChangeObjects.AddChange;
+import com.vibeat.vibeatapp.ChangeObjects.DeleteChange;
+import com.vibeat.vibeatapp.ServerConnection.SenderThread;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
-import com.vibeat.vibeatapp.PlaylistChange;
+import com.vibeat.vibeatapp.ChangeObjects.PlaylistChange;
 import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
 import com.vibeat.vibeatapp.ServerSide.userIntention;
-import com.vibeat.vibeatapp.SwapChange;
+import com.vibeat.vibeatapp.ChangeObjects.SwapChange;
 
 import org.json.JSONException;
 
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 import static com.vibeat.vibeatapp.ServerSide.userIntention.*;
+import static java.lang.Thread.sleep;
 
 public class ClientManager {
 
@@ -138,6 +138,7 @@ public class ClientManager {
     }
 
     public void removeTrack(int track_id){
+
         try {
             int pos = app.client_manager.party.playlist.searchTrack(track_id);
             if(pos == app.client_manager.party.playlist.cur_track)
@@ -437,7 +438,7 @@ public class ClientManager {
                 int id = party.playlist.tracks.get(party.playlist.cur_track).track_id;
                 int offset = app.media_manager.getOffset(id);
                 app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
-                Thread.sleep(250);
+                sleep(250);
                 app.sync_music = false;
                 app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
             }

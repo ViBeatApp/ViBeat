@@ -13,7 +13,7 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
-import com.vibeat.vibeatapp.imageLoader;
+import com.vibeat.vibeatapp.HelperClasses.imageLoader;
 
 import java.util.ArrayList;
 import java.util.List;

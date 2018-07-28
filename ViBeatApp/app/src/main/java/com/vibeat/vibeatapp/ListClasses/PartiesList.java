@@ -14,7 +14,7 @@ import com.vibeat.vibeatapp.ListHelpers.ListAdapterable;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.R;
 import com.vibeat.vibeatapp.ServerSide.partyInfo;
-import com.vibeat.vibeatapp.imageLoader;
+import com.vibeat.vibeatapp.HelperClasses.imageLoader;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.vibeat.vibeatapp.HelperClasses;
+package com.vibeat.vibeatapp.ServerConnection;
 
 import android.util.Log;
 

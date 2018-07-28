@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 
 import com.vibeat.vibeatapp.ListClasses.PlaylistRecyclerView;
 import com.vibeat.vibeatapp.ListHelpers.RecyclerTouchHelper;

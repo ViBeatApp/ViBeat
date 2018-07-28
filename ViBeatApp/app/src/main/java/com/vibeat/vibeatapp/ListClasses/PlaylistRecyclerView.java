@@ -18,7 +18,7 @@ import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.R;
-import com.vibeat.vibeatapp.imageLoader;
+import com.vibeat.vibeatapp.HelperClasses.imageLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,12 +88,15 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public void onItemDismiss(int position) {
+        Log.d("Remove", "position = " +  position + " cur_track = " + app.client_manager.party.playlist.cur_track);
         int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
         app.client_manager.party.playlist.tracks.remove(position);
+        boolean b = position == app.client_manager.party.playlist.cur_track;
         if(position >= app.client_manager.party.playlist.tracks.size())
             app.client_manager.party.playlist.cur_track = 0;
         notifyItemRemoved(position);
-        notifyItemChanged(app.client_manager.party.playlist.cur_track);
+        if(b)
+            notifyItemChanged(app.client_manager.party.playlist.cur_track);
         app.client_manager.removeTrack(track_id);
 
     }

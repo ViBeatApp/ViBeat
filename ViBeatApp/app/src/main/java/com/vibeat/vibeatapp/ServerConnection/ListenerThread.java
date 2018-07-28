@@ -1,19 +1,19 @@
-package com.vibeat.vibeatapp.HelperClasses;
+package com.vibeat.vibeatapp.ServerConnection;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.vibeat.vibeatapp.Activities.EnterPartyActivity;
-import com.vibeat.vibeatapp.AddChange;
+import com.vibeat.vibeatapp.ChangeObjects.AddChange;
 import com.vibeat.vibeatapp.Managers.MediaPlayerManager;
-import com.vibeat.vibeatapp.Managers.GUIChange;
+import com.vibeat.vibeatapp.ChangeObjects.GUIChange;
 import com.vibeat.vibeatapp.MyApplication;
 import com.vibeat.vibeatapp.Objects.Party;
 import com.vibeat.vibeatapp.Objects.Playlist;
 import com.vibeat.vibeatapp.Objects.Track;
 import com.vibeat.vibeatapp.Objects.User;
-import com.vibeat.vibeatapp.PlaylistChange;
+import com.vibeat.vibeatapp.ChangeObjects.PlaylistChange;
 import com.vibeat.vibeatapp.ServerSide.Command;
 import com.vibeat.vibeatapp.ServerSide.CommandClientAux;
 import com.vibeat.vibeatapp.ServerSide.ReadWriteAux;
@@ -51,13 +51,10 @@ public class ListenerThread extends Thread {
         while (!disconnected && openparty) {
             Command cmd = null;
             try {
-                //Log.e("Listener","before listen");
                 cmd = getServerCommand();
-                //Log.e("Listener","atfer listen");
                 handlerCommand(cmd);
             }
             catch (InterruptedException e){
-                Log.e("Listener","got Interrupted");
                 e.printStackTrace();
                 break;
             } catch (JSONException e){
@@ -201,6 +198,9 @@ public class ListenerThread extends Thread {
                 break;
 
             case PLAY_SONG:
+                synchronized (app.gui_manager.validOffset) {
+                    app.gui_manager.validOffset = true;
+                }
                 Log.d("Test1", "play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
