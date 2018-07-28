@@ -70,6 +70,7 @@ public class GUIManager{
     public MyMediaPlayer mediaPlayer;
     public Integer curProgress = 0;
     public boolean isPlaylistOnTop = true;
+    public Playlist searchRes = null;
 
     public GUIManager(Activity act, List<Adapter> adapters){
         this.act = act;
@@ -902,7 +903,7 @@ public class GUIManager{
     }
 
 
-    public void searchAndUpdate(String query){
+    public void searchAndUpdate(final String query){
         AsyncTask<String, Integer, Playlist> searchForSongs_thread = new AsyncTask<String, Integer, Playlist>() {
             @Override
             protected Playlist doInBackground(String... strings) {
@@ -915,8 +916,13 @@ public class GUIManager{
                         }
                     });
                 }
-                Playlist search_res = app.client_manager.searchTracks(strings[0]);
-                return search_res;
+                if (query.equals("")) {
+                    if (app.gui_manager.searchRes == null) {
+                        app.gui_manager.searchRes = app.client_manager.searchTracks(strings[0]);
+                    }
+                    return app.gui_manager.searchRes;
+                }
+                return app.client_manager.searchTracks(strings[0]);
             }
 
             protected void onPostExecute(final Playlist search_res) {
@@ -1018,7 +1024,7 @@ public class GUIManager{
                                     return;
                                 }
 
-                                Log.d("Progress Bar", "progress = " + curProgress);
+                                Log.d("ProgressBar", "progress = " + curProgress);
                             }
                         }
                     }).start();
@@ -1039,12 +1045,13 @@ public class GUIManager{
 
                     try {
                         seekBar.setMax(mediaPlayer.getDuration());
+                        seekBar.setProgress(curProgress);
                     }
-                    catch (Exception e){
+                    catch (Exception e) {
+                        Log.d("SeekBar", "exception in  startSeekBar");
                         e.printStackTrace();
                         return;
                     }
-                    seekBar.setProgress(curProgress);
 
                     new Thread(new Runnable() {
                         @Override
