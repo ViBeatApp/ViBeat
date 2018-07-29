@@ -6,6 +6,7 @@ public enum pathNames{
     DB_Artist,
     DB_Image_path,
     DB_Track_path,
+    DB_Publicity,
     DB_hash1,
     DB_hash2,
     DB_hash3,

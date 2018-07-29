@@ -35,4 +35,9 @@ public class Playlist{
         }
         return -1;
     }
+    public Track getCurrentTrack(){
+        if(cur_track == -1)
+            return null;
+        return tracks.get(cur_track);
+    }
 }

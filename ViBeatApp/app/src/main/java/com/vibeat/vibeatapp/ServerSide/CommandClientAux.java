@@ -72,9 +72,7 @@ public class CommandClientAux {
 		JSONArray objectArray = cmd.getSyncPartyAttribute(jsonKey.USERS);
 		if(objectArray == null)
 			return null;
-		Log.d("USERS", "in create users array");
 		for(int i = 0; i < objectArray.length(); ++i) {
-			Log.d("USERS", "in create users array "+i);
 			JSONObject userJsonObject = objectArray.getJSONObject(i);
 
 			String name = userJsonObject.getString(jsonKey.NAME.name());

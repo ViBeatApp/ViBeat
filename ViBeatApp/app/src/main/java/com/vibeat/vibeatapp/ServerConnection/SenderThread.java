@@ -29,21 +29,15 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            Log.d("Test7", "sender run");
-            // conn = new ReadWriteAux("10.0.0.15"); - for locally running the server
+            //conn = new ReadWriteAux("10.0.0.15"); //- for locally running the server
             conn = new ReadWriteAux("52.23.168.179");
             if(conn.socket == null) {
-                Log.d("Test7", "sender conn = null");
                 app.gui_manager.disconnected(false);
                 app.semaphoreSender.release();
-                Log.d("Test7", "release semaphore sender in sender");
                 return;
             }
-            Log.d("Test7", "conn succeed");
             app.disconnected = false;
             app.semaphoreSender.release();
-            Log.d("Test7", "release semaphore sender in sender");
-            Log.d("SenderThread", "after connection ");
             app.listener_thread = new ListenerThread(app, conn);
             app.listener_thread.start();
 
@@ -55,9 +49,7 @@ public class SenderThread extends Thread {
                         while (connected && !task_queue.isEmpty()) {
                             try {
                                 Command cmd = task_queue.pop();
-                                Log.d("SENDER", cmd.cmd_type.name());
                                 if (conn.send(cmd) < 0) {
-                                    Log.d("SENDER", "got -1");
                                     app.gui_manager.disconnected(false);
                                     connected = false;
                                 }
@@ -77,17 +69,13 @@ public class SenderThread extends Thread {
             e.printStackTrace();
         }
 
-        Log.d("SENDER","at the end");
-
     }
 
     public void addCmd(Command cmd){
         synchronized(task_queue) {
-            Log.e("SENDER","doing add command synchpnized");
             task_queue.add(cmd);
             if(task_queue.size() >= 1) {
                 task_queue.notify();
-                Log.e("SENDER","after notify");
             }
         }
     }

@@ -58,7 +58,6 @@ public class RecyclerTouchHelper extends ItemTouchHelper.Callback{
                 viewHolder.getAdapterPosition() >= 0) {
             int track_id = app.client_manager.party.playlist.tracks.get(viewHolder.getAdapterPosition()).track_id;
             if (viewHolder instanceof PlaylistRecyclerView.playlistViewHolder) {
-                Log.d("Delet", "second track id = " + track_id);
                 if ((!(app.client_manager.party.playlist.tracks.size() == 1)) && track_id != -1 && app.client_manager.isAdmin())
                     adapter.onItemDismiss(viewHolder.getAdapterPosition());
             }

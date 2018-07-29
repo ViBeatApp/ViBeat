@@ -58,7 +58,6 @@ public class PlaylistActivity extends AppCompatActivity implements RecyclerTouch
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
-        Log.d("Delet", "first track id = "+track_id);
         if(track_id != -1)
             itemTouchHelper.startSwipe(viewHolder);
     }

@@ -48,7 +48,6 @@ public class ClientManager {
     public ClientManager(User user, MyApplication app){
         app.semaphore = new Semaphore(0);
         app.semaphoreSender = new Semaphore(0);
-        Log.d("Test7", "lock semaphore sender in client manager");
         this.user= user;
         this.party = null;
         this.local_changes = Collections.synchronizedList(new ArrayList<PlaylistChange>());
@@ -57,7 +56,6 @@ public class ClientManager {
         app.sender_thread.start();
         try {
             app.sender_thread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
-            Log.d("Dana", "ClientManager:  add command to sender");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -101,7 +99,6 @@ public class ClientManager {
     }
 
     public void nextSong(userIntention userIntent){
-        Log.d("GET_READY","next song");
         if(isAdmin()) {
             try {
                 app.media_manager.pause();
@@ -238,11 +235,9 @@ public class ClientManager {
     }
 
     public void commandPlayPause() {
-        Log.d("GET_READY","playpause");
         try {
             if (this.party.playlist.is_playing && app.sender_thread != null) {
                 int track_id = this.party.playlist.tracks.get(this.party.playlist.cur_track).track_id;
-                Log.d("playPause", "commandPlayPause: " + app.gui_manager.curProgress);
                 app.sender_thread.addCmd(Command.create_playSong_Command(track_id, app.gui_manager.curProgress,PLAY_BUTTON));
                 waiting_for_response = true;
             } else {
@@ -334,13 +329,6 @@ public class ClientManager {
         return (user.is_admin);
     }
 
-    /*public void closeParty() {
-        party = null;
-        user.is_admin = false;
-        terminateConnection();
-        startConnection();
-    }*/
-
     public void terminateConnection(boolean fromListener){
         Log.d("Test7", "terminateConnection");
         if(fromListener && app.sender_thread != null) {
@@ -349,39 +337,16 @@ public class ClientManager {
                 app.sender_thread.connected = false;
             }
             app.sender_thread.interrupt();
-            /*try {
-                app.sender_thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
-            Log.d("Test7", "terminateConnection - kill sender");
         }
         else if (app.listener_thread != null) {
-            Log.d("Test7", "terminateConnection - try to kill listener");
                 synchronized (app.listener_thread.disconnected) {
                     app.listener_thread.disconnected = true;
                 }
                 app.listener_thread.interrupt();
-                /*try {
-                    app.listener_thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
-            Log.d("Test7", "terminateConnection - kill listener");
         }
         this.app.sender_thread = null;
         this.app.listener_thread = null;
     }
-
-    /*public void startConnection(){
-        app.sender_thread = new SenderThread(app);
-        app.sender_thread.start();
-        try {
-            app.sender_thread.addCmd(Command.create_authentication_command(user.name, user.id, user.img_path));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public int getTrackPosFromId(int track_id){
         for (int i = 0; i < app.client_manager.party.playlist.tracks.size(); i++){
@@ -415,18 +380,12 @@ public class ClientManager {
         }
     }
 
-    public void seekMusic(int id, int offset) {
-        boolean is_pause = false;
+    public void seekMusic(final int id, final int offset) {
         try {
-            if (app.sender_thread != null){
-                if(!app.client_manager.party.playlist.is_playing)
-                    is_pause = true;
-                app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
-                app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
-                if (is_pause)
-                    app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
+            if (app.sender_thread != null) {
+                //final boolean isPause = !app.client_manager.party.playlist.is_playing;
+                app.sender_thread.addCmd(Command.create_seekMusic_Command(id, offset));
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -434,17 +393,12 @@ public class ClientManager {
 
     public void syncMusic() {
         try {
-            if (app.sender_thread != null){
-                int id = party.playlist.tracks.get(party.playlist.cur_track).track_id;
-                int offset = app.media_manager.getOffset(id);
-                app.sender_thread.addCmd(Command.create_pause_Command(id, offset));
-                sleep(250);
-                app.sync_music = false;
-                app.sender_thread.addCmd(Command.create_playSong_Command(id, offset, PLAY_BUTTON));
+            if (app.sender_thread != null) {
+                final int id = party.playlist.tracks.get(party.playlist.cur_track).track_id;
+                final int offset = app.media_manager.getOffset(id);
+                app.sender_thread.addCmd(Command.create_syncMusic_Command(id, offset));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

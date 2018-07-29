@@ -8,5 +8,4 @@ public enum GUIChange{
     is_private,
     cur_track,
     admin,
-    delete_songs
 }

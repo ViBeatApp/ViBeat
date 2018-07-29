@@ -56,9 +56,7 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
             List<ImageView> views = new ArrayList<ImageView>();
             img_paths.add(track.img_path);
             views.add(holder.img);
-            Log.d("ImagePath", "berore");
             imageLoader.loadImageSquare((Activity) context, img_paths, views);
-            Log.d("ImagePath", "after");
 
             if (this.playlist.cur_track == position)
                 holder.background.setBackgroundColor(R.color.colorPrimaryDark);
@@ -88,7 +86,6 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
     }
 
     public void onItemDismiss(int position) {
-        Log.d("Remove", "position = " +  position + " cur_track = " + app.client_manager.party.playlist.cur_track);
         int track_id = app.client_manager.party.playlist.tracks.get(position).track_id;
         app.client_manager.party.playlist.tracks.remove(position);
         boolean b = position == app.client_manager.party.playlist.cur_track;
@@ -103,15 +100,12 @@ public class PlaylistRecyclerView extends RecyclerView.Adapter<PlaylistRecyclerV
 
     @SuppressLint("ResourceAsColor")
     public void setCurTrackBackground(int position_old, int position_new){
-        Log.d("DebugAll", "position_old = "+position_old+" position_new = "+position_new);
-        Log.d("DebugAll", "playlist size = "+ app.client_manager.party.playlist.tracks.size());
         if(playlist.tracks.size() > position_new && 0 <= position_new &&
                 playlist.tracks.size() > position_old && 0 <= position_old) {
             PlaylistRecyclerView.playlistViewHolder viewHolder_new, viewHolder_old;
             if (position_old != -1) {
                 viewHolder_old = (PlaylistRecyclerView.playlistViewHolder) recyclerView.findViewHolderForAdapterPosition(position_old);
                 if(viewHolder_old != null) {
-                    Log.d("Not null", "setCurTrackBackground: ");
                     viewHolder_old.background.setBackgroundColor(Color.TRANSPARENT);
                     notifyItemChanged(position_old);
                 }

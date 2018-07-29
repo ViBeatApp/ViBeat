@@ -30,6 +30,8 @@ public enum CommandType {
 	SEARCH_RESULT,
 	
 	//get if the other side fall
-	DISCONNECTED;
+	DISCONNECTED, 
+	SYNC_MUSIC, 
+	SEEK_MUSIC;
 	
 }

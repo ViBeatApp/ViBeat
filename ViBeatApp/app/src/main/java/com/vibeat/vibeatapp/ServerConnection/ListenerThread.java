@@ -36,7 +36,6 @@ public class ListenerThread extends Thread {
     public MyApplication app;
     public Boolean disconnected;
     public boolean openparty = true;
-    public long offset_from_ntp;
 
     public ListenerThread(MyApplication app, ReadWriteAux readWriteAux) {
         this.readWriteAux = readWriteAux;
@@ -64,7 +63,7 @@ public class ListenerThread extends Thread {
         }
     }
 
-    public Command getServerCommand() throws InterruptedException{
+    public Command getServerCommand(){
 
         try {
             return readWriteAux.recieve();
@@ -76,14 +75,11 @@ public class ListenerThread extends Thread {
         return null;
     }
 
-    //@RequiresApi(api = Build.VERSION_CODES.O)
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void handlerCommand(Command cmd) throws JSONException, InterruptedException {
         if( cmd == null )
             return;
 
-        Log.e("Listener",cmd.cmd_type.name());
-        Log.e("LOADING_CHANGE",cmd.cmd_type.name());
         switch (cmd.cmd_type) {
 
             case SYNC_PARTY:
@@ -98,7 +94,6 @@ public class ListenerThread extends Thread {
                 JSONArray name = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.NAME);
                 JSONArray is_private = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.IS_PRIVATE);
                 JSONArray cur_track = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.CURRENT_TRACK_ID);
-                JSONArray deleted_songs = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.DELETED_SONGS);
                 boolean isPlaying = CommandClientAux.getSyncPartyAttribute(cmd, jsonKey.PARTY_PLAYING).getBoolean(0);
                 boolean move = false;
 
@@ -152,7 +147,6 @@ public class ListenerThread extends Thread {
                                         if (p.change_id == c) {
                                             iter.remove();
                                             if (!AddChange.class.isInstance(p)) {
-                                                Log.d("Instance", "not Add song class ");
                                                 serverIter.remove();
                                             }
                                         }
@@ -179,7 +173,6 @@ public class ListenerThread extends Thread {
                         app.gui_manager.completeJoin(isPlaying);
                     else
                         app.gui_manager.syncParty(old_cur_track, isPlaying);
-                    Log.e("Listener-sam", "Sync Done");
                     break;
                 }
             case SEARCH_RESULT:
@@ -189,7 +182,6 @@ public class ListenerThread extends Thread {
                 break;
 
             case GET_READY:
-                Log.d("Test1", "get ready in listener");
                 int prep_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int prep_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 boolean joiningPlayingParty = cmd.getBoolAttribute(jsonKey.PARTY_PLAYING);
@@ -201,13 +193,11 @@ public class ListenerThread extends Thread {
                 synchronized (app.gui_manager.validOffset) {
                     app.gui_manager.validOffset = true;
                 }
-                Log.d("Test1", "play song in listener");
                 app.client_manager.waiting_for_response = false;
                 int play_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
                 int play_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.media_manager.play(play_track_id, play_offset);
-                if(!app.sync_music)
-                    app.gui_manager.play(play_track_id);
+                app.gui_manager.play(play_track_id);
                 break;
 
             case LEAVE_PARTY:
@@ -220,13 +210,15 @@ public class ListenerThread extends Thread {
                 break;
 
             case PAUSE:
-                Log.d("Test1","pause song in listener");
+                int pause_track_id = cmd.getIntAttribute(jsonKey.TRACK_ID);
+                if(pause_track_id != app.client_manager.party.playlist.getCurrentTrack().track_id)
+                    break;
+                int pause_offset = cmd.getIntAttribute(jsonKey.OFFSET);
                 app.client_manager.waiting_for_response = false;
                 app.media_manager.pause();
-                if(!app.sync_music)
-                    app.gui_manager.pause();
+                app.gui_manager.updateOffset(pause_offset);
+                app.gui_manager.pause();
                 break;
-
             case REJECTED:
                 app.gui_manager.rejected();
                 break;
@@ -243,12 +235,10 @@ public class ListenerThread extends Thread {
 
     private List<Track> getTrackListFromJSON(JSONArray arr) throws JSONException{
         List<Track> tracks = new ArrayList<Track>();
-        Log.e("Listener-sam", "num of songs is " + arr.length());
+
         for (int i = 0; i < arr.length(); i++ ){
             trackInfo s = (trackInfo)arr.get(i);
-            int searchTrack = -1;
-            if (app.client_manager.party.playlist != null)
-                searchTrack = app.client_manager.party.playlist.searchTrack(s.track_id);
+            int searchTrack = (app.client_manager.party.playlist != null) ? app.client_manager.party.playlist.searchTrack(s.track_id) : -1;
             Track track = (searchTrack != -1) ? app.client_manager.party.playlist.tracks.get(searchTrack) : app.fb_manager.getTrackByDBid(s.db_id, s.track_id);
             tracks.add(track);
         }
@@ -257,9 +247,7 @@ public class ListenerThread extends Thread {
 
     private List<User> getUserListFromJSON(JSONArray arr) throws JSONException{
         List<User> users = new ArrayList<User>();
-        Log.d("USERS", arr.length()+"");
         for (int i = 0; i < arr.length(); i++ ){
-            Log.d("USERS", "in json");
             User u = (User)arr.get(i);
             users.add(u);
         }
@@ -288,9 +276,7 @@ public class ListenerThread extends Thread {
     private void updateUserList(List<User> users, Party party){
         party.admin.clear();
         party.connected.clear();
-        Log.d("USERS", "before for "+users.toString());
         for (User user : users){
-            Log.d("USERS", user.name);
             if (user.is_admin) {
                 party.admin.add(user);
                 if (app.client_manager.user.id == user.id)
@@ -314,7 +300,6 @@ public class ListenerThread extends Thread {
     private void deleteSongsForPlaylist(List<Integer> delete_songs){
         for(Integer id : delete_songs){
             int pos = app.client_manager.party.playlist.searchTrack(id);
-            Log.d("delete", "track pos = "+pos);
             if(pos != -1)
                 app.client_manager.party.playlist.tracks.remove(pos);
         }

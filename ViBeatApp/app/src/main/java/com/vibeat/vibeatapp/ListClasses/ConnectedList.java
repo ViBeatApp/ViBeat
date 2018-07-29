@@ -32,7 +32,6 @@ public class ConnectedList implements ListAdapterable {
 
         ImageView img = (ImageView) v.findViewById(R.id.imageUser);
         TextView name = (TextView) v.findViewById(R.id.name);
-        //TextView admin = (TextView) v.findViewById(R.id.admin);
         final ImageView crown = (ImageView) v.findViewById(R.id.adminImage);
 
         final View row_send = v;
@@ -44,7 +43,6 @@ public class ConnectedList implements ListAdapterable {
         if (position < party.admin.size()) {
             img_paths.add(party.admin.get(position).img_path);
             name.setText(party.admin.get(position).name);
-            //admin.setTextColor(R.color.text);
             crown.setImageResource(R.drawable.white_crown_full);
         } else {
             img_paths.add(party.connected.get(position - party.admin.size()).img_path);

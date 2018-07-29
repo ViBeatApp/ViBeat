@@ -40,7 +40,6 @@ public class imageLoader {
                             }
                         });
                     } catch (Exception e) {
-                        Log.d("image", "failed: " + i);
                         e.printStackTrace();
                     }
                 }
@@ -79,7 +78,6 @@ public class imageLoader {
                         });
                     }
                     catch (Exception e) {
-                        Log.d("image", "failed: " + i);
                         e.printStackTrace(); }
                 }
             }

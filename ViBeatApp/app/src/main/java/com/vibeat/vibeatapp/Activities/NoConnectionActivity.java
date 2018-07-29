@@ -32,7 +32,6 @@ public class NoConnectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_no_connection);
 
         app = (MyApplication) this.getApplication();
-        Log.d("Test7", "no connection activity");
         app.disconnected = true;
         app.semaphoreDisconnected.release();
 
@@ -87,16 +86,13 @@ public class NoConnectionActivity extends AppCompatActivity {
 
                         int counter = 0;
                         if (app.sender_thread != null) {
-                            Log.d("Test7", "no connection activity - not null");
                         }
                         while (app.sender_thread == null && counter < 5) {
-                            Log.d("Test7", "no connection activity - inside while");
                             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(NoConnectionActivity.this);
                             app.client_manager = new ClientManager(AuthenticationManager.getGoogleUserFromAccount(account), app);
                             app.semaphore.release();
                             try {
                                 app.semaphoreSender.acquire();
-                                Log.d("Test7", "no connection activity - after new ClientManager");
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

@@ -9,7 +9,7 @@ public class Command {
 	public CommandType cmd_type;
 	public JSONObject cmd_info;
 
-	public Command(CommandType cmd_type) throws JSONException {
+	public Command(CommandType cmd_type){
 		this.cmd_type = cmd_type;
 		this.cmd_info = new JSONObject();
 	}
@@ -34,10 +34,6 @@ public class Command {
 		json.put(jsonKey.COMMAND_TYPE.name(), this.cmd_type);
 		json.put(jsonKey.COMMAND_INFO.name(), this.cmd_info);
 		return json.toString().getBytes();
-	}
-
-	public void printCommand() {
-		System.out.println("command " + this.cmd_type + ", info" + this.cmd_info);
 	}
 
 	@NonNull
@@ -184,6 +180,18 @@ public class Command {
 	public static Command create_makeAdmin_Command(int userId) throws JSONException {
 		Command cmd = new Command(CommandType.MAKE_ADMIN);
 		cmd.setAttribute(jsonKey.USER_ID, userId);
+		return cmd;
+	}
+	public static Command create_seekMusic_Command(int trackId, int offset) throws JSONException {
+		Command cmd = new Command(CommandType.SEEK_MUSIC);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		return cmd;
+	}
+	public static Command create_syncMusic_Command(int trackId, int offset) throws JSONException {
+		Command cmd = new Command(CommandType.SYNC_MUSIC);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
 		return cmd;
 	}
 	public static Command create_updateLocation_Command(double longtitude,double latitude,double altitude) throws JSONException {

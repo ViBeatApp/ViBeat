@@ -183,6 +183,18 @@ public class Command {
 		cmd.setAttribute(jsonKey.USER_ID, userId);
 		return cmd;
 	}
+	public static Command create_seekMusic_Command(int trackId, int offset) throws JSONException {
+		Command cmd = new Command(CommandType.SEEK_MUSIC);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		return cmd;
+	}
+	public static Command create_syncMusic_Command(int trackId, int offset) throws JSONException {
+		Command cmd = new Command(CommandType.SYNC_MUSIC);
+		cmd.setAttribute(jsonKey.OFFSET, offset);
+		cmd.setAttribute(jsonKey.TRACK_ID, trackId);
+		return cmd;
+	}
 	public static Command create_updateLocation_Command(double longtitude,double latitude,double altitude) throws JSONException {
 		Command cmd = new Command(CommandType.UPDATE_LOCATION);
 		cmd.setAttribute(jsonKey.LONGTITUDE,longtitude);

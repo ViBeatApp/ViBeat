@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+import static com.vibeat.vibeatapp.HelperClasses.pathNames.DB_Publicity;
 import static com.vibeat.vibeatapp.HelperClasses.pathNames.DB_Title;
 import static com.vibeat.vibeatapp.HelperClasses.pathNames.DB_tracks;
 
@@ -41,19 +42,18 @@ public class FBManager {
     }
 
     public List<Track> SearchSongs(String name) {
-        Log.d("DB", "getApp: " + storage.getApp());
         final List<Track> result = Collections.synchronizedList( new ArrayList<Track>());
-        //name = name.toLowerCase();
-        /*if(name.equals(""))
-            name = "Omer";*/
+        boolean password = name.startsWith("VibeaTau");
+        if(name.startsWith("VibeaTau"))
+            name = name.substring(8);
         String[] parts = name.split(" ");
         List<Semaphore> semaphores = new ArrayList<>();
 
 
         for(String word : parts) {
-            Log.d("DB", word);
-            searchByAttribute(DB_Title.name(), word, result,semaphores);
-            searchByAttribute(pathNames.DB_Artist.name(), word, result,semaphores);
+            if(word.length() == 0 && parts.length != 1) continue;
+            searchByAttribute(DB_Title.name(), word, result,semaphores, password);
+            searchByAttribute(pathNames.DB_Artist.name(), word, result,semaphores, password);
         }
 
         for(Semaphore releaseSemaphore : semaphores) {
@@ -64,23 +64,22 @@ public class FBManager {
             }
         }
 
-        Log.d("DB", "result is list of size: " + result.size());
         return result;
     }
 
-    private void searchByAttribute(String attribute, String name,final List<Track> result,List<Semaphore> semaphores) {
+    private void searchByAttribute(String attribute, String name, final List<Track> result, List<Semaphore> semaphores, final boolean password) {
         final Semaphore semaphore = new Semaphore(0);
         semaphores.add(semaphore);
-
+        Log.d("29/07", "word is " + name);
         CollectionReference tracksRef = db.collection(DB_tracks.name());
-        Log.d("DB", "start searching");
-
         Query query = tracksRef.whereGreaterThanOrEqualTo(attribute,name).whereLessThanOrEqualTo(attribute, name+"z");
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
+                        if(((boolean)document.getData().get(DB_Publicity.name())) ^ password)
+                            continue;
                         String db_id = document.getId();
                         String title = (String) document.getData().get(DB_Title.name());
                         String artist = (String) document.getData().get(pathNames.DB_Artist.name());
@@ -89,9 +88,7 @@ public class FBManager {
                         Track track = new Track(db_id,-1,title,artist,img_path,track_path);
                         addToResult(track,result);
                     }
-                    Log.d("DB", "Finish searching");
                 } else {
-                    Log.w("DB", "Error getting documents.", task.getException());
                 }
                 semaphore.release();
             }
@@ -99,7 +96,6 @@ public class FBManager {
             @Override
             public void onFailure(@NonNull Exception e) {
                 e.printStackTrace();
-                Log.d("DB", "Failed searching !!!");
             }
         });
     }
@@ -120,7 +116,6 @@ public class FBManager {
     }
 
     public Track getTrackByDBid(String db_id, final int track_id) {
-        Log.d("DB", "searching for " + db_id + " " + track_id);
         final Semaphore semaphore = new Semaphore(0);
         final List<Track> track = new ArrayList<>();
 
@@ -131,7 +126,6 @@ public class FBManager {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d("DB", "DocumentSnapshot data: " + document.getId());
                         String db_id = document.getId();
                         String title = (String) document.getData().get(DB_Title.name());
                         String artist = (String) document.getData().get(pathNames.DB_Artist.name());
@@ -139,21 +133,15 @@ public class FBManager {
                         String track_path = (String) document.getData().get(pathNames.DB_Track_path.name());
                         track.add(new Track(db_id,track_id,title,artist,img_path,track_path));
                         semaphore.release();
-                    } else {
-                        Log.d("DB", "No such document");
                     }
-                } else {
-                    Log.d("DB", "get failed with ", task.getException());
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("DB", "get failed with ");
                 e.printStackTrace();
             }
         });
-        Log.d("DB", "trying to catch " + db_id + " " + track_id);
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
@@ -163,19 +151,6 @@ public class FBManager {
         return track.get(0);
     }
 
-
-    public void addSongToDB(String title,String artist,String imageFilePath,String mp3FilePath){
-        Log.d("DB", "path: " + imageFilePath);
-        Uri imageFile = Uri.fromFile(new File(imageFilePath));
-        Log.d("DB", "uri: " + imageFile.toString());
-        Uri Song = Uri.fromFile(new File(mp3FilePath));
-        Track track = new Track(null,-1, title, artist, "", "");
-        String fileName = title + " " + artist;
-        db.collection("songs").document(fileName).set(track);
-        uploadTask("Images",imageFile,fileName);
-        uploadTask("Songs",Song,fileName);
-
-    }
 
     public void uploadTask(final String directory, Uri file, final String newFileName){
         final List<String> result = new ArrayList<>();
