@@ -13,19 +13,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".Activities.EnterPartyActivity" />
+        <activity android:name=".Activities.EnterPartyActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.CreatePartyActivity"
             android:fitsSystemWindows="false"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".Activities.PlaylistActivity"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.PlaylistActivity"
+            android:screenOrientation="portrait"></activity>
 
         <meta-data
             android:name="preloaded_fonts"
@@ -37,10 +42,14 @@
         <activity
             android:name=".Activities.ConnectedActivity"
             android:fitsSystemWindows="false"
-            android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".Activities.AddMusicActivity" />
-        <activity android:name=".Activities.LoadingActivity" />
-        <activity android:name=".Activities.NoConnectionActivity"></activity>
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.AddMusicActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.LoadingActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Activities.NoConnectionActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
